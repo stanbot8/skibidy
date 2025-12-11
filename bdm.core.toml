@@ -1,0 +1,170 @@
+[visualization]
+export = true
+interval = 200
+
+[[visualize_diffusion]]
+  name = "Stratum"
+
+[[visualize_diffusion]]
+  name = "Vascular"
+
+[visualization.colormap.skin_strata]
+color_space = "Step"
+c0 = [0.0, 0.831, 0.400, 0.392]   # Basale
+c1 = [1.0, 0.910, 0.590, 0.478]   # Spinosum
+c2 = [2.0, 0.941, 0.788, 0.529]   # Granulosum
+c3 = [3.0, 0.961, 0.902, 0.827]   # Corneum
+c4 = [4.0, 0.710, 0.325, 0.294]   # Dermis
+c5 = [5.0, 0.750, 0.480, 0.470]   # Scar Basale
+c6 = [6.0, 0.820, 0.620, 0.550]   # Scar Spinosum
+c7 = [7.0, 0.870, 0.750, 0.620]   # Scar Granulosum
+c8 = [8.0, 0.900, 0.850, 0.780]   # Scar Corneum
+c9 = [10.0, 0.929, 0.780, 0.686]  # Papillary dermis
+c10 = [11.0, 0.729, 0.506, 0.400] # Reticular dermis
+c11 = [12.0, 0.529, 0.353, 0.294] # Hypodermis
+
+[visualization.colormap.immune_types]
+color_space = "Step"
+c0 = [0.0, 1.000, 1.000, 1.000]   # Neutrophil
+c1 = [1.0, 1.000, 0.850, 0.200]   # Macrophage
+
+[visualization.colormap.tumor_types]
+color_space = "Step"
+c0 = [0.0, 0.200, 0.800, 0.200]   # Tumor
+
+[visualization.glyph]
+theta_resolution = 8
+phi_resolution = 8
+
+[visualization.rendering]
+diffusion_representation = "Volume"
+
+[visualization.opacity]
+points = [[-1.0, 0.0], [0.0, 0.0], [0.5, 0.15], [1.0, 0.35], [2.0, 0.4], [3.0, 0.45], [4.0, 0.55], [5.0, 0.65], [7.0, 0.75], [8.0, 0.8], [10.0, 0.85], [12.0, 0.9]]
+
+[visualization.camera]
+position = [-60.0, -100.0, 40.0]
+focal_point = [0.0, 0.0, 15.0]
+view_up = [0, 0, 1]
+view_angle = 40
+
+# Module configs merged at runtime by scripts/config/merge_config.py -> bdm.toml
+
+[geometry]
+patch_um = 2000.0
+depth_um = 1500.0
+height_um = 1500.0
+margin_um = 500.0
+um_per_unit = 50.0
+voxel_um = 250.0
+
+[skin]
+oxygen_diffusion = 0.1
+oxygen_decay = 0.01
+oxygen_basal_conc = 1.0
+oxygen_decay_length = 8.0
+
+kgf_diffusion = 0
+kgf_decay = 0
+kgf_basal_conc = 2.0
+kgf_half_maximal = 0.5
+kgf_max_boost = 1.0
+kgf_decay_length = 5.0
+
+water_diffusion = 1e-4
+water_decay = 0.002
+water_basal_conc = 1.0
+water_decay_length = 12.0
+water_recovery_rate = 0.02
+water_surface_loss_rate = 0.03
+water_migration_threshold = 0.3
+water_prolif_threshold = 0.4
+
+# Cell cycle durations (hours)
+g1_duration = 7.0
+s_duration = 6.0
+g2_duration = 3.0
+m_duration = 1.0
+
+growth_rate = 5
+max_neighbors = 14
+lateral_scatter = 0.3
+max_ta_divisions = 4
+division_diameter = 5.0
+p_asymmetric = 0.7
+stem_fraction = 0.50
+
+repulsion_coeff = 5.0
+attraction_coeff = 0.0
+
+shedding_delay_h = 9999.9
+apoptosis_delay_h = 9999.9
+
+calcium_diffusion = 0
+calcium_decay = 0
+calcium_basal = 0.05
+calcium_peak = 1.5
+calcium_midpoint_z = 18.0
+calcium_steepness = 2.0
+
+ca_spinous_threshold = 0.1
+ca_granular_threshold = 0.5
+ca_cornified_threshold = 1.0
+spinous_threshold = 6.0
+
+# Layer thicknesses relative to basement membrane (z=0)
+basal_thickness = 3.0
+spinous_thickness = 15.0
+granular_thickness = 7.0
+papillary_thickness = 2.0
+reticular_thickness = 6.0
+
+duration_days = 30
+
+calcium_recovery_rate = 0.002
+oxygen_prolif_threshold = 0.3
+oxygen_recovery_enabled = true
+
+migration_enabled = true
+migration_speed = 3.0
+migration_gradient_scale = 15.0
+vegf_migration_weight = 0.5
+fibronectin_haptotaxis_weight = 0.3
+cil_suppression = 1.0
+
+handoff_delay_h = 50
+metrics_interval_h = 10
+metrics_autoopen = true
+headless = false
+
+# PDE sub-cycling (N = solve every N steps)
+subcycle_slow = 10
+subcycle_medium = 5
+derived_fields_subcycle = 5
+migration_subcycle = 3
+homeostasis_subcycle = 3
+
+basal_density_enabled = true
+basal_density_max = 1.0
+basal_density_div_rate = 0.01
+basal_density_diff_rate = 0.005
+basal_density_subcycle = 5
+demotion_radius_factor = 2.8
+
+hot_reload = false
+
+[skin.derived]
+ecm_weight_collagen = 0.4
+ecm_weight_fibronectin = 0.3
+ecm_weight_elastin = 0.2
+ecm_weight_fibrin = 0.1
+ecm_migration_boost = 1.5
+
+grid_resolution_structural = 6
+
+[skin.debug]
+immune = false
+fibroblast = false
+wound = false
+scaled_grid = false
+perf = false
