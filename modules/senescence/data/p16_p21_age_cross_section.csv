@@ -1,0 +1,22 @@
+# Senescent cell burden in human skin as a function of donor age.
+#
+# Source: Idda ML et al. 2020, "Survey of senescent cell markers with age in
+#   human tissues", Aging 12(5):4052-4066. doi:10.18632/aging.102903. PMID
+#   32160592. PMC7093180.
+# Cohort: tissue microarray, n=5 cores per age bin. Age bins: Young 13-35,
+#   Middle 40-59, Old >65 years. Anatomic site not stratified by sun exposure.
+# Source table/figure: Figure 2A-D (p16+ and p21+ cells in epidermis and
+#   dermis per age bin); Table 2 (fold-change Old vs Young).
+# Extraction: figure-extracted approximate percentages from Figure 2 bar
+#   charts (the paper's primary tables report fold-changes, not absolute
+#   percentages by bin).
+# Aggregation: single-source.
+# Normalization: absolute (% cells positive).
+#
+# Bin midpoints used for the age column: Young 24, Middle 50, Old 75. Dermal
+# p16 was undetectable across all bins in this cohort (omitted column).
+#
+age_years,epi_p16_pct,epi_p21_pct,derm_p21_pct
+24,0.0,1.0,1.0
+50,0.0,3.0,2.0
+75,4.0,6.0,15.0

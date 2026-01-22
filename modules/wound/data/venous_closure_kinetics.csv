@@ -1,0 +1,23 @@
+# Venous leg ulcer closure under standard 4-layer bandaging (4LB) compression.
+#
+# Source: Harrison MB et al. 2011, "The Canadian Bandaging Trial:
+#   evidence-informed leg ulcer care and the effectiveness of two compression
+#   technologies", BMC Nursing 10:20. doi:10.1186/1472-6955-10-20.
+#   PMC3214126.
+# Cohort: 4LB arm n=215 (full RCT n=424). Community/home setting, trained
+#   nurses. Mixed venous etiology, prior treatment-naive within 3 months.
+# Source table: Table 6, "Cumulative percentage of participants healed".
+# Extraction: tabular (verbatim from published table).
+# Aggregation: single-arm (4LB).
+# Normalization: absolute (0-100% wounds healed).
+#
+# Day 0 anchor (0% healed) added to the published 12/16/24/52-week timepoints
+# to define the early-trajectory boundary. The 16->24 wk plateau (67->69%) is
+# a published feature of the cohort, not interpolation.
+#
+day,closure_pct
+0,0.0
+84,58.0
+112,67.0
+168,69.0
+364,83.0
