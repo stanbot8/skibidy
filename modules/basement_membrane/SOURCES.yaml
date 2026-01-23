@@ -1,0 +1,18 @@
+basement_membrane_attachment:
+  description: Assembled matrix supports basal keratinocyte attachment and gradual assembly
+  sources:
+  - id: kariya2012
+    authors: Kariya Y, Sato H, Katou N, Kariya Y, Miyazaki K
+    year: 2012
+    title: Polymerized Laminin-332 Matrix Supports Rapid and Tight Adhesion of Keratinocytes, Suppressing Cell Migration
+    journal: PLoS ONE 7(5):e35546
+    doi: 10.1371/journal.pone.0035546
+    notes: Supports stable attachment direction; no measured integrity scale, wound damage fraction, or repair rate transferred.
+  - id: epidermal_graft1995
+    authors: Germain L, Guignard R, Rouabhia M, Auger FA
+    year: 1995
+    title: Early basement membrane formation following the grafting of cultured epidermal sheets detached with thermolysin or Dispase
+    journal: Burns 21(3):175-180
+    doi: 10.1016/0305-4179(95)80004-8
+    url: https://pubmed.ncbi.nlm.nih.gov/7794497/
+    notes: Human epidermal sheets grafted onto athymic mice; abstract biopsies at 2/4/21 days give qualitative component milestones, no numeric coverage or N/rate. Manual extraction in data/germain1995_timing.csv with provenance; does not fit a human punch-wound repair coefficient.

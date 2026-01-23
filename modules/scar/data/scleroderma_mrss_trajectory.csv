@@ -1,0 +1,28 @@
+# Modified Rodnan Skin Score (mRSS) longitudinal trajectory in diffuse
+# cutaneous systemic sclerosis (dcSSc): canonical "rise then regression"
+# pattern matching Steen & Medsger 2001 natural history.
+#
+# Source: Ledoult E et al. 2020, "Latent class trajectory model of mRSS in
+#   systemic sclerosis: long-term outcomes", Arthritis Res Ther 22:30.
+#   doi:10.1186/s13075-020-2113-6. PMID 32070422. PMC7029583.
+# Cohort: French SSc cohort n=198, 641 mRSS measurements over up to 4 years
+#   from baseline (median baseline disease duration 0.8 yr). Latent class
+#   modeling identified 5 trajectory classes.
+# Source table: Table 2, mRSS trajectories section.
+# Extraction: tabular (verbatim from published table).
+# Aggregation: Class 4 only (n=13 high-rising-then-falling). Class 4 is the
+#   canonical severe-dcSSc shape: starts 25.1, peaks 41.5 at year 2, regresses
+#   to 29.5 by year 4. Other classes (1=stable-low/lcSSc, 2=moderate-improving,
+#   3=mild-rising, 5=high-improving) capture different phenotypes and are
+#   not modeled here.
+# Normalization: absolute (mRSS scale 0-51, higher = worse skin thickening).
+#
+# Day axis derived from years: year * 365.25.
+#
+day,mrss_mean,mrss_ci_lo,mrss_ci_hi
+0,25.1,22.6,27.6
+183,31.9,28.7,35.1
+365,36.9,32.7,41.0
+731,41.5,37.0,46.1
+1096,39.1,35.3,42.8
+1461,29.5,22.7,36.2

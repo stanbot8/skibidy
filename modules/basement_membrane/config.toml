@@ -1,0 +1,5 @@
+# Opt-in research extension; coefficients are assumptions (see README).
+[skin.basement_membrane]
+enabled = false
+wound_damage = 1.0
+repair_rate = 0.005

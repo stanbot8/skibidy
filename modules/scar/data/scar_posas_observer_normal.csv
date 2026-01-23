@@ -1,0 +1,24 @@
+# Normal scar maturation timecourse: POSAS 2.0 Observer mean by post-injury
+# month.
+#
+# Source: van der Wal MBA et al. 2024, "The minimal important change and
+#   minimal clinically important difference of the POSAS 2.0 in scars after
+#   burn injury", Burns 50(8):1996-2003. doi:10.1016/j.burns.2024.05.022.
+#   PMID 38902132.
+# Cohort: n=127 adults with deep dermal burns and split-thickness skin grafts
+#   in a single burn center. POSAS 2.0 Observer scored at 3, 6, and 12 months
+#   post-burn by a trained scar specialist.
+# Source table: per-timepoint mean (SD) POSAS Observer, table in full text.
+# Extraction: tabular (verbatim).
+# Aggregation: single-source.
+# Normalization: absolute (POSAS Observer scale 1-10, lower is better).
+#
+# These values describe a normally-healing burn-graft scar; the curve is
+# monotonically improving across the first year. Hypertrophic scars deviate
+# upward from this baseline (sustained scores >5 past 12 months); the
+# delta-from-normal is a candidate observable for the hypertrophic profile.
+#
+month,posas_observer_mean,posas_observer_sd
+3,4.3,1.9
+6,3.7,1.9
+12,3.3,1.8
