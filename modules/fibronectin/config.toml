@@ -1,0 +1,10 @@
+# Module: fibronectin -- provisional wound matrix scaffold
+# Sources: Clark 1990 (doi:10.1111/1523-1747.ep12876104),
+#          Grinnell 1984 (doi:10.1002/jcb.240260206),
+#          Hynes 1990 (doi:10.1007/978-1-4612-3264-3)
+[skin.fibronectin]
+enabled = true                        # master switch
+decay = 0.0005                        # slow turnover (~1400 steps half-life)
+deposition_rate = 0.003               # cellular fibronectin from activated fibroblasts (Clark 1990)
+serum_rate = 0.001                    # plasma fibronectin from vascular leakage into open wound
+migration_boost = 0.5                 # keratinocyte speed multiplier from integrin-FN binding (Grinnell 1984)
