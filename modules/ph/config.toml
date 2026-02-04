@@ -1,0 +1,8 @@
+# Module: ph -- wound bed alkalinity (acid mantle disruption)
+# Sources: Schneider et al. 2007 (doi:10.1111/j.1524-475X.2007.00230.x),
+#          Gethin 2007 (doi:10.1111/j.1742-481X.2007.00340.x),
+#          Leveen et al. 1994 (doi:10.1016/S0140-6736(94)91421-4)
+[skin.ph]
+enabled = false                       # master switch
+recovery_rate = 0.003                 # acidification per step (scaled by perfusion)
+migration_suppression = 0.5           # max migration speed reduction at full alkalinity
