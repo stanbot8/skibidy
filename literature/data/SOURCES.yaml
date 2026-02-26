@@ -1,0 +1,1714 @@
+# Reference data sources for skibidy validation
+#
+# Each dataset lists the papers it was synthesized from, with full citations
+# and DOI/PMC links.
+#
+# Directory structure:
+#   raw/       Per-paper digitized data (one CSV per source, with figure reference)
+#   consensus/ Synthesized midpoints used by comparison scripts
+#
+# Wound model: 4-6mm punch biopsy, moist wound care, healthy adult skin.
+
+closure_kinetics_punch_biopsy:
+  description: Re-epithelialization trajectory (% wound closure over 28 days)
+  consensus: consensus/closure_kinetics_punch_biopsy.csv
+  raw_files:
+    - raw/closure/eaglstein1978_closure.csv
+    - raw/closure/cukjati2000_closure.csv
+    - raw/closure/pastar2014_closure.csv
+  columns: [day, closure_pct]
+  units: {day: days, closure_pct: percent}
+  normalization: absolute (0-100%)
+  sources:
+    - id: eaglstein1978
+      authors: Eaglstein WH, Mertz PM
+      year: 1978
+      title: "New methods for assessing epidermal wound healing"
+      journal: J Invest Dermatol 71(6):382-384
+      doi: 10.1111/1523-1747.ep12556814
+    - id: cukjati2000
+      authors: Cukjati D, Rebersek S, Karba R, Miklavcic D
+      year: 2000
+      title: "Modelling of chronic wound healing dynamics"
+      journal: Med Biol Eng Comput 38(3):339-347
+      doi: 10.1007/BF02347056
+    - id: pastar2014
+      authors: Pastar I, Stojadinovic O, Yin NC, Ramirez H, Nusbaum AG, Sawaya A, Patel SB, Khalid L, Isseroff RR, Tomic-Canic M
+      year: 2014
+      title: "Epithelialization in wound healing: a comprehensive review"
+      journal: Adv Wound Care 3(7):445-464
+      doi: 10.1089/wound.2013.0473
+
+inflammation_timecourse:
+  description: Composite inflammatory signal (cytokines + cell density), peak-normalized
+  consensus: consensus/inflammation_timecourse.csv
+  raw_files:
+    - raw/inflammation/eming2007_inflammation.csv
+    - raw/inflammation/kondo1996_inflammation.csv
+    - raw/inflammation/hubner1996_inflammation.csv
+  columns: [day, inflammation_normalized]
+  units: {day: days, inflammation_normalized: fraction of peak}
+  normalization: peak-normalized (1.0 = maximum at day 2)
+  notes: >
+    Peak reflects neutrophil density maximum and sustained TNF-alpha/IL-1/IL-6
+    expression.
+  sources:
+    - id: eming2007
+      authors: Eming SA, Krieg T, Davidson JM
+      year: 2007
+      title: "Inflammation in wound repair: molecular and cellular mechanisms"
+      journal: J Invest Dermatol 127(3):514-525
+      doi: 10.1038/sj.jid.5700701
+    - id: kondo1996
+      authors: Kondo T, Ohshima T
+      year: 1996
+      title: "The dynamics of inflammatory cytokines in the healing process of mouse skin wound"
+      journal: Int J Legal Med 108(5):231-236
+      doi: 10.1007/BF01369816
+    - id: hubner1996
+      authors: Hubner G, Brauchle M, Smola H, Madlener M, Fassler R, Werner S
+      year: 1996
+      title: "Differential regulation of pro-inflammatory cytokines during wound healing"
+      journal: Cytokine 8(7):548-556
+      doi: 10.1006/cyto.1996.0074
+    - id: koh2011
+      authors: Koh TJ, DiPietro LA
+      year: 2011
+      title: "Inflammation and wound healing: the role of the macrophage"
+      journal: Expert Rev Mol Med 13:e23
+      doi: 10.1017/S1462399411001943
+    - id: canedo2019
+      authors: Canedo-Dorantes L, Canedo-Ayala M
+      year: 2019
+      title: "Skin acute wound healing: a comprehensive review"
+      journal: Int J Inflam 2019:3706315
+      doi: 10.1155/2019/3706315
+
+immune_cell_kinetics:
+  description: Neutrophil and macrophage counts, each peak-normalized independently
+  consensus: consensus/immune_cell_kinetics.csv
+  raw_files:
+    - raw/neutrophils/kim2008_neutrophils.csv
+    - raw/neutrophils/wilgus2013_neutrophils.csv
+    - raw/macrophages/krzyszczyk2018_macrophages.csv
+    - raw/macrophages/rodero2010_macrophages.csv
+    - raw/macrophages/lucas2010_macrophages.csv
+  columns: [day, neutrophils_normalized, macrophages_normalized]
+  units: {day: days, neutrophils_normalized: fraction of peak, macrophages_normalized: fraction of peak}
+  normalization: peak-normalized per cell type (1.0 = maximum count)
+  notes: >
+    Neutrophils peak day 1 (~6x10^6 cells, Kim 2008).
+    Macrophages peak day 3 (Krzyszczyk 2018, Rodero 2010).
+  sources:
+    - id: kim2008
+      authors: Kim MH, Liu W, Borjesson DL, Curry FR, Miller LS, Cheung AL, Liu FT, Isseroff RR, Simon SI
+      year: 2008
+      title: "Dynamics of neutrophil infiltration during cutaneous wound healing and infection"
+      journal: J Invest Dermatol 128(7):1812-1820
+      doi: 10.1038/sj.jid.5701223
+    - id: wilgus2013
+      authors: Wilgus TA, Roy S, McDaniel JC
+      year: 2013
+      title: "Neutrophils and wound repair: positive actions and negative reactions"
+      journal: Adv Wound Care 2(7):379-388
+      doi: 10.1089/wound.2012.0383
+    - id: koh2011
+      authors: Koh TJ, DiPietro LA
+      year: 2011
+      title: "Inflammation and wound healing: the role of the macrophage"
+      journal: Expert Rev Mol Med 13:e23
+      doi: 10.1017/S1462399411001943
+    - id: rodero2010
+      authors: Rodero MP, Khosrotehrani K
+      year: 2010
+      title: "Skin wound healing modulation by macrophages"
+      journal: Int J Clin Exp Pathol 3(7):643-653
+      pmc: PMC2933384
+    - id: krzyszczyk2018
+      authors: Krzyszczyk P, Schloss R, Palmer A, Berthiaume F
+      year: 2018
+      title: "The role of macrophages in acute and chronic wound healing"
+      journal: Front Physiol 9:419
+      doi: 10.3389/fphys.2018.00419
+    - id: lucas2010
+      authors: Lucas T, Waisman A, Ranjan R, Roes J, Krieg T, Muller W, Roers A, Eming SA
+      year: 2010
+      title: "Differential roles of macrophages in diverse phases of skin repair"
+      journal: J Immunol 184(7):3964-3977
+      doi: 10.4049/jimmunol.0903356
+
+myofibroblast_kinetics:
+  description: Alpha-SMA+ myofibroblast density, peak-normalized
+  consensus: consensus/myofibroblast_kinetics.csv
+  raw_files:
+    - raw/myofibroblasts/desmouliere1995_myofibroblasts.csv
+    - raw/myofibroblasts/darby2014_myofibroblasts.csv
+    - raw/myofibroblasts/tomasek2002_myofibroblasts.csv
+    - raw/myofibroblasts/hinz2007_myofibroblasts.csv
+  columns: [day, myofibroblasts_normalized]
+  units: {day: days, myofibroblasts_normalized: fraction of peak density}
+  normalization: peak-normalized (1.0 = maximum alpha-SMA+ cells at day 12)
+  notes: >
+    Myofibroblasts first appear day 4-6 as proto-myofibroblasts acquire alpha-SMA.
+    Peak density day 10-15 during active contraction.
+    Apoptosis begins ~day 12, peaks ~day 20 (Desmouliere 1995).
+    Largely resolved by day 30 in normal healing.
+  sources:
+    - id: desmouliere1995
+      authors: Desmouliere A, Redard M, Darby I, Gabbiani G
+      year: 1995
+      title: "Apoptosis mediates the decrease in cellularity during the transition between granulation tissue and scar"
+      journal: Am J Pathol 146(1):56-66
+      pmc: PMC1870783
+    - id: darby2014
+      authors: Darby IA, Laverdet B, Bonte F, Desmouliere A
+      year: 2014
+      title: "Fibroblasts and myofibroblasts in wound healing"
+      journal: Clin Cosmet Investig Dermatol 7:301-311
+      doi: 10.2147/CCID.S50046
+    - id: tomasek2002
+      authors: Tomasek JJ, Gabbiani G, Hinz B, Chaponnier C, Brown RA
+      year: 2002
+      title: "Myofibroblasts and mechano-regulation of connective tissue remodelling"
+      journal: Nat Rev Mol Cell Biol 3(5):349-363
+      doi: 10.1038/nrm809
+    - id: hinz2007
+      authors: Hinz B
+      year: 2007
+      title: "Formation and function of the myofibroblast during tissue repair"
+      journal: J Invest Dermatol 127(3):526-537
+      doi: 10.1038/sj.jid.5700613
+    - id: statpearls_wound
+      authors: Wound Healing Phases, StatPearls
+      year: 2024
+      title: "Wound Healing Phases"
+      journal: StatPearls (NBK470443)
+      url: https://www.ncbi.nlm.nih.gov/books/NBK470443/
+
+collagen_deposition:
+  description: Collagen accumulation during proliferative/remodeling phases, end-normalized
+  consensus: consensus/collagen_deposition.csv
+  raw_files:
+    - raw/collagen/gonzalez2016_collagen.csv
+    - raw/collagen/zhou2013_collagen.csv
+    - raw/collagen/mathew2021_collagen.csv
+    - raw/collagen/caetano2016_collagen.csv
+  columns: [day, collagen_normalized]
+  units: {day: days, collagen_normalized: fraction of day-28 value}
+  normalization: end-normalized (1.0 = collagen at day 28)
+  notes: >
+    Collagen deposition begins day 5-7, rises through proliferative phase,
+    continues actively for 4-5 weeks. Tensile strength as proxy:
+    week 1 ~3%, week 3 ~20%, 3 months ~80%.
+    This represents the rising phase of a curve that plateaus at ~80% over months.
+  sources:
+    - id: gonzalez2016
+      authors: Gonzalez ACDO, Costa TF, Andrade ZA, Medrado ARAP
+      year: 2016
+      title: "Wound healing: a literature review"
+      journal: An Bras Dermatol 91(5):614-620
+      doi: 10.1590/abd1806-4841.20164741
+    - id: statpearls_wound
+      authors: Wound Healing Phases, StatPearls
+      year: 2024
+      title: "Wound Healing Phases"
+      journal: StatPearls (NBK470443)
+      url: https://www.ncbi.nlm.nih.gov/books/NBK470443/
+    - id: zhou2013
+      authors: Zhou S, Salisbury J, Preedy VR, Emery PW
+      year: 2013
+      title: "Increased collagen synthesis rate during wound healing in muscle"
+      journal: PLoS One 8(3):e58324
+      doi: 10.1371/journal.pone.0058324
+    - id: mathew2021
+      authors: Mathew-Steiner SS, Roy S, Sen CK
+      year: 2021
+      title: "Collagen in wound healing"
+      journal: Bioengineering 8(5):63
+      doi: 10.3390/bioengineering8050063
+    - id: caetano2016
+      authors: Caetano GF, Fronza M, Leite MN, Gomes A, Frade MAC
+      year: 2016
+      title: "Comparison of collagen content in skin wounds"
+      journal: Pharm Biol 54(11):2555-2559
+      doi: 10.3109/13880209.2016.1170861
+
+# ===========================================================================
+# Diabetic wound healing validation
+# Parameters for impaired healing: immune, keratinocyte, fibroblast, vascular.
+# ===========================================================================
+
+diabetic_wound_healing:
+  description: >
+    Literature sources validating diabetic wound model parameters.
+    No digitized timeseries yet; citations support parameter magnitudes.
+  sources:
+    # Macrophage M1/M2 polarization (diabetic_m1_duration_factor, diabetic_resolution_factor)
+    - id: mirza2011
+      authors: Mirza R, Koh TJ
+      year: 2011
+      title: "Dysregulation of monocyte/macrophage phenotype in wounds of diabetic mice"
+      journal: Cytokine 56(2):256-264
+      doi: 10.1016/j.cyto.2011.06.016
+      notes: >
+        Diabetic mouse wounds show persistent M1 markers (iNOS, TNF-alpha) and
+        delayed M2 markers (Arg1, IL-10). Supports m1_duration_factor=3.0 and
+        resolution_factor=0.3.
+    - id: louiselle2021
+      authors: Louiselle AE, Niemiec SM, Zgheib C, Liechty KW
+      year: 2021
+      title: "Macrophage polarization and diabetic wound healing"
+      journal: Transl Res 236:109-116
+      doi: 10.1016/j.trsl.2021.05.006
+      pmc: PMC9797953
+      notes: >
+        Review: diabetic macrophages fail M1-to-M2 switch; sustained TNF-alpha/
+        IL-1/IL-6 impairs re-epithelialization.
+
+    # Neutrophil infiltration and lifespan (diabetic_neutrophil_factor, _lifespan_factor)
+    - id: wong2015
+      authors: Wong SL, Demers M, Martinod K, Gallant M, Wang Y, Goldenberg AB, Bhatt DL, et al.
+      year: 2015
+      title: "Diabetes primes neutrophils to undergo NETosis, which impairs wound healing"
+      journal: Nat Med 21(7):815-819
+      doi: 10.1038/nm.3887
+      notes: >
+        Hyperglycemia primes excessive NET release; NET-laden wounds show ~2x
+        neutrophil burden vs. controls. Supports neutrophil_factor=1.8.
+    - id: brem2007
+      authors: Brem H, Tomic-Canic M
+      year: 2007
+      title: "Cellular and molecular basis of wound healing in diabetes"
+      journal: J Clin Invest 117(5):1219-1222
+      doi: 10.1172/JCI32169
+      notes: >
+        Review: neutrophil apoptosis delayed in diabetic wounds; prolonged
+        protease release damages ECM. Supports neutrophil_lifespan_factor=1.5.
+    - id: albaloureiro2007
+      authors: Alba-Loureiro TC, Munhoz CD, Martins JO, Cerchiaro GA, Scavone C, Curi R, Sannomiya P
+      year: 2007
+      title: "Neutrophil function and metabolism in individuals with diabetes mellitus"
+      journal: Braz J Med Biol Res 40(8):1037-1044
+      doi: 10.1016/j.lfs.2006.10.001
+      notes: >
+        Impaired neutrophil apoptosis in diabetes; reduced caspase-3 activity
+        and delayed phosphatidylserine exposure. Supports
+        neutrophil_apoptosis_factor=0.3.
+
+    # Efferocytosis (diabetic_efferocytosis_factor)
+    - id: khanna2010
+      authors: Khanna S, Biswas S, Shang Y, Collard E, Azad A, Kauh C, et al.
+      year: 2010
+      title: "Macrophage dysfunction impairs resolution of inflammation in the wounds of diabetic mice"
+      journal: PLoS One 5(3):e9539
+      doi: 10.1371/journal.pone.0009539
+      notes: >
+        Diabetic wound macrophages show ~50% reduction in phagocytic clearance
+        of apoptotic cells. Supports efferocytosis_factor=0.5.
+
+    # Keratinocyte proliferation and migration (diabetic_prolif_factor, _migration_factor)
+    - id: wang2020
+      authors: Wang Y, Graves DT
+      year: 2020
+      title: "Keratinocyte function in normal and diabetic wounds and modulation by FOXO1"
+      journal: J Diabetes Res 2020:3714704
+      doi: 10.1155/2020/3714704
+      notes: >
+        Hyperglycemia attenuates p125FAK phosphorylation critical for cell cycle
+        progression; PI3K/Akt signaling and ClC-2 function reduced, cutting
+        migration speed 40-60%. Supports prolif_factor=0.5, migration_factor=0.6.
+
+    # Fibroblast dysfunction (diabetic_fibroblast_activation_factor, _collagen_factor, _lifespan_factor)
+    - id: lerman2003
+      authors: Lerman OZ, Galiano RD, Armour M, Levine JP, Gurtner GC
+      year: 2003
+      title: "Cellular dysfunction in the diabetic fibroblast: impairment in migration, vascular endothelial growth factor production, and response to hypoxia"
+      journal: Am J Pathol 162(1):303-312
+      pmc: PMC1851127
+      notes: >
+        Diabetic fibroblasts show delayed activation, reduced VEGF production,
+        and impaired hypoxia response. Supports fibroblast_activation_factor=2.0,
+        fibroblast_lifespan_factor=0.6.
+    - id: goldberg2007
+      authors: Goldberg MT, Han YP, Yan C, Shaw MC, Garner WL
+      year: 2007
+      title: "TNF-alpha suppresses alpha-smooth muscle actin expression in human dermal fibroblasts"
+      journal: J Invest Dermatol 127(11):2645-2655
+      doi: 10.1038/sj.jid.5700890
+      notes: >
+        Chronic TNF-alpha (as in diabetic wounds) suppresses myofibroblast
+        differentiation and collagen synthesis. Supports collagen_factor=0.4.
+    - id: spanheimer1988
+      authors: Spanheimer RG
+      year: 1988
+      title: "Direct inhibition of collagen production in vitro by diabetic rat serum"
+      journal: Metabolism 37(5):479-485
+      doi: 10.1016/0026-0495(88)90050-9
+      notes: >
+        Collagen synthesis fell to ~58% of control in diabetic serum; dose-dependent
+        inhibition by diabetic rat serum factors. Supports collagen_factor=0.4.
+
+    # Microangiopathy (perfusion_basal, perfusion_angio_rate)
+    - id: dinh2005
+      authors: Dinh T, Veves A
+      year: 2005
+      title: "A review of the mechanisms implicated in the pathogenesis of the diabetic foot"
+      journal: Int J Low Extrem Wounds 4(3):154-159
+      doi: 10.1177/1534734605280130
+      notes: >
+        Capillary density -22%, lumen area -58% in diabetic foot skin.
+        Supports perfusion_basal=0.7.
+    - id: brem2016
+      authors: Brem H, Sheehan P, Rosenberg HJ, Schneider JS, Boulton AJ
+      year: 2006
+      title: "Evidence-based protocol for diabetic foot ulcers"
+      journal: Plast Reconstr Surg 117(7 Suppl):193S-209S
+      doi: 10.1097/01.prs.0000225459.93750.29
+      notes: >
+        Review: impaired VEGF/FGF signaling slows angiogenesis. Reduced NO
+        bioavailability further limits vessel formation.
+        Supports perfusion_angio_rate=0.002 (vs. normal 0.005).
+
+    # Water / barrier dysfunction (water_recovery_rate)
+    - id: sakai2005
+      authors: Sakai S, Kikuchi K, Satoh J, Tagami H, Inoue S
+      year: 2005
+      title: "Functional properties of the stratum corneum in patients with diabetes mellitus: similarities to senile xerosis"
+      journal: Br J Dermatol 153(2):319-323
+      doi: 10.1111/j.1365-2133.2005.06756.x
+      notes: >
+        Diabetic patients show reduced stratum corneum hydration (lower HFC) and
+        decreased sebaceous gland activity vs. controls. Supports compound
+        reduction in water_recovery_rate (0.05 -> 0.02).
+    - id: li2017
+      authors: Li X, Xu J, He Y, Yang Y, Huang L, et al.
+      year: 2017
+      title: "Diabetic and sympathetic influences on the water permeability barrier function of human skin as measured using transepidermal water loss"
+      journal: Medicine 96(45):e8611
+      doi: 10.1097/MD.0000000000008611
+      notes: >
+        Diabetic skin shows altered water permeability barrier function related
+        to peripheral sympathetic neuropathy. Reduced TEWL on distal limbs
+        indicates impaired barrier homeostasis.
+
+    # Chronic baseline inflammation (diabetic_baseline_inflammation)
+    - id: dinh2012
+      authors: Dinh T, Tecilazich F, Kafanas A, Doupis J, Gnardellis C, Leal E, et al.
+      year: 2012
+      title: "Mechanisms involved in the development and healing of diabetic foot ulceration"
+      journal: Diabetes 61(11):2937-2947
+      doi: 10.2337/db12-0227
+      notes: >
+        Elevated baseline IL-1beta, TNF-alpha, IL-6 in diabetic serum
+        even before wounding (AGE/RAGE pathway).
+    - id: bierhaus2005
+      authors: Bierhaus A, Humpert PM, Morcos M, Wendt T, Chavakis T, Arnold B, et al.
+      year: 2005
+      title: "Understanding RAGE, the receptor for advanced glycation end products"
+      journal: J Mol Med 83(11):876-886
+      doi: 10.1007/s00109-005-0688-7
+      notes: >
+        RAGE-NF-kB axis produces sustained constitutive inflammation in diabetic
+        tissue; AGE accumulation drives persistent cytokine production independent
+        of acute injury. Supports baseline_inflammation=0.001.
+
+    # Inflammation sensitivity (diabetic_inflammation_sensitivity)
+    - id: rasik2000
+      authors: Rasik AM, Shukla A
+      year: 2000
+      title: "Antioxidant status in delayed healing type of wounds"
+      journal: Int J Exp Pathol 81(4):257-263
+      doi: 10.1046/j.1365-2613.2000.00158.x
+      notes: >
+        Diabetic wound tissue shows ~50% reduced SOD and catalase activity,
+        making keratinocytes more vulnerable to oxidative damage from
+        equivalent inflammation levels. Supports inflammation_sensitivity=2.0.
+    - id: lobmann2002
+      authors: Lobmann R, Ambrosch A, Schultz G, Waldmann K, Schiweck S, Lehnert H
+      year: 2002
+      title: "Expression of matrix-metalloproteinases and their inhibitors in the wounds of diabetic and non-diabetic patients"
+      journal: Diabetologia 45(7):1011-1016
+      doi: 10.1007/s00125-002-0868-8
+      notes: >
+        MMP-1 65-fold and MMP-9 14-fold elevated in diabetic foot ulcers vs.
+        traumatic wounds; TIMP-2 reduced. Elevated MMPs degrade growth factors
+        (EGF, PDGF, TGF-beta) at the wound bed, amplifying the effective
+        impact of inflammation on keratinocyte function.
+        Supports inflammation_sensitivity=2.0.
+    - id: brownlee2005
+      authors: Brownlee M
+      year: 2005
+      title: "The pathobiology of diabetic complications: a unifying mechanism"
+      journal: Diabetes 54(6):1615-1625
+      doi: 10.2337/diabetes.54.6.1615
+      notes: >
+        Unifying mechanism: hyperglycemia-driven mitochondrial superoxide
+        overproduction activates four major damage pathways (polyol, AGE,
+        PKC, hexosamine). Provides mechanistic basis for increased
+        keratinocyte sensitivity to inflammatory mediators.
+
+# ===========================================================================
+# Diabetic wound healing timeseries (validation reference curves)
+# Derived from normal curves scaled by literature factors (see sources below).
+# ===========================================================================
+
+diabetic_closure_kinetics:
+  description: >
+    Diabetic wound closure trajectory, scaled from normal punch biopsy
+    consensus using murine db/db data. 1.8x overall time-stretch with
+    steeper delay in early phase (~3x at day 3-7) and convergence in
+    late phase (~1.5x at day 14-21).
+  consensus: consensus/diabetic_closure_kinetics.csv
+  columns: [day, closure_pct]
+  units: {day: days, closure_pct: percent}
+  normalization: absolute (0-100%)
+  notes: >
+    Scaling factors from Galiano 2004, Michaels 2007: db/db mice complete
+    healing at 27.75d vs 11.86d for controls (2.3x). Day 7: 20-30% vs
+    70-80% (3x early delay). Day 14: 55-70% vs 95-100%.
+  sources:
+    - id: galiano2004
+      authors: Galiano RD, Michaels J, Dobryansky M, Levine JP, Gurtner GC
+      year: 2004
+      title: "Quantitative and reproducible murine model of excisional wound healing"
+      journal: Wound Repair Regen 12(4):485-492
+      doi: 10.1111/j.1067-1927.2004.12404.x
+    - id: michaels2007
+      authors: Michaels JT, Churgin SS, Blechman KM, Greives MR, Ber S, Gurtner GC
+      year: 2007
+      title: "db/db mice exhibit severe wound-healing impairments compared with other murine diabetic strains"
+      journal: Wound Repair Regen 15(5):665-670
+      doi: 10.1111/j.1524-475X.2007.00273.x
+    - id: falanga2005
+      authors: Falanga V
+      year: 2005
+      title: "Wound healing and its impairment in the diabetic foot"
+      journal: Lancet 366(9498):1736-1743
+      doi: 10.1016/S0140-6736(05)67700-8
+
+diabetic_immune_cell_kinetics:
+  description: >
+    Diabetic wound immune cell kinetics, scaled from normal consensus.
+    Neutrophils: 5x reduced early (6h), peak shifted to day 5, persistent
+    through day 14+. Macrophages: 0.3-0.5x early, peak shifted to day 7,
+    elevated and persistent through day 28.
+  consensus: consensus/diabetic_immune_cell_kinetics.csv
+  columns: [day, neutrophils_normalized, macrophages_normalized]
+  units: {day: days, neutrophils_normalized: fraction of peak, macrophages_normalized: fraction of peak}
+  normalization: peak-normalized per cell type (1.0 = maximum count)
+  notes: >
+    Neutrophil scaling from Wetzler 2000 (persistent day 13+), Clayton 2024
+    (5x reduced early). Macrophage scaling from Mirza & Koh 2011 (reduced
+    early, elevated late), Khanna 2010 (persistent, failed resolution).
+  sources:
+    - id: mirza2011
+      authors: Mirza R, Koh TJ
+      year: 2011
+      title: "Dysregulation of monocyte/macrophage phenotype in wounds of diabetic mice"
+      journal: Cytokine 56(2):256-264
+      doi: 10.1016/j.cyto.2011.06.016
+    - id: wetzler2000
+      authors: Wetzler C, Kampfer H, Stallmeyer B, Pfeilschifter J, Frank S
+      year: 2000
+      title: "Large and sustained induction of chemokines during impaired wound healing in the genetically diabetic mouse"
+      journal: J Invest Dermatol 115(2):245-253
+      doi: 10.1046/j.1523-1747.2000.00029.x
+    - id: khanna2010
+      authors: Khanna S, Biswas S, Shang Y, Collard E, Azad A, Kauh C, et al.
+      year: 2010
+      title: "Macrophage dysfunction impairs resolution of inflammation in the wounds of diabetic mice"
+      journal: PLoS One 5(3):e9539
+      doi: 10.1371/journal.pone.0009539
+    - id: clayton2024
+      authors: Clayton SM, Shafikhani SH, Soulika AM
+      year: 2024
+      title: "Macrophage and neutrophil dysfunction in diabetic wounds"
+      journal: Adv Wound Care 13(9):463-484
+      doi: 10.1089/wound.2023.0149
+
+diabetic_inflammation_timecourse:
+  description: >
+    Diabetic wound inflammation, scaled from normal consensus.
+    Peak shifted from day 2 to day 3, resolution delayed >2x,
+    persistent chronic baseline (~0.12 at day 28 vs 0.02 normal).
+  consensus: consensus/diabetic_inflammation_timecourse.csv
+  columns: [day, inflammation_normalized]
+  units: {day: days, inflammation_normalized: fraction of peak}
+  normalization: peak-normalized (1.0 = maximum)
+  notes: >
+    Cytokines 2x higher at day 10 (Mirza & Koh 2011). TNF-alpha/IL-1beta
+    100x elevated in chronic wound fluid (Krzyszczyk 2018). Resolution
+    fails or delayed beyond day 13-15 (Wetzler 2000, Louiselle 2021).
+  sources:
+    - id: mirza2011
+      authors: Mirza R, Koh TJ
+      year: 2011
+      title: "Dysregulation of monocyte/macrophage phenotype in wounds of diabetic mice"
+      journal: Cytokine 56(2):256-264
+      doi: 10.1016/j.cyto.2011.06.016
+    - id: louiselle2021
+      authors: Louiselle AE, Niemiec SM, Zgheib C, Liechty KW
+      year: 2021
+      title: "Macrophage polarization and diabetic wound healing"
+      journal: Transl Res 236:109-116
+      doi: 10.1016/j.trsl.2021.05.006
+    - id: eming2014
+      authors: Eming SA, Martin P, Tomic-Canic M
+      year: 2014
+      title: "Wound repair and regeneration: mechanisms, signaling, and translation"
+      journal: Sci Transl Med 6(265):265sr6
+      doi: 10.1126/scitranslmed.3009337
+
+# ===========================================================================
+# Biofilm module parameter validation
+# ===========================================================================
+
+biofilm_parameters:
+  description: >
+    Literature sources validating biofilm module parameters.
+    Citations support colonization prevalence, growth dynamics,
+    and inflammatory effects.
+  sources:
+    - id: james2008
+      authors: James GA, Swogger E, Wolcott R, Pulcini ED, Secor P, Sestrich J, et al.
+      year: 2008
+      title: "Biofilms in chronic wounds"
+      journal: Wound Repair Regen 16(1):37-44
+      doi: 10.1111/j.1524-475X.2007.00321.x
+      notes: >
+        60% of chronic wounds contain biofilms vs 6% of acute wounds.
+        Supports biofilm_enabled and biofilm_seed_delay parameters.
+    - id: bjarnsholt2008
+      authors: Bjarnsholt T, Kirketerp-Moller K, Jensen PO, Madsen KG, Phipps R, Krogfelt K, et al.
+      year: 2008
+      title: "Why chronic wounds will not heal: a novel hypothesis"
+      journal: Wound Repair Regen 16(1):2-10
+      doi: 10.1111/j.1524-475X.2007.00283.x
+      notes: >
+        Biofilm presence drives persistent inflammation via PAMPs;
+        impairs neutrophil phagocytosis and macrophage function.
+        Supports biofilm_inflammation_rate and biofilm_m1_block_threshold.
+    - id: robson1997
+      authors: Robson MC
+      year: 1997
+      title: "Wound infection: a failure of wound healing caused by an imbalance of bacteria"
+      journal: Surg Clin North Am 77(3):637-650
+      doi: 10.1016/S0039-6109(05)70572-7
+      notes: >
+        Foundational paper establishing 10^5 CFU/g as the critical bacterial
+        load threshold for wound infection. Host-bacteria equilibrium model.
+        Supports carrying_capacity normalization.
+
+# ===========================================================================
+# Angiogenesis module parameter validation
+# ===========================================================================
+
+angiogenesis_parameters:
+  description: >
+    Literature sources validating angiogenesis and VEGF module parameters.
+  sources:
+    - id: catrina2004
+      authors: Catrina SB, Okamoto K, Pereira T, Brismar K, Poellinger L
+      year: 2004
+      title: "Hyperglycemia regulates hypoxia-inducible factor-1alpha protein stability and function"
+      journal: Diabetes 53(12):3226-3232
+      doi: 10.2337/diabetes.53.12.3226
+      notes: >
+        Hyperglycemia destabilizes HIF-1alpha, reducing VEGF transcription.
+        Supports diabetic_vegf_factor=0.4 and hypoxia-driven VEGF production model.
+    - id: thangarajah2009
+      authors: Thangarajah H, Yao D, Chang EI, Shi Y, Jazayeri L, Vial IN, et al.
+      year: 2009
+      title: "The molecular basis for impaired hypoxia-induced VEGF expression in diabetic tissues"
+      journal: Proc Natl Acad Sci USA 106(32):13505-13510
+      doi: 10.1073/pnas.0906670106
+      notes: >
+        Methylglyoxal modification of HIF-1alpha p300 binding domain reduces
+        VEGF transcriptional response to hypoxia by ~60%.
+        Supports vegf_factor=0.4 and vegf_hypoxia_threshold.
+    - id: jetten2014
+      authors: Jetten N, Verbruggen S, Gijbels MJ, Post MJ, De Winther MP, Donners MM
+      year: 2014
+      title: "Anti-inflammatory M2, but not pro-inflammatory M1 macrophages promote angiogenesis in vivo"
+      journal: Angiogenesis 17(1):109-118
+      doi: 10.1007/s10456-013-9381-6
+      notes: >
+        M2 macrophages are the primary VEGF source in wound angiogenesis.
+        Supports M2-specific VEGF production (immune::ProduceVEGF) and
+        the coupling between M1-to-M2 transition and vascular recovery.
+
+# ===========================================================================
+# Scar formation parameter validation
+# Fibroblast lifecycle, TGF-beta kinetics, collagen deposition, scar-inflammation.
+# ===========================================================================
+
+scar_formation_parameters:
+  description: >
+    Literature sources validating fibroblast module and scar formation parameters.
+    Complements myofibroblast_kinetics (timecourse) and collagen_deposition
+    (accumulation curve) with sources for specific parameter choices.
+  sources:
+    # Fibroblast lifecycle timing (fibroblast_lifespan, _min_lifespan, _myofibroblast_delay)
+    - id: desmouliere1995
+      authors: Desmouliere A, Redard M, Darby I, Gabbiani G
+      year: 1995
+      title: "Apoptosis mediates the decrease in cellularity during the transition between granulation tissue and scar"
+      journal: Am J Pathol 146(1):56-66
+      pmc: PMC1870783
+      notes: >
+        Myofibroblasts first appear day 4-6, peak day 10-15, apoptosis begins
+        ~day 12, largely resolved by day 30. Supports fibroblast_min_lifespan=1680
+        (7d) and fibroblast_lifespan=6720 (28d).
+    - id: tomasek2002
+      authors: Tomasek JJ, Gabbiani G, Hinz B, Chaponnier C, Brown RA
+      year: 2002
+      title: "Myofibroblasts and mechano-regulation of connective tissue remodelling"
+      journal: Nat Rev Mol Cell Biol 3(5):349-363
+      doi: 10.1038/nrm809
+      notes: >
+        Two-stage model: fibroblast -> proto-myofibroblast (stress fibers) ->
+        myofibroblast (alpha-SMA). Requires both TGF-beta1 and mechanical tension.
+        Supports fibroblast_activation_threshold and _myofibroblast_threshold
+        as sequential TGF-beta gates.
+
+    # Myofibroblast differentiation timing (fibroblast_myofibroblast_delay)
+    - id: vandewater2013
+      authors: Van De Water L, Varney S, Tomasek JJ
+      year: 2013
+      title: "Mechanoregulation of the myofibroblast in wound contraction, scarring, and fibrosis: opportunities for new therapeutic intervention"
+      journal: Adv Wound Care 2(4):122-141
+      doi: 10.1089/wound.2012.0393
+      notes: >
+        In vitro differentiation to myofibroblast takes 3-5 days on rigid
+        substrate with TGF-beta1. Supports fibroblast_myofibroblast_delay=480
+        (48h = 2d in vivo with higher TGF-beta bioavailability).
+    - id: hinz2007
+      authors: Hinz B
+      year: 2007
+      title: "Formation and function of the myofibroblast during tissue repair"
+      journal: J Invest Dermatol 127(3):526-537
+      doi: 10.1038/sj.jid.5700613
+      notes: >
+        TGF-beta1 drives alpha-SMA expression; myofibroblasts generate 2x more
+        contractile force than proto-myofibroblasts. Apoptosis triggered by
+        loss of mechanical load and reduced TGF-beta. Supports
+        fibroblast_apoptosis_threshold as low-TGF-beta trigger.
+
+    # Mathematical model parameters (tgfb_diffusion, tgfb_decay, collagen_deposition_rate)
+    - id: murphy2012
+      authors: Murphy KE, Hall CL, Maini PK, McCue SW, McElwain DLS
+      year: 2012
+      title: "A fibrocontractive mechanochemical model of dermal wound closure incorporating realistic growth factor kinetics"
+      journal: Bull Math Biol 74(5):1143-1170
+      doi: 10.1007/s11538-011-9712-y
+      notes: >
+        Comprehensive parameter table for TGF-beta kinetics in wound closure:
+        growth factor diffusion, decay, fibroblast chemotactic sensitivity,
+        and collagen production rates. Supports order-of-magnitude calibration
+        of tgfb_diffusion=0.03, tgfb_decay=0.005, collagen_deposition_rate=0.002.
+    - id: dallon2001
+      authors: Dallon JC, Sherratt JA, Maini PK
+      year: 2001
+      title: "Modeling the effects of transforming growth factor-beta on extracellular matrix alignment in dermal wound repair"
+      journal: Wound Repair Regen 9(4):278-286
+      doi: 10.1046/j.1524-475X.2001.00278.x
+      notes: >
+        TGF-beta modulates fibroblast speed and collagen alignment over 240h
+        simulation window. Cell speed increases with TGF-beta concentration.
+        Supports fibroblast_migration_speed scaling and chemotaxis model.
+
+    # M2 macrophage TGF-beta production (m2_tgfb_rate)
+    - id: koh2011
+      authors: Koh TJ, DiPietro LA
+      year: 2011
+      title: "Inflammation and wound healing: the role of the macrophage"
+      journal: Expert Rev Mol Med 13:e23
+      doi: 10.1017/S1462399411001943
+      notes: >
+        M2 macrophages are the primary source of TGF-beta1 in wound
+        granulation tissue. Transition from M1 to M2 phenotype initiates
+        the fibroblast activation cascade. Supports m2_tgfb_rate parameter.
+
+    # Scar-inflammation correlation (scar_accumulation_rate, scar_proportional_enabled)
+    - id: ogawa2017
+      authors: Ogawa R
+      year: 2017
+      title: "Keloid and hypertrophic scars are the result of chronic inflammation in the reticular dermis"
+      journal: Int J Mol Sci 18(3):606
+      doi: 10.3390/ijms18030606
+      notes: >
+        Pathological scars are inflammatory disorders; scar severity reflects
+        inflammation intensity, frequency, and duration. Supports
+        scar_proportional_enabled model (scar = inflammation integral).
+    - id: gauglitz2011
+      authors: Gauglitz GG, Korting HC, Pavicic T, Ruzicka T, Jeschke MG
+      year: 2011
+      title: "Hypertrophic scarring and keloids: pathomechanisms and current and emerging treatment strategies"
+      journal: Mol Med 17(1-2):113-125
+      doi: 10.2119/molmed.2009.00153
+      notes: >
+        Delayed epithelialization beyond 10-14 days dramatically increases
+        hypertrophic scarring incidence. Prolonged inflammation is a primary
+        driver. Supports inflammation-proportional scar model.
+
+# ===========================================================================
+# Tumor validation datasets
+# Tumor model: cutaneous BCC/SCC, linear growth and proliferation kinetics.
+# ===========================================================================
+
+tumor_growth_rate:
+  description: Linear growth rate of cutaneous BCC (diameter increase over months)
+  consensus: consensus/tumor_growth_rate.csv
+  raw_files:
+    - raw/tumor_growth/fijalkowska2023_bcc_growth_meta.csv
+    - raw/tumor_growth/sykes2020_superficial_bcc.csv
+    - raw/tumor_growth/kricker2014_community_bcc.csv
+  columns: [month, diameter_mm]
+  units: {month: months, diameter_mm: millimeters}
+  normalization: absolute (mm from initial ~4mm diameter)
+  notes: >
+    BCC mean linear growth rate 0.71 mm/month (Fijalkowska 2023 meta-analysis).
+    Superficial BCC grows ~0.81 mm2/month surface area (Sykes 2020).
+    Starting diameter 4mm matches simulation tumor_diameter parameter.
+  sources:
+    - id: fijalkowska2023
+      authors: Fijalkowska M, Bonczar M, Jastrzebski I, Ostrowski P, Antoszewski B, Koziej M
+      year: 2023
+      title: "Growth rate of basal cell carcinoma: a meta-analysis and systematic review"
+      journal: Postepy Dermatol Alergol 40(2):220-224
+      doi: 10.5114/ada.2023.124795
+    - id: sykes2020
+      authors: Sykes AJ, Weedon D, Raasch BA
+      year: 2020
+      title: "Growth rate of clinically diagnosed superficial basal cell carcinoma and changes in dermoscopic features over time"
+      journal: Australas J Dermatol 61(4):330-335
+      doi: 10.1111/ajd.13352
+    - id: kricker2014
+      authors: Kricker A, Armstrong BK, Hansen V, Watson A, Singh-Khaira G, Lecathelinais C, et al.
+      year: 2014
+      title: "Basal cell carcinoma and squamous cell carcinoma growth rates and determinants of size in community patients"
+      journal: J Am Acad Dermatol 70(5):880-887
+      doi: 10.1016/j.jaad.2013.11.009
+
+tumor_doubling_time:
+  description: Volume doubling time for cutaneous BCC and SCC
+  consensus: consensus/tumor_doubling_time.csv
+  raw_files:
+    - raw/tumor_doubling/al_qahtani2020_bcc_doubling.csv
+    - raw/tumor_doubling/tejera2023_skin_cancer_tdt.csv
+  columns: [tumor_type, doubling_time_days]
+  units: {doubling_time_days: days}
+  normalization: absolute (days per volume doubling)
+  notes: >
+    BCC volume doubling time ~148 days mean (Khoo 2019).
+    SCC doubling times much shorter: 16-35 days for aggressive cases (Tejera 2023).
+    Simulation doubling time depends on tumor_cycle_factor and tumor_growth_rate.
+  sources:
+    - id: khoo2019
+      authors: Khoo ABS, Goon PKY, Sudhoff H, Goon PKC
+      year: 2019
+      title: "Comparative analyses of tumour volume doubling times for periocular and non-periocular head and neck basal cell carcinomas"
+      journal: Acta Derm Venereol 99(13):1266-1269
+      doi: 10.2340/00015555-3325
+    - id: tejera2023
+      authors: Tejera-Vaquerizo A, Canueto J, Nagore E, et al.
+      year: 2023
+      title: "Tumor doubling time in skin cancer: can it be estimated and is it useful?"
+      journal: Actas Dermosifiliogr 114(4):T313-T321
+      doi: 10.1016/j.ad.2022.10.034
+
+tumor_proliferation_index:
+  description: Ki-67 proliferation index for cutaneous BCC and SCC by subtype/grade
+  consensus: consensus/tumor_proliferation_index.csv
+  raw_files:
+    - raw/tumor_proliferation/toth2012_bcc_ki67.csv
+    - raw/tumor_proliferation/alferraly2019_scc_ki67.csv
+    - raw/tumor_proliferation/alsader1996_bcc_scc_indices.csv
+  columns: [tumor_type, ki67_pct]
+  units: {ki67_pct: percent of cells Ki-67 positive}
+  normalization: absolute (percentage)
+  notes: >
+    Ki-67 marks cells in S/G2/M phases. BCC mean 27.4% (Toth 2012), range 2-70%.
+    SCC higher: 22-68% depending on grade (Kurnia 2020).
+    Simulation equivalent: fraction of tumor cells in S+G2+M phases.
+  sources:
+    - id: toth2012
+      authors: Toth DP, Bognar G, Gurbity-Palfi T, Vizkeleti L, Dobozy A, Kemeny L
+      year: 2012
+      title: "Immunohistochemical evaluation of proliferative activity (Ki-67 index) in different histological types of cutaneous basal cell carcinoma"
+      journal: Biologia 67(3):610-616
+      doi: 10.2478/s11756-012-0035-8
+    - id: alferraly2019
+      authors: Alferraly IT, Munir D, Putra IB, Sembiring RJ
+      year: 2019
+      title: "Correlation of Ki-67 expression as tumor cell proliferation activity marker with cutaneous squamous cell carcinoma grading"
+      journal: Open Access Maced J Med Sci 7(20):3384-3386
+      doi: 10.3889/oamjms.2019.428
+    - id: alsader1996
+      authors: al-Sader MH, Doyle E, Kay EW, Bennett M, Walsh CB, Curran B, Leader M
+      year: 1996
+      title: "Proliferation indexes - a comparison between cutaneous basal and squamous cell carcinomas"
+      journal: J Clin Pathol 49(7):549-551
+      doi: 10.1136/jcp.49.7.549
+
+# ===========================================================================
+# Core tissue parameter validation
+# Oxygen, water, calcium, KGF, cell cycle, migration, mechanics.
+# ===========================================================================
+
+core_tissue_parameters:
+  description: >
+    Literature sources validating core bdm.toml parameters for epidermis
+    and dermis continuum fields, cell cycle, division mechanics, and migration.
+  sources:
+    # Oxygen diffusion and consumption
+    - id: schugart2008
+      authors: Schugart RC, Friedman A, Zhao R, Sen CK
+      year: 2008
+      title: "Wound angiogenesis as a function of tissue oxygen tension: a mathematical model"
+      journal: Proc Natl Acad Sci USA 105(7):2628-2633
+      doi: 10.1073/pnas.0711642105
+      notes: >
+        Mathematical wound angiogenesis model with O2 diffusion, capillary
+        density, and VEGF coupling. Supports oxygen_diffusion and VEGF
+        hypoxia threshold parameters.
+    - id: stucker2002
+      authors: Stucker M, Struk A, Altmeyer P, Herde M, Baumgartl H, Lubbers DW
+      year: 2002
+      title: "The cutaneous uptake of atmospheric oxygen contributes significantly to the oxygen supply of human dermis and epidermis"
+      journal: J Physiol 538(Pt 3):985-994
+      doi: 10.1113/jphysiol.2001.013067
+      notes: >
+        In vivo transcutaneous pO2 measurements in human skin. Supports
+        oxygen_decay parameter magnitude for epidermal O2 consumption.
+
+    # KGF growth factor
+    - id: rubin1989
+      authors: Rubin JS, Osada H, Finch PW, Taylor WG, Rudikoff S, Aaronson SA
+      year: 1989
+      title: "Purification and characterization of a newly identified growth factor specific for epithelial cells"
+      journal: Proc Natl Acad Sci USA 86(3):802-806
+      doi: 10.1073/pnas.86.3.802
+      notes: >
+        Original KGF characterization. Half-maximal stimulation data
+        supports kgf_half_maximal Michaelis-Menten parameter.
+    - id: werner1992
+      authors: Werner S, Peters KG, Longaker MT, Fuller-Pace F, Banda MJ, Williams LT
+      year: 1992
+      title: "Large induction of keratinocyte growth factor expression in the dermis during wound healing"
+      journal: Proc Natl Acad Sci USA 89(15):6896-6900
+      doi: 10.1073/pnas.89.15.6896
+      notes: >
+        KGF expressed exclusively by dermal fibroblasts, 160-fold upregulation
+        post-wounding. Supports paracrine continuum source model and
+        kgf_decay_length parameter.
+
+    # Water / TEWL
+    - id: schwindt1998
+      authors: Schwindt DA, Wilhelm KP, Maibach HI
+      year: 1998
+      title: "Water diffusion characteristics of human stratum corneum at different anatomical sites in vivo"
+      journal: J Invest Dermatol 111(3):385-389
+      doi: 10.1046/j.1523-1747.1998.00321.x
+      notes: >
+        Measured water diffusion through stratum corneum in vivo.
+        Supports water_diffusion parameter.
+    - id: pinnagoda1990
+      authors: Pinnagoda J, Tupker RA, Agner T, Serup J
+      year: 1990
+      title: "Guidelines for transepidermal water loss (TEWL) measurement"
+      journal: Contact Dermatitis 22(3):164-178
+      doi: 10.1111/j.1600-0536.1990.tb01553.x
+      notes: >
+        Standardized TEWL measurement protocol. Normal TEWL 5-10 g/m2/h.
+        Supports water_decay and water_surface_loss_rate parameters.
+
+    # Calcium gradient
+    - id: grabe2005
+      authors: Grabe N, Neuber K
+      year: 2005
+      title: "A multicellular systems biology model predicts epidermal morphology, kinetics and Ca2+ flow"
+      journal: Bioinformatics 21(17):3541-3547
+      doi: 10.1093/bioinformatics/bti585
+      notes: >
+        Agent-based epidermal model with Ca2+ flow. Predicted calcium
+        profile matches physiological measurements. Foundational paper
+        for calcium sigmoid profile parameters.
+    - id: menon1985
+      authors: Menon GK, Grayson S, Elias PM
+      year: 1985
+      title: "Ionic calcium reservoirs in mammalian epidermis: ultrastructural localization by ion-capture cytochemistry"
+      journal: J Invest Dermatol 84(6):508-512
+      doi: 10.1111/1523-1747.ep12273485
+      notes: >
+        Ca2+ low in basale, increases through spinosum, peaks in granulosum.
+        Supports calcium_basal and calcium_peak parameters.
+    - id: bikle2012
+      authors: Bikle DD, Xie Z, Tu CL
+      year: 2012
+      title: "Calcium regulation of keratinocyte differentiation"
+      journal: Expert Rev Endocrinol Metab 7(4):461-472
+      doi: 10.1586/eem.12.34
+      notes: >
+        >0.1 mM Ca2+ triggers calcium switch initiating differentiation.
+        Supports ca_spinous_threshold=0.1 as differentiation gate.
+    - id: adams2015
+      authors: Adams MP, Mallet DG, Pettet GJ
+      year: 2015
+      title: "Towards a quantitative theory of epidermal calcium profile formation in unwounded skin"
+      journal: PLoS ONE 10(1):e0116751
+      doi: 10.1371/journal.pone.0116751
+      notes: >
+        Mathematical model of epidermal calcium profile. Quantitative fit
+        to measured gradient. Supports calcium sigmoid parameters.
+
+    # Cell cycle
+    - id: adra2010
+      authors: Adra S, Sun T, MacNeil S, Holcombe M, Smallwood R
+      year: 2010
+      title: "Development of a three dimensional multiscale computational model of the human epidermis"
+      journal: PLoS ONE 5(1):e8511
+      doi: 10.1371/journal.pone.0008511
+      notes: >
+        Agent-based epidermal model with 15-24h cell cycle for actively
+        cycling cells and 10um cell diameter. Supports cell cycle and
+        division_diameter parameters.
+
+    # Division mechanics
+    - id: jones1993
+      authors: Jones PH, Watt FM
+      year: 1993
+      title: "Separation of human epidermal stem cells from transit amplifying cells on the basis of differences in integrin function and expression"
+      journal: Cell 73(4):713-724
+      doi: 10.1016/0092-8674(93)90251-K
+      notes: >
+        TA cells undergo 1-5 rounds of division before terminal differentiation.
+        Foundational paper for max_ta_divisions=4.
+    - id: clayton2007
+      authors: Clayton E, Doupe DP, Klein AM, Winton DJ, Simons BD, Jones PH
+      year: 2007
+      title: "A single type of progenitor cell maintains normal epidermis"
+      journal: Nature 446(7132):185-189
+      doi: 10.1038/nature05574
+      notes: >
+        ~80% asymmetric divisions at homeostasis. Supports p_asymmetric=0.7.
+    - id: barrandon1985
+      authors: Barrandon Y, Green H
+      year: 1985
+      title: "Cell size as a determinant of the clone-forming ability of human keratinocytes"
+      journal: Proc Natl Acad Sci USA 82(16):5390-5394
+      doi: 10.1073/pnas.82.16.5390
+      notes: >
+        Clone-forming keratinocytes <=11um, committed >=12um. Smallest
+        basal stem cells ~9um. Supports division_diameter parameter.
+    - id: sun2007
+      authors: Sun T, McMinn P, Coakley S, Holcombe M, Smallwood R, MacNeil S
+      year: 2007
+      title: "An integrated systems biology approach to understanding the rules of keratinocyte colony formation"
+      journal: J R Soc Interface 4(17):1077-1117
+      doi: 10.1098/rsif.2007.0227
+      notes: >
+        Contact inhibition by neighbor count; packing geometry threshold.
+        Supports max_neighbors=14 (sphere packing ~12-14).
+    - id: li1998
+      authors: Li A, Simmons PJ, Kaur P
+      year: 1998
+      title: "Identification and isolation of candidate human keratinocyte stem cells based on cell surface phenotype"
+      journal: Proc Natl Acad Sci USA 95(7):3902-3907
+      doi: 10.1073/pnas.95.7.3902
+      notes: >
+        Alpha6-bright/CD71-dim stem fraction ~5% of basal cells in vivo.
+        Model stem_fraction=0.50 represents full proliferative fraction
+        (stem + TA cells).
+
+    # Cell mechanics
+    - id: lulevich2010
+      authors: Lulevich V, Zink T, Chen HY, Liu FT, Liu GY
+      year: 2010
+      title: "Single cell mechanics of keratinocyte cells"
+      journal: Ultramicroscopy 110(12):1435-1442
+      doi: 10.1016/j.ultramic.2010.07.009
+      notes: >
+        AFM-based single cell compression. Keratinocyte Young's modulus
+        1-10 kPa for Hertz contact model. Supports repulsion_coeff.
+
+    # Migration
+    - id: safferling2013
+      authors: Safferling K, Sutterlin T, Westphal K, Ernst C, Breuhahn K, et al.
+      year: 2013
+      title: "Wound healing revised: a novel reepithelialization mechanism revealed by in vitro and in silico models"
+      journal: J Cell Biol 203(4):691-709
+      doi: 10.1083/jcb.201212020
+      notes: >
+        Wound edge advancement 20-60 um/h. Supports migration_speed.
+    - id: mcdougall2006
+      authors: McDougall S, Dallon J, Sherratt J, Maini P
+      year: 2006
+      title: "Fibroblast migration and collagen deposition during dermal wound healing"
+      journal: Philos Trans R Soc A 364(1843):1385-1405
+      doi: 10.1098/rsta.2006.1773
+      notes: >
+        Fibroblast migration 10-30 um/h in wound bed. Supports
+        fibroblast migration_speed parameter.
+    - id: lammermann2008
+      authors: Lammermann T, Bader BL, Monkley SJ, et al.
+      year: 2008
+      title: "Rapid leukocyte migration by integrin-independent flowing and squeezing"
+      journal: Nature 453(7191):51-55
+      doi: 10.1038/nature06887
+      notes: >
+        Leukocyte 3D migration up to 20-30 um/min for neutrophils.
+        Macrophages ~1-4 um/min. Supports immune migration_speed.
+
+    # Desquamation
+    - id: iizuka1994
+      authors: Iizuka H
+      year: 1994
+      title: "Epidermal turnover time"
+      journal: J Dermatol Sci 8(3):215-217
+      doi: 10.1016/0923-1811(94)90057-4
+      notes: >
+        Total epidermal turnover 47-48 days. Stratum corneum transit ~14 days.
+
+# ===========================================================================
+# Inflammation and immune parameter validation
+# Cytokine diffusion, decay, efferocytosis, chemotaxis.
+# ===========================================================================
+
+inflammation_parameters:
+  description: >
+    Literature sources validating inflammation module parameters for
+    cytokine diffusion, decay, and pro/anti-inflammatory balance.
+  sources:
+    - id: oyler_yaniv2017
+      authors: Oyler-Yaniv A, Oyler-Yaniv J, Whitlock BM, et al.
+      year: 2017
+      title: "A tunable diffusion-consumption mechanism of cytokine propagation enables plasticity in cell-to-cell communication"
+      journal: Immunity 46(4):609-620
+      doi: 10.1016/j.immuni.2017.03.011
+      notes: >
+        Cytokine diffusion in dense tissue ~10^-7 to 10^-8 cm^2/s.
+        Supports inflammation diffusion parameter.
+    - id: bemelmans1996
+      authors: Bemelmans MH, van Tits LJ, Buurman WA
+      year: 1996
+      title: "Tumor necrosis factor: function, release and clearance"
+      journal: Crit Rev Immunol 16(1):1-11
+      doi: 10.1615/CritRevImmunol.v16.i1.10
+      notes: >
+        TNF-alpha serum half-life 14-18 minutes. Supports
+        inflammation decay parameter.
+    - id: mosser2008
+      authors: Mosser DM, Zhang X
+      year: 2008
+      title: "Interleukin-10: new perspectives on an old cytokine"
+      journal: Immunol Rev 226:205-218
+      doi: 10.1111/j.1600-065X.2008.00706.x
+      notes: >
+        IL-10 inhibits TNF-alpha and IL-1beta production. Supports
+        split pro/anti-inflammatory field model.
+    - id: huhn1996
+      authors: Huhn RD, Radwanski E, O'Connell SM, Sturgill MG, Clarke L, Cody RP, Affrime MB, Cutler DL
+      year: 1996
+      title: "Pharmacokinetics and immunomodulatory properties of intravenously administered recombinant human interleukin-10 in healthy volunteers"
+      journal: Blood 87(2):699-705
+      doi: 10.1182/blood.V87.2.699.bloodjournal872699
+      notes: >
+        IL-10 terminal half-life 2.3-3.7h in healthy volunteers.
+        Supports anti_decay=0.002 parameter for anti-inflammatory field.
+    - id: werner2003
+      authors: Werner S, Grose R
+      year: 2003
+      title: "Regulation of wound healing by growth factors and cytokines"
+      journal: Physiol Rev 83(3):835-870
+      doi: 10.1152/physrev.00031.2002
+      notes: >
+        DAMPs and IL-1alpha release from damaged keratinocytes sustain
+        inflammation proportional to open wound area. Supports
+        wound_source_rate parameter for continuum inflammation source.
+    - id: ravichandran2010
+      authors: Ravichandran KS
+      year: 2010
+      title: "Find-me and eat-me signals in apoptotic cell clearance"
+      journal: J Exp Med 207(9):1807-1817
+      doi: 10.1084/jem.20101157
+      notes: >
+        Find-me signals create short-range chemotactic gradient.
+        Effective range tens to ~200 um. Supports efferocytosis_radius.
+    - id: savill1989
+      authors: Savill JS, Wyllie AH, Henson JE, Walport MJ, Henson PM, Haslett C
+      year: 1989
+      title: "Macrophage phagocytosis of aging neutrophils in inflammation"
+      journal: J Clin Invest 83(3):865-875
+      doi: 10.1172/JCI113970
+      notes: >
+        Macrophages preferentially recognize aging/apoptotic neutrophils
+        expressing phosphatidylserine. Supports efferocytosis_age_fraction.
+
+# ===========================================================================
+# Dermis tissue integrity parameter validation
+# ===========================================================================
+
+dermis_parameters:
+  description: >
+    Literature sources for dermal tissue integrity, ECM structure, and
+    wound bed remodeling kinetics.
+  sources:
+    - id: clark1996
+      authors: Clark RAF
+      year: 1996
+      title: "The Molecular and Cellular Biology of Wound Repair"
+      journal: Springer
+      doi: 10.1007/978-1-4899-0185-9
+      notes: >
+        Comprehensive reference for dermal wound healing phases.
+        Papillary dermis (loose connective tissue) recovers faster than
+        reticular dermis (dense collagen). Supports per-layer rate factors.
+    - id: schultz2009
+      authors: Schultz GS, Wysocki A
+      year: 2009
+      title: "Interactions between extracellular matrix and growth factors in wound healing"
+      journal: Wound Repair Regen 17(2):153-162
+      doi: 10.1111/j.1524-475X.2009.00466.x
+      notes: >
+        MMP-mediated ECM degradation in chronic wounds. Supports
+        dermis_mmp_degradation parameter.
+
+# ===========================================================================
+# Perfusion and angiogenesis parameter validation
+# ===========================================================================
+
+perfusion_parameters:
+  description: >
+    Literature sources validating perfusion and angiogenesis module parameters.
+  sources:
+    - id: braverman2000
+      authors: Braverman IM
+      year: 2000
+      title: "The cutaneous microcirculation"
+      journal: J Investig Dermatol Symp Proc 5(1):3-9
+      doi: 10.1046/j.1087-0024.2000.00010.x
+      notes: >
+        Papillary dermis capillary density 2x reticular; hypodermis lowest.
+        Supports per-layer perfusion profiles (papillary=1.0, reticular=0.6, hypodermis=0.3).
+    - id: singer1999
+      authors: Singer AJ, Clark RAF
+      year: 1999
+      title: "Cutaneous wound healing"
+      journal: N Engl J Med 341(10):738-746
+      doi: 10.1056/NEJM199909023411006
+      notes: >
+        Capillary buds begin 24-48h post-wounding; circulation established
+        by 72h. Supports angio_delay=240 steps (~24h).
+    - id: johnson2014
+      authors: Johnson KE, Wilgus TA
+      year: 2014
+      title: "Vascular endothelial growth factor and angiogenesis in the regulation of cutaneous wound repair"
+      journal: Adv Wound Care 3(10):647-661
+      doi: 10.1089/wound.2013.0517
+      notes: >
+        VEGF levels elevated days 3-5, normalize days 7-14. Vessel density
+        near-normal by days 14-21. Supports VEGF production and consumption rates.
+    - id: flegg2012
+      authors: Flegg JA, Byrne HM, Flegg MB, McElwain DLS
+      year: 2012
+      title: "Wound healing angiogenesis: the clinical implications of a simple mathematical model"
+      journal: J Theor Biol 300:309-316
+      doi: 10.1016/j.jtbi.2012.01.043
+      notes: >
+        PDE model for O2 supply via diffusion and new vessel formation.
+        Supports angio_vegf_rate parameter calibration.
+    - id: jesaitis2003
+      authors: Jesaitis AJ, Franklin MJ, Berglund D, Sasaki M, Lord CI, Bleazard JB, et al.
+      year: 2003
+      title: "Compromised host defense on Pseudomonas aeruginosa biofilms"
+      journal: J Immunol 171(8):4329-4339
+      doi: 10.4049/jimmunol.171.8.4329
+      notes: >
+        Biofilm bacteria induce frustrated phagocytosis in neutrophils.
+        Supports neutrophil_clearance rate for biofilm module.
+    - id: gibson2018
+      authors: Gibson B, Wilson DJ, Feil E, Eyre-Walker A
+      year: 2018
+      title: "The distribution of bacterial doubling times in the wild"
+      journal: Proc R Soc B 285(1880):20180789
+      doi: 10.1098/rspb.2018.0789
+      notes: >
+        S. aureus in vivo doubling time 1.8h; P. aeruginosa 1.9-2.4h.
+        Supports biofilm growth_rate parameter (~2h doubling).
+    - id: davis2008
+      authors: Davis SC, Ricotti C, Cazzaniga A, Welsh E, Eaglstein WH, Mertz PM
+      year: 2008
+      title: "Microscopic and physiologic evidence for biofilm-associated wound colonization in vivo"
+      journal: Wound Repair Regen 16(1):23-29
+      doi: 10.1111/j.1524-475X.2007.00303.x
+      notes: >
+        Biofilm-like structures observed 48h post-inoculation in porcine
+        wound model. Supports biofilm seed_delay=480 (~48h).
+
+mmp_ecm_remodeling:
+  description: MMP/TIMP dynamics and ECM degradation in wound healing
+  sources:
+    - id: lobmann2002
+      authors: Lobmann R, Ambrosch A, Schultz G, Waldmann K, Schiweck S, Lehnert H
+      year: 2002
+      title: "Expression of matrix-metalloproteinases and their inhibitors in the wounds of diabetic and non-diabetic patients"
+      journal: Diabetologia 45:1011-1016
+      doi: 10.1007/s00125-002-0868-8
+      notes: >
+        MMP-1 elevated 65-fold and MMP-9 14-fold in diabetic vs acute wounds.
+        TIMP-2 reduced 2-fold. Supports diabetic_mmp_factor=3.0 and
+        diabetic_timp_factor=0.5 parameters.
+    - id: nagase1999
+      authors: Nagase H, Woessner JF
+      year: 1999
+      title: "Matrix metalloproteinases"
+      journal: J Biol Chem 274(31):21491-21494
+      doi: 10.1074/jbc.274.31.21491
+      notes: >
+        Review of MMP family biochemistry. MMP-1 (fibroblast collagenase),
+        MMP-9 (gelatinase B from macrophages/neutrophils). Supports
+        mmp_diffusion and fibroblast MMP production parameters.
+    - id: ladwig2002
+      authors: Ladwig GP, Robson MC, Liu R, Kuhn MA, Muir DF, Schultz GS
+      year: 2002
+      title: "Ratios of activated matrix metalloproteinase-9 to tissue inhibitor of matrix metalloproteinase-1 in wound fluids are inversely correlated with healing of pressure ulcers"
+      journal: Wound Repair Regen 10(1):26-37
+      doi: 10.1046/j.1524-475x.2002.10903.x
+      notes: >
+        High MMP-9:TIMP-1 ratio inversely correlates with healing.
+        Supports MMP-collagen degradation rate calibration.
+
+fibronectin_provisional_matrix:
+  description: Fibronectin dynamics as provisional wound matrix scaffold
+  sources:
+    - id: clark1990
+      authors: Clark RAF
+      year: 1990
+      title: "Fibronectin matrix deposition and fibronectin receptor expression in healing and normal skin"
+      journal: J Invest Dermatol 94(6 Suppl):128S-134S
+      doi: 10.1111/1523-1747.ep12876104
+      notes: >
+        Plasma fibronectin provides initial wound matrix; cellular fibronectin
+        deposited by fibroblasts replaces it. Supports fibronectin_serum_rate
+        and fibronectin_deposition_rate parameters.
+    - id: grinnell1984
+      authors: Grinnell F
+      year: 1984
+      title: "Fibronectin and wound healing"
+      journal: J Cell Biochem 26(2):107-116
+      doi: 10.1002/jcb.240260206
+      notes: >
+        Fibronectin promotes keratinocyte migration via integrin alpha5-beta1.
+        Supports fibronectin_migration_boost parameter.
+    - id: hynes1990
+      authors: Hynes RO
+      year: 1990
+      title: "Fibronectins"
+      journal: Springer Series in Molecular Biology
+      doi: 10.1007/978-1-4612-3264-3
+      notes: >
+        Comprehensive monograph on fibronectin structure, function, and
+        role in cell adhesion and wound healing. General reference for
+        fibronectin module parameters.
+
+# ===========================================================================
+# Normal skin profile literature
+# References for profiles/normal.toml baseline parameters.
+# ===========================================================================
+
+normal_skin_profile:
+  description: >
+    Literature sources for baseline normal skin parameters: cell cycle
+    kinetics, stem/TA cell hierarchy, calcium-driven differentiation,
+    and paracrine growth factor signaling.
+  sources:
+    - id: dover1988
+      authors: Dover R, Potten CS
+      year: 1988
+      title: "Heterogeneity and cell cycle analyses from time-lapse studies of human keratinocytes in vitro"
+      journal: J Cell Sci 89(3):359-371
+      doi: 10.1242/jcs.89.3.359
+      notes: >
+        Time-lapse cell cycle analysis of human keratinocytes. Mean cycle
+        time ~17h with heterogeneity. Supports g1_duration=7.0, s_duration=6.0,
+        g2_duration=3.0, m_duration=1.0 parameters.
+    - id: potten1988
+      authors: Potten CS, Morris RJ
+      year: 1988
+      title: "Epithelial stem cells in vivo"
+      journal: J Cell Sci Suppl 10:45-62
+      doi: 10.1242/jcs.1988.supplement_10.4
+      notes: >
+        Epidermal proliferative unit model: stem cells with unlimited
+        self-renewal, TA cells with 3-5 divisions before terminal
+        differentiation. Supports max_ta_divisions=4, p_asymmetric=0.7.
+    - id: bikle2012
+      authors: Bikle DD, Xie Z, Tu CL
+      year: 2012
+      title: "Calcium regulation of keratinocyte differentiation"
+      journal: Expert Rev Endocrinol Metab 7(4):461-472
+      doi: 10.1586/eem.12.34
+      notes: >
+        Calcium gradient from low (basal) to peak (granulosum) drives
+        sequential keratinocyte differentiation via CaR signaling.
+        Supports calcium_basal=0.05, calcium_peak=1.5 and differentiation
+        threshold parameters.
+    - id: finch2004
+      authors: Finch PW, Rubin JS
+      year: 2004
+      title: "Keratinocyte growth factor/fibroblast growth factor 7, a homeostatic factor with therapeutic potential for epithelial protection and repair"
+      journal: Adv Cancer Res 91:69-136
+      doi: 10.1016/S0065-230X(04)91003-2
+      notes: >
+        KGF (FGF-7) is a paracrine factor from mesenchymal cells that
+        drives epithelial proliferation and repair. Supports kgf_basal_conc
+        and kgf_max_boost parameters.
+
+# ===========================================================================
+# Aged skin profile literature
+# References for profiles/aged.toml parameter overrides.
+# ===========================================================================
+
+aged_skin_profile:
+  description: >
+    Literature sources for aged skin profile parameters. Aged skin shows
+    slower epidermal turnover, thinner stratum corneum, and reduced dermal
+    vasculature compared to young adult skin.
+  sources:
+    - id: gilchrest1983
+      authors: Gilchrest BA
+      year: 1983
+      title: "In vitro assessment of keratinocyte aging"
+      journal: J Invest Dermatol 81(1 Suppl):184s-189s
+      doi: 10.1111/1523-1747.ep12541084
+      notes: >
+        Aged keratinocytes proliferate more slowly in vitro with reduced
+        mitogenic responsiveness. Supports g1_duration=9.0 and s_duration=8.0
+        (total cycle ~20h vs ~17h in young adult).
+    - id: farage2013
+      authors: Farage MA, Miller KW, Elsner P, Maibach HI
+      year: 2013
+      title: "Characteristics of the aging skin"
+      journal: Adv Wound Care 2(1):5-10
+      doi: 10.1089/wound.2011.0356
+      notes: >
+        Review of age-related skin changes: thinner stratum corneum,
+        reduced barrier function, slower transepidermal water loss recovery.
+        Supports volume_z_cornified=20.0, water_recovery_rate=0.03, and
+        basal perfusion=0.8 parameters.
+    - id: sgonc2013
+      authors: Sgonc R, Gruber J
+      year: 2013
+      title: "Age-related aspects of cutaneous wound healing: a mini-review"
+      journal: Gerontology 59(2):159-164
+      doi: 10.1159/000342344
+      notes: >
+        Fewer active stem cells, reduced growth factor responsiveness,
+        and delayed inflammatory resolution in aged skin. Supports
+        stem_fraction=0.30 parameter.
+
+# ===========================================================================
+# Treatment intervention literature
+# References for the 8 therapeutic interventions modeled in treatments/.
+# ===========================================================================
+
+treatment_interventions:
+  description: >
+    Literature sources supporting treatment parameter choices for diabetic
+    wound interventions. Each treatment overlay modifies diabetic dysfunction
+    parameters proportional to published clinical/preclinical effect sizes.
+  sources:
+    # Anti-inflammatory (anti-TNF-alpha)
+    - id: goren2007
+      authors: Goren I, Muller E, Schiefelbein D, Christen U, Pfeilschifter J, Muhl H, Frank S
+      year: 2007
+      title: "Systemic anti-TNFalpha treatment restores diabetes-impaired skin repair in ob/ob mice by inactivation of macrophages"
+      journal: J Invest Dermatol 127(9):2259-2267
+      doi: 10.1038/sj.jid.5700842
+      notes: >
+        Anti-TNF-alpha restores wound healing in diabetic ob/ob mice via
+        macrophage inactivation. Supports anti_inflammatory treatment
+        m1_duration_factor and resolution_factor adjustments.
+    - id: ashcroft2012
+      authors: Ashcroft GS, Jeong MJ, Ashworth JJ, Hardman M, Jin W, Moutsopoulos N, et al.
+      year: 2012
+      title: "Tumor necrosis factor-alpha (TNF-alpha) is a therapeutic target for impaired cutaneous wound healing"
+      journal: Wound Repair Regen 20(1):38-49
+      doi: 10.1111/j.1524-475X.2011.00748.x
+      notes: >
+        Topical anti-TNF-alpha neutralizing antibodies blunt leukocyte
+        recruitment, shift M1/M2 balance, and accelerate wound closure.
+    - id: siqueira2010
+      authors: Siqueira MF, Li J, Chehab L, Desta T, Chino T, Krothpali N, et al.
+      year: 2010
+      title: "Impaired wound healing in mouse models of diabetes is mediated by TNF-alpha dysregulation and associated with enhanced activation of forkhead box O1 (FOXO1)"
+      journal: Diabetologia 53(2):378-388
+      doi: 10.1007/s00125-009-1529-y
+      notes: >
+        TNF-alpha dysregulation drives fibroblast apoptosis and reduced
+        proliferation via FOXO1 pathway in diabetic wounds.
+
+    # Hyperbaric oxygen therapy (HBO)
+    - id: londahl2010
+      authors: Londahl M, Katzman P, Nilsson A, Hammarlund C
+      year: 2010
+      title: "Hyperbaric oxygen therapy facilitates healing of chronic foot ulcers in patients with diabetes"
+      journal: Diabetes Care 33(5):998-1003
+      doi: 10.2337/dc09-1754
+      notes: >
+        HODFU RCT: HBO significantly improved complete healing of chronic
+        DFUs at 1 year. Supports HBO treatment perfusion and VEGF adjustments.
+    - id: fedorko2016
+      authors: Fedorko L, Bowen JM, Jones W, Englesbe G, Englesbe J, Dain S, et al.
+      year: 2016
+      title: "Hyperbaric oxygen therapy does not reduce indications for amputation in patients with diabetes with nonhealing ulcers of the lower limb"
+      journal: Diabetes Care 39(3):392-399
+      doi: 10.2337/dc15-2001
+      notes: >
+        Negative RCT: no significant healing difference with HBO. Provides
+        important context that HBO effect sizes are debated.
+
+    # Negative pressure wound therapy (NPWT)
+    - id: morykwas1997
+      authors: Morykwas MJ, Argenta LC, Shelton-Brown EI, McGuirt W
+      year: 1997
+      title: "Vacuum-assisted closure: a new method for wound control and treatment"
+      journal: Ann Plast Surg 38(6):553-562
+      doi: 10.1097/00000637-199706000-00001
+      notes: >
+        Original NPWT description. 4x blood flow increase at -125 mmHg.
+        Granulation tissue formation accelerated. Supports NPWT perfusion
+        and proliferation parameter adjustments.
+    - id: armstrong2005
+      authors: Armstrong DG, Lavery LA
+      year: 2005
+      title: "Negative pressure wound therapy after partial diabetic foot amputation"
+      journal: Lancet 366(9498):1704-1710
+      doi: 10.1016/S0140-6736(05)67695-7
+      notes: >
+        RCT: NPWT improved healing rate (56% vs 39%) in diabetic foot
+        amputations. Supports NPWT treatment parameter magnitudes.
+
+    # Doxycycline (sub-antimicrobial MMP inhibitor)
+    - id: smith1999
+      authors: Smith GN Jr, Mickler EA, Hasty KA, Brandt KD
+      year: 1999
+      title: "Specificity of inhibition of matrix metalloproteinase activity by doxycycline"
+      journal: Arthritis Rheum 42(6):1140-1146
+      doi: 10.1002/1529-0131(199906)42:6<1140::AID-ANR10>3.0.CO;2-7
+      notes: >
+        Sub-antimicrobial doxycycline inhibits MMP-1, -8, -9, -13.
+        IC50 values support mmp_factor adjustment from 3.0 to 1.5.
+
+    # Growth factor (PDGF-BB / becaplermin)
+    - id: steed2006
+      authors: Steed DL
+      year: 2006
+      title: "Clinical evaluation of recombinant human platelet-derived growth factor for the treatment of lower extremity ulcers"
+      journal: Plast Reconstr Surg 117(7 Suppl):143S-149S
+      doi: 10.1097/01.prs.0000222526.21512.4c
+      notes: >
+        Becaplermin (rhPDGF-BB) improved complete healing in DFU clinical
+        trials. Supports growth_factor treatment fibroblast activation
+        and density parameters.
+    - id: smiell1998
+      authors: Smiell JM, Wieman TJ, Steed DL, Perry BH, Sampson AR, Schwab BH
+      year: 1998
+      title: "Efficacy and safety of becaplermin (recombinant human platelet-derived growth factor-BB) in patients with nonhealing, lower extremity diabetic ulcers"
+      journal: Wound Repair Regen 7(5):335-346
+      doi: 10.1046/j.1524-475X.1999.00335.x
+      notes: >
+        FDA pivotal trial data for becaplermin. 50% improvement in
+        complete healing vs. placebo.
+
+    # MSC therapy
+    - id: cao2017
+      authors: Cao Y, Gang X, Sun C, Wang G
+      year: 2017
+      title: "Mesenchymal stem cells improve healing of diabetic foot ulcer"
+      journal: J Diabetes Res 2017:9328347
+      doi: 10.1155/2017/9328347
+      notes: >
+        Review of MSC mechanisms in DFU: paracrine factors (VEGF, PDGF,
+        TGF-beta, IL-10) modulate all four dysfunction axes.
+
+    # Moisture dressings
+    - id: winter1962
+      authors: Winter GD
+      year: 1962
+      title: "Formation of the scab and the rate of epithelization of superficial wounds in the skin of the young domestic pig"
+      journal: Nature 193:293-294
+      doi: 10.1038/193293a0
+      notes: >
+        Foundational moist wound healing study. Epithelialization 2x faster
+        under occlusive dressing vs. air-exposed. Supports moisture treatment
+        water_recovery_rate and surface_loss_rate adjustments.
+    - id: junker2013
+      authors: Junker JPE, Kamel RA, Caterson EJ, Eriksson E
+      year: 2013
+      title: "Clinical impact upon wound healing and inflammation in moist, wet, and dry environments"
+      journal: Adv Wound Care 2(7):348-356
+      doi: 10.1089/wound.2012.0412
+      notes: >
+        Moist environment reduces inflammation, improves keratinocyte
+        migration, and accelerates wound closure. Supports moisture
+        treatment inflammation_decay adjustment.
+
+# ===========================================================================
+# Hyaluronan module parameter validation
+# ===========================================================================
+
+hyaluronan_parameters:
+  description: >
+    Literature sources for hyaluronan (HA) dynamics in wound healing:
+    synthesis, degradation, migration scaffold, and water retention.
+  sources:
+    - id: toole2004
+      authors: Toole BP
+      year: 2004
+      title: "Hyaluronan: from extracellular glue to pericellular cue"
+      journal: Nat Rev Cancer 4(7):528-539
+      doi: 10.1038/nrc1391
+      notes: >
+        HA as pericellular coat and migration scaffold. CD44-mediated
+        signaling drives keratinocyte and fibroblast motility. General
+        reference for hyaluronan module.
+    - id: stern2006
+      authors: Stern R, Asari AA, Sugahara KN
+      year: 2006
+      title: "Hyaluronan fragments: an information-rich system"
+      journal: Eur J Cell Biol 85(8):699-715
+      doi: 10.1016/j.ejcb.2006.05.009
+      notes: >
+        HA fragment size determines signaling: high-MW HA is anti-inflammatory,
+        low-MW fragments (via hyaluronidase) are pro-inflammatory and
+        pro-angiogenic. Supports ha_decay parameter.
+    - id: aya2014
+      authors: Aya KL, Stern R
+      year: 2014
+      title: "Hyaluronan in wound healing: rediscovering a major player"
+      journal: Wound Repair Regen 22(5):579-593
+      doi: 10.1111/wrr.12214
+      notes: >
+        Review of HA roles across all wound phases. CD44-mediated keratinocyte
+        migration, HA-rich provisional matrix, MW-dependent immune modulation.
+    - id: chen1999
+      authors: Chen WY, Abatangelo G
+      year: 1999
+      title: "Functions of hyaluronan in wound repair"
+      journal: Wound Repair Regen 7(2):79-89
+      doi: 10.1046/j.1524-475x.1999.00079.x
+      notes: >
+        HA as provisional matrix scaffold for cell migration and proliferation.
+        Covers synthesis/degradation kinetics and the transition from HA-rich
+        granulation tissue to collagen-rich scar.
+
+# ===========================================================================
+# Elastin module parameter validation
+# ===========================================================================
+
+elastin_parameters:
+  description: >
+    Literature sources for elastic fiber network dynamics: tropoelastin
+    deposition, lysyl oxidase cross-linking, and wound recovery.
+  sources:
+    - id: kielty2002
+      authors: Kielty CM, Sherratt MJ, Shuttleworth CA
+      year: 2002
+      title: "Elastic fibres"
+      journal: J Cell Sci 115(14):2817-2828
+      doi: 10.1002/path.1107
+      notes: >
+        Elastic fiber architecture: tropoelastin monomers, microfibril
+        scaffolds, lysyl oxidase cross-linking to desmosine. Supports
+        elastin_crosslink_rate and recovery parameters.
+    - id: almine2012
+      authors: Almine JF, Wise SG, Weiss AS
+      year: 2012
+      title: "Elastin signaling in wound repair"
+      journal: Birth Defects Res C Embryo Today 96(3):248-257
+      doi: 10.1002/bdrc.21016
+      notes: >
+        Elastin fragments (matrikines) signal via elastin-binding protein
+        to drive cell migration and protease production during repair.
+        Covers temporal limitations of tropoelastin re-expression in scars.
+    - id: mithieux2005
+      authors: Mithieux SM, Weiss AS
+      year: 2005
+      title: "Elastin"
+      journal: Adv Protein Chem 70:437-461
+      doi: 10.1016/S0065-3233(05)70013-9
+      notes: >
+        Tropoelastin domain structure, coacervation, and elastic fiber
+        assembly. Quantitative data on secretion and assembly rates.
+        Supports elastin_recovery_rate parameter.
+
+# ===========================================================================
+# Cell mechanics and contact inhibition
+# ===========================================================================
+
+cell_mechanics:
+  description: >
+    Literature sources for cell-cell interaction forces and density-dependent
+    growth control used in agent-based modeling.
+  sources:
+    - id: vanliedekerke2015
+      authors: Van Liedekerke P, Palm MM, Jagiella N, Drasdo D
+      year: 2015
+      title: "Simulating tissue mechanics with agent-based models: concepts, perspectives and some novel results"
+      journal: Comput Part Mech 2(4):401-444
+      doi: 10.1007/s40571-015-0082-3
+      notes: >
+        JKR and Hertz contact models for deformable cell-cell interactions
+        in agent-based tissue simulations. Supports cell_cell_force
+        repulsion/adhesion calibration.
+    - id: johnson1971
+      authors: Johnson KL, Kendall K, Roberts AD
+      year: 1971
+      title: "Surface energy and the contact of elastic solids"
+      journal: Proc R Soc Lond A 324(1558):301-313
+      doi: 10.1098/rspa.1971.0141
+      notes: >
+        Original JKR theory for elastic contact with adhesion.
+        Foundational reference for Hertz-adhesion cell force model.
+    - id: eisenhoffer2012
+      authors: Eisenhoffer GT, Loftus PD, Yoshigi M, Otsuna H, Chien CB, et al.
+      year: 2012
+      title: "Crowding induces live cell extrusion to maintain homeostatic cell numbers in epithelia"
+      journal: Nature 484(7395):546-549
+      doi: 10.1038/nature10999
+      notes: >
+        Epithelial overcrowding triggers live cell extrusion via
+        stretch-activated channel Piezo1 and S1P signaling. Supports
+        crowding-driven differentiation/extrusion threshold.
+
+# ===========================================================================
+# Scar remodeling (supplementary)
+# ===========================================================================
+
+scar_remodeling:
+  description: >
+    Additional literature for scar formation and collagen remodeling beyond
+    the scar_formation dataset.
+  sources:
+    - id: xue2015
+      authors: Xue M, Jackson CJ
+      year: 2015
+      title: "Extracellular matrix reorganization during wound healing and its impact on abnormal scarring"
+      journal: Adv Wound Care 4(3):119-136
+      doi: 10.1089/wound.2013.0485
+      notes: >
+        Collagen type III to type I transition during scar maturation.
+        Lysyl oxidase cross-linking increases tensile strength over months.
+        Supports scar accumulation model from collagen deposition.
+    - id: bailey1998
+      authors: Bailey AJ, Paul RG, Knott L
+      year: 1998
+      title: "Mechanisms of maturation and ageing of collagen"
+      journal: Mech Ageing Dev 106(1-2):1-56
+      doi: 10.1016/S0047-6374(98)00119-5
+      notes: >
+        Enzymatic (lysyl oxidase) and non-enzymatic (glycation) collagen
+        cross-linking pathways. Divalent cross-links mature into stable
+        multivalent forms. Reference for long-term scar maturation.
