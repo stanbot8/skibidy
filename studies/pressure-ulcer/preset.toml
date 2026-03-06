@@ -1,0 +1,21 @@
+# Preset: pressure-ulcer -- pressure ulcer (bedsore) simulation
+
+[skin]
+duration_days = 42
+metrics_interval_h = 20
+
+[skin.wound]
+enabled = true
+trigger_h = 0
+
+[skin.ph]
+enabled = true
+
+[skin.fibroblast]
+enabled = true
+
+[skin.hemostasis]
+enabled = true
+
+[skin.pressure]
+enabled = true
