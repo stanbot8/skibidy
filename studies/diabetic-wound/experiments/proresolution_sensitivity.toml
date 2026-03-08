@@ -1,0 +1,35 @@
+# Opt-in mechanism sensitivity; no dose or clinical efficacy interpretation.
+# See ../../../docs/treatments.md#exploratory-pro-resolution-study.
+[experiment]
+name = "proresolution_sensitivity"
+description = "Resolvin D1 mechanism sensitivity: assumed recovery fractions and actual start days"
+profile = "diabetic"
+study = "diabetic-wound"
+runs_per_config = 5
+seed = 42
+
+[experiment.overrides]
+"skin.duration_days" = 42
+
+[[experiment.configs]]
+label = "Untreated diabetic"
+
+[[experiment.configs]]
+label = "RvD1 assumed 25% recovery, day 0"
+schedule = [{ treatment = "resolvin_d1_low", start_day = 0 }]
+
+[[experiment.configs]]
+label = "RvD1 assumed 50% recovery, day 0"
+schedule = [{ treatment = "resolvin_d1_medium", start_day = 0 }]
+
+[[experiment.configs]]
+label = "RvD1 assumed 75% recovery, day 0"
+schedule = [{ treatment = "resolvin_d1_high", start_day = 0 }]
+
+[[experiment.configs]]
+label = "RvD1 assumed 50% recovery, day 7"
+schedule = [{ treatment = "resolvin_d1_medium", start_day = 7 }]
+
+[[experiment.configs]]
+label = "RvD1 assumed 50% recovery, day 14"
+schedule = [{ treatment = "resolvin_d1_medium", start_day = 14 }]

@@ -1,0 +1,26 @@
+Experiment: proresolution_sensitivity
+Resolvin D1 mechanism sensitivity: assumed recovery fractions and actual start days
+
+Profile: diabetic
+Study: diabetic-wound
+Runs per config: 5
+Total time: 18.8 minutes
+
+======================================================================
+Config                          Closure  T50 (d)  Peak Infl     Scar
+----------------------------------------------------------------------
+Untreated diabetic               100.0%     17.7     1.6821    0.468
+RvD1 assumed 25% recovery, day   100.0%     17.0     1.6627    0.611
+RvD1 assumed 50% recovery, day   100.0%     16.8     1.6543    0.639
+RvD1 assumed 75% recovery, day   100.0%     16.8     1.6497    0.522
+RvD1 assumed 50% recovery, day   100.0%     17.2     1.6821    0.425
+RvD1 assumed 50% recovery, day   100.0%     17.2     1.6821    0.484
+
+======================================================================
+Comparison vs first config:
+
+  RvD1 assumed 25% recovery, day 0 closure: +0.0%
+  RvD1 assumed 50% recovery, day 0 closure: +0.0%
+  RvD1 assumed 75% recovery, day 0 closure: +0.0%
+  RvD1 assumed 50% recovery, day 7 closure: +0.0%
+  RvD1 assumed 50% recovery, day 14 closure: +0.0%

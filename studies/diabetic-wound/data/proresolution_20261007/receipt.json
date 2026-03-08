@@ -1,0 +1,1213 @@
+{
+  "status": "complete",
+  "requested_runs": 30,
+  "experiment": {
+    "name": "proresolution_sensitivity",
+    "description": "Resolvin D1 mechanism sensitivity: assumed recovery fractions and actual start days",
+    "profile": "diabetic",
+    "study": "diabetic-wound",
+    "runs_per_config": 5,
+    "seed": 42,
+    "overrides": {
+      "skin.duration_days": 42
+    },
+    "configs": [
+      {
+        "label": "Untreated diabetic",
+        "overrides": {},
+        "profile": null,
+        "study": null,
+        "treatments": [],
+        "extra_overlays": [],
+        "schedule": []
+      },
+      {
+        "label": "RvD1 assumed 25% recovery, day 0",
+        "schedule": [
+          {
+            "treatment": "resolvin_d1_low",
+            "start_day": 0
+          }
+        ],
+        "overrides": {},
+        "profile": null,
+        "study": null,
+        "treatments": [],
+        "extra_overlays": []
+      },
+      {
+        "label": "RvD1 assumed 50% recovery, day 0",
+        "schedule": [
+          {
+            "treatment": "resolvin_d1_medium",
+            "start_day": 0
+          }
+        ],
+        "overrides": {},
+        "profile": null,
+        "study": null,
+        "treatments": [],
+        "extra_overlays": []
+      },
+      {
+        "label": "RvD1 assumed 75% recovery, day 0",
+        "schedule": [
+          {
+            "treatment": "resolvin_d1_high",
+            "start_day": 0
+          }
+        ],
+        "overrides": {},
+        "profile": null,
+        "study": null,
+        "treatments": [],
+        "extra_overlays": []
+      },
+      {
+        "label": "RvD1 assumed 50% recovery, day 7",
+        "schedule": [
+          {
+            "treatment": "resolvin_d1_medium",
+            "start_day": 7
+          }
+        ],
+        "overrides": {},
+        "profile": null,
+        "study": null,
+        "treatments": [],
+        "extra_overlays": []
+      },
+      {
+        "label": "RvD1 assumed 50% recovery, day 14",
+        "schedule": [
+          {
+            "treatment": "resolvin_d1_medium",
+            "start_day": 14
+          }
+        ],
+        "overrides": {},
+        "profile": null,
+        "study": null,
+        "treatments": [],
+        "extra_overlays": []
+      }
+    ]
+  },
+  "binary_receipt": {
+    "git_head": "ad973e68e487f34fa318b17adff4eddd82fd114c",
+    "source_diff_sha256": "2d7c050f347c666f4babd93b4e93ffc038575324aeebd5bf61e9606515e03e49",
+    "project_files": [
+      {
+        "source": "/mnt/d/dev/skibidy/build/skibidy",
+        "path": "/mnt/d/dev/skibidy/studies/diabetic-wound/results/experiments/proresolution_42day_20261007/binary/skibidy",
+        "sha256": "069fb62a98dfe127664ccba0237da4225ba3ea77140201a29adb7e43516aa815"
+      },
+      {
+        "source": "/mnt/d/dev/skibidy/build/libskibidy.so",
+        "path": "/mnt/d/dev/skibidy/studies/diabetic-wound/results/experiments/proresolution_42day_20261007/binary/libskibidy.so",
+        "sha256": "c4fe1dcd56494157e46e8e704b94b0b7958166cf10fea6f785592a8864dd1f0d"
+      }
+    ],
+    "dependencies": [
+      {
+        "path": "/mnt/d/dev/skibidy/studies/diabetic-wound/results/experiments/proresolution_42day_20261007/binary/libskibidy.so",
+        "sha256": "c4fe1dcd56494157e46e8e704b94b0b7958166cf10fea6f785592a8864dd1f0d"
+      },
+      {
+        "path": "/lib/x86_64-linux-gnu/libc.so.6",
+        "sha256": "3a15d66867d83762c7f2f1e37359cb8f6c5743edb369c65285cb0b1c4f7498bf"
+      },
+      {
+        "path": "/root/biodynamo-v1.05.169/lib/libbiodynamo.so",
+        "sha256": "e6279202295cd83f77f11127839b513641530e20f9aabe9716f5a063a068c0c5"
+      },
+      {
+        "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libCore.so",
+        "sha256": "06675a6757905c982787572cdbdc6efdc3ba07ef4563f92479ad3059667a6e4c"
+      },
+      {
+        "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libRIO.so",
+        "sha256": "e1d59bc0021554d85bb08d132e01e7778e06318259ecce04a1af03dad3d8f969"
+      },
+      {
+        "path": "/lib/x86_64-linux-gnu/libgomp.so.1",
+        "sha256": "135f3c8f006d2fe5e68e51281c7974cb991a03de3bfb3593d68d174dfcf854d1"
+      },
+      {
+        "path": "/lib/x86_64-linux-gnu/libstdc++.so.6",
+        "sha256": "1fd75fe70354a416d75aef22bcae68c47bd25d20e2d0568c30b1a9838cf62f11"
+      },
+      {
+        "path": "/lib/x86_64-linux-gnu/libm.so.6",
+        "sha256": "fce00b6f25f459cf4ae0b7fae4257909a1a8a86f9149e7c029a5d617baf1ccd0"
+      },
+      {
+        "path": "/lib/x86_64-linux-gnu/libgcc_s.so.1",
+        "sha256": "d93224d2b0dab4247598be683adca02f5cf00586f99c187579cd7e92058fb7cb"
+      },
+      {
+        "path": "/lib64/ld-linux-x86-64.so.2",
+        "sha256": "c20a2dc8917c755f02b94049356320fe1f62ac7d9f8994731f807d9df39302da"
+      },
+      {
+        "path": "/root/biodynamo-v1.05.169/lib/liboptim.so",
+        "sha256": "6c6b7acce3bd33fd0cfe4cf3ce4f9bb5728bae7a51d782641e20497a8b8de3fa"
+      },
+      {
+        "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libNet.so",
+        "sha256": "f3effa3a996e84678fd5eee8efd79fbdc2e45c455556d26902463ee5de9edb9b"
+      },
+      {
+        "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libHist.so",
+        "sha256": "7938e31d434019df6b2d808f9e429438ab892599cc90169c532127bb432423f8"
+      },
+      {
+        "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libGraf.so",
+        "sha256": "38d4384c99c26b3f6a1a3f04ca7a5dac3ee1663b33bdebfa89caf4e1d3884e93"
+      },
+      {
+        "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libGpad.so",
+        "sha256": "d1f736ea9a88df5927e97068c84ccc7f4c9cb09647d4b39060bd5960429a5e9b"
+      },
+      {
+        "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libMathCore.so",
+        "sha256": "e94a6e1ffa9dcd645c7357eb63c7582e2c9a41b53510947f00dfe4d39f2ff24e"
+      },
+      {
+        "path": "/lib/x86_64-linux-gnu/libmpi_cxx.so.40",
+        "sha256": "bf970d3b7ffdd471e5d073ff3bd689f2ef26a0b318eec5cfcef6acab802fe24b"
+      },
+      {
+        "path": "/lib/x86_64-linux-gnu/libmpi.so.40",
+        "sha256": "9055018b12757e830591aa0283e485e471f1f2a06d3bc0dd5fb35ab00386c172"
+      },
+      {
+        "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libThread.so",
+        "sha256": "0f144227d1c163cb07354c532b40170e36e2156eb0d5f06b4d486c47bccc8230"
+      },
+      {
+        "path": "/lib/x86_64-linux-gnu/libblas.so.3",
+        "sha256": "8ba4a98f44d763c2e648755ef452025919e28633339f23ff605044de3483a25d"
+      },
+      {
+        "path": "/lib/x86_64-linux-gnu/liblapack.so.3",
+        "sha256": "1e82245607c58d13405580c71b9b0134b5a952686ac861f979fc7a886ebd4229"
+      },
+      {
+        "path": "/lib/x86_64-linux-gnu/libssl.so.3",
+        "sha256": "a40e7b67489bbd257e432c700ff8f6a1ad796425b5eccecdc2930127fdd86624"
+      },
+      {
+        "path": "/lib/x86_64-linux-gnu/libcrypto.so.3",
+        "sha256": "6866ed711dab8927e1bf82bf1cd30e828bdfc34f3cc1e83b1c9eb01ce6c37d9a"
+      },
+      {
+        "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libMatrix.so",
+        "sha256": "1cf806b1225fdb97a0c7d9b9f8a0824f7e95a36e998632d8d028ec29b3492042"
+      },
+      {
+        "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libImt.so",
+        "sha256": "2cb1ad06392ec81ab4a15647d2a6c550509e054b17723463c078f40af608ded1"
+      },
+      {
+        "path": "/lib/x86_64-linux-gnu/libopen-pal.so.40",
+        "sha256": "59c4d9b111cd3ec326a4df475a338daae050496087c67e86956187056fdc3051"
+      },
+      {
+        "path": "/lib/x86_64-linux-gnu/libopen-rte.so.40",
+        "sha256": "26467e1da428d31dab924ddbc50bc6ade75da47dbb82c77498a5f127a5466ba7"
+      },
+      {
+        "path": "/lib/x86_64-linux-gnu/libhwloc.so.15",
+        "sha256": "86dff44a023254d997cea910b9a51f35afefe6780f4b5530f974a2009ba47487"
+      },
+      {
+        "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libtbb.so.12",
+        "sha256": "c45c725b828eaa6eee6fafe34b4dcc94b9ad2498b008d83c5090e2c1be557f1b"
+      },
+      {
+        "path": "/lib/x86_64-linux-gnu/libopenblas.so.0",
+        "sha256": "bfc7492adbf84a8f567720a9e1fae2afc18f3d817da233e7f4d453683485308e"
+      },
+      {
+        "path": "/lib/x86_64-linux-gnu/libgfortran.so.5",
+        "sha256": "342618ccfebe840446e4ef2b7893f4161b2084845e570f42d68a70bfde58a58d"
+      },
+      {
+        "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libMultiProc.so",
+        "sha256": "9c4ee5bf798308fcaba0ad3719f031ee6450e90a8e64f218879b769e61631607"
+      },
+      {
+        "path": "/lib/x86_64-linux-gnu/libevent_core-2.1.so.7",
+        "sha256": "7fa4592ebaec38a7c1ce665c29244fbaae249cab6c1dbdd5024418dcdfd4898e"
+      },
+      {
+        "path": "/lib/x86_64-linux-gnu/libevent_pthreads-2.1.so.7",
+        "sha256": "e386329c9c16032b489bebbd545750f35eafc0f50ab88ef0c986a31acb4b47a2"
+      },
+      {
+        "path": "/lib/x86_64-linux-gnu/libz.so.1",
+        "sha256": "86200da370f20476a2507e9097a789b5ef97269b4ca8d5e164ad82dab9d99892"
+      },
+      {
+        "path": "/lib/x86_64-linux-gnu/libudev.so.1",
+        "sha256": "4298228175fa62a36af88b1afd4406cdd8b1bf166621f957d0dbbde45a698fe5"
+      },
+      {
+        "path": "/lib/x86_64-linux-gnu/libcap.so.2",
+        "sha256": "6ac6abc86ac891c6e13486470e26f1d939f47fda9e6b5d5508a7f5ec881adc84"
+      }
+    ],
+    "ldd": "\tlinux-vdso.so.1 (0x000076448dabb000)\n\tlibskibidy.so => /mnt/d/dev/skibidy/studies/diabetic-wound/results/experiments/proresolution_42day_20261007/binary/libskibidy.so (0x000076448d822000)\n\tlibc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x000076448d400000)\n\tlibbiodynamo.so => /root/biodynamo-v1.05.169/lib/libbiodynamo.so (0x000076448d000000)\n\tlibCore.so => /root/biodynamo-v1.05.169/third_party/root/lib/libCore.so (0x000076448ca00000)\n\tlibRIO.so => /root/biodynamo-v1.05.169/third_party/root/lib/libRIO.so (0x000076448c600000)\n\tlibgomp.so.1 => /lib/x86_64-linux-gnu/libgomp.so.1 (0x000076448d7b2000)\n\tlibstdc++.so.6 => /lib/x86_64-linux-gnu/libstdc++.so.6 (0x000076448c200000)\n\tlibm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x000076448d6c9000)\n\tlibgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x000076448d69b000)\n\t/lib64/ld-linux-x86-64.so.2 (0x000076448dabd000)\n\tliboptim.so => /root/biodynamo-v1.05.169/lib/liboptim.so (0x000076448d632000)\n\tlibNet.so => /root/biodynamo-v1.05.169/third_party/root/lib/libNet.so (0x000076448d319000)\n\tlibHist.so => /root/biodynamo-v1.05.169/third_party/root/lib/libHist.so (0x000076448bc00000)\n\tlibGraf.so => /root/biodynamo-v1.05.169/third_party/root/lib/libGraf.so (0x000076448b800000)\n\tlibGpad.so => /root/biodynamo-v1.05.169/third_party/root/lib/libGpad.so (0x000076448c512000)\n\tlibMathCore.so => /root/biodynamo-v1.05.169/third_party/root/lib/libMathCore.so (0x000076448b400000)\n\tlibmpi_cxx.so.40 => /lib/x86_64-linux-gnu/libmpi_cxx.so.40 (0x000076448d617000)\n\tlibmpi.so.40 => /lib/x86_64-linux-gnu/libmpi.so.40 (0x000076448c0ce000)\n\tlibThread.so => /root/biodynamo-v1.05.169/third_party/root/lib/libThread.so (0x000076448c4a5000)\n\tlibblas.so.3 => /lib/x86_64-linux-gnu/libblas.so.3 (0x000076448bb93000)\n\tliblapack.so.3 => /lib/x86_64-linux-gnu/liblapack.so.3 (0x000076448ac00000)\n\tlibssl.so.3 => /lib/x86_64-linux-gnu/libssl.so.3 (0x000076448bae9000)\n\tlibcrypto.so.3 => /lib/x86_64-linux-gnu/libcrypto.so.3 (0x000076448a600000)\n\tlibMatrix.so => /root/biodynamo-v1.05.169/third_party/root/lib/libMatrix.so (0x000076448b679000)\n\tlibImt.so => /root/biodynamo-v1.05.169/third_party/root/lib/libImt.so (0x000076448d305000)\n\tlibopen-pal.so.40 => /lib/x86_64-linux-gnu/libopen-pal.so.40 (0x000076448ba35000)\n\tlibopen-rte.so.40 => /lib/x86_64-linux-gnu/libopen-rte.so.40 (0x000076448b344000)\n\tlibhwloc.so.15 => /lib/x86_64-linux-gnu/libhwloc.so.15 (0x000076448b2e3000)\n\tlibtbb.so.12 => /root/biodynamo-v1.05.169/third_party/root/lib/libtbb.so.12 (0x000076448b28a000)\n\tlibopenblas.so.0 => /lib/x86_64-linux-gnu/libopenblas.so.0 (0x0000764488220000)\n\tlibgfortran.so.5 => /lib/x86_64-linux-gnu/libgfortran.so.5 (0x0000764487e00000)\n\tlibMultiProc.so => /root/biodynamo-v1.05.169/third_party/root/lib/libMultiProc.so (0x000076448d2f3000)\n\tlibevent_core-2.1.so.7 => /lib/x86_64-linux-gnu/libevent_core-2.1.so.7 (0x000076448c099000)\n\tlibevent_pthreads-2.1.so.7 => /lib/x86_64-linux-gnu/libevent_pthreads-2.1.so.7 (0x000076448d2ee000)\n\tlibz.so.1 => /lib/x86_64-linux-gnu/libz.so.1 (0x000076448cfe4000)\n\tlibudev.so.1 => /lib/x86_64-linux-gnu/libudev.so.1 (0x000076448abcd000)\n\tlibcap.so.2 => /lib/x86_64-linux-gnu/libcap.so.2 (0x000076448d2df000)\n",
+    "threads": 1,
+    "created_unix_seconds": 1791392259.3571174
+  },
+  "elapsed_seconds": 1128.663169145584,
+  "shared_prefix_checks": [
+    {
+      "arm": 4,
+      "seed": 42,
+      "start_h": 168,
+      "identical_prefix_rows": 9,
+      "post_start_metrics_differ": true
+    },
+    {
+      "arm": 4,
+      "seed": 43,
+      "start_h": 168,
+      "identical_prefix_rows": 9,
+      "post_start_metrics_differ": true
+    },
+    {
+      "arm": 4,
+      "seed": 44,
+      "start_h": 168,
+      "identical_prefix_rows": 9,
+      "post_start_metrics_differ": true
+    },
+    {
+      "arm": 4,
+      "seed": 45,
+      "start_h": 168,
+      "identical_prefix_rows": 9,
+      "post_start_metrics_differ": true
+    },
+    {
+      "arm": 4,
+      "seed": 46,
+      "start_h": 168,
+      "identical_prefix_rows": 9,
+      "post_start_metrics_differ": true
+    },
+    {
+      "arm": 5,
+      "seed": 42,
+      "start_h": 336,
+      "identical_prefix_rows": 17,
+      "post_start_metrics_differ": true
+    },
+    {
+      "arm": 5,
+      "seed": 43,
+      "start_h": 336,
+      "identical_prefix_rows": 17,
+      "post_start_metrics_differ": true
+    },
+    {
+      "arm": 5,
+      "seed": 44,
+      "start_h": 336,
+      "identical_prefix_rows": 17,
+      "post_start_metrics_differ": true
+    },
+    {
+      "arm": 5,
+      "seed": 45,
+      "start_h": 336,
+      "identical_prefix_rows": 17,
+      "post_start_metrics_differ": true
+    },
+    {
+      "arm": 5,
+      "seed": 46,
+      "start_h": 336,
+      "identical_prefix_rows": 17,
+      "post_start_metrics_differ": true
+    }
+  ],
+  "original_manifest_sha256": "9fece94314062d926365201646bcab2493797fbd9b3418e081182bcc128355ed",
+  "archive_sha256": "961c47fab489c479c3f1965e0272e1d685ce8b3cd4888dd15b556fef27c3d37d",
+  "runs": [
+    {
+      "label": "Untreated diabetic",
+      "arm": 0,
+      "seed": 42,
+      "config_sha256": "d0d05b049c8a5613780c5abe035d66fc65dcab2d99f8d95ab5da6b62662378da",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 28.710866928100586,
+      "metrics_sha256": "232babc2f4170df1bc2e7946ebb396011fda4e5a65fe68be7145eec90fcc1a22",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.69763,
+        "scar_magnitude": 0.270209,
+        "peak_neutrophils": 37.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.0450349,
+        "time_to_50pct_h": 420.0,
+        "time_to_90pct_h": 740.0,
+        "time_to_50pct_days": 17.5,
+        "time_to_90pct_days": 30.833333333333332
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "Untreated diabetic",
+      "arm": 0,
+      "seed": 43,
+      "config_sha256": "8f41270ee0bfa1d30b66af48a71fd86897b0eb55661936fec2ccfa919583c159",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 22.98059368133545,
+      "metrics_sha256": "c427c5dabaa6c7ed2c0848ad4f4f8a17c5c1814cca88ddb87b4d739f26cda93b",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.6662,
+        "scar_magnitude": 0.396277,
+        "peak_neutrophils": 35.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.0660461,
+        "time_to_50pct_h": 400.0,
+        "time_to_90pct_h": 760.0,
+        "time_to_50pct_days": 16.666666666666668,
+        "time_to_90pct_days": 31.666666666666668
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "Untreated diabetic",
+      "arm": 0,
+      "seed": 44,
+      "config_sha256": "64968cdf34c3efe424b33e89a57285db6ff1ceff52f9e09b75042e8d3b51ab1e",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 24.36134147644043,
+      "metrics_sha256": "98e2b18be773f56250b7e80040ce430b23dbbcc4ef386062cb82564b71ef083c",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.65702,
+        "scar_magnitude": 0.449702,
+        "peak_neutrophils": 38.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.0749504,
+        "time_to_50pct_h": 420.0,
+        "time_to_90pct_h": 800.0,
+        "time_to_50pct_days": 17.5,
+        "time_to_90pct_days": 33.333333333333336
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "Untreated diabetic",
+      "arm": 0,
+      "seed": 45,
+      "config_sha256": "e0daf9928029c4c39ead6d5f4c9e22bc446f21dc2c0be0c3301b7d5cf433baac",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 22.745990991592407,
+      "metrics_sha256": "e5f164fb4c0d9dbb0bb6d84c0119dc28619f91fbe3e0cb55c2b93192201d010d",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.70348,
+        "scar_magnitude": 0.795604,
+        "peak_neutrophils": 35.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.132601,
+        "time_to_50pct_h": 440.0,
+        "time_to_90pct_h": 840.0,
+        "time_to_50pct_days": 18.333333333333332,
+        "time_to_90pct_days": 35.0
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "Untreated diabetic",
+      "arm": 0,
+      "seed": 46,
+      "config_sha256": "d6006f3c7ba06740c8ddafffa5e760810982d1ffa07e6150413deed663c5f610",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 23.80113673210144,
+      "metrics_sha256": "0e75a817987eab22703e83b34516ca1d424d6bb3bc47f8a1e083dc33e050a163",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.68604,
+        "scar_magnitude": 0.426257,
+        "peak_neutrophils": 36.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.0710429,
+        "time_to_50pct_h": 440.0,
+        "time_to_90pct_h": 800.0,
+        "time_to_50pct_days": 18.333333333333332,
+        "time_to_90pct_days": 33.333333333333336
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "RvD1 assumed 25% recovery, day 0",
+      "arm": 1,
+      "seed": 42,
+      "config_sha256": "2fe34972d50338da71281068e046e00b538daae2856dfa40bb1977eab3b0a01e",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 61.93207907676697,
+      "metrics_sha256": "d00dc50b5dfc301fd9dcf89919361a25145baab2778f47048f7c61989248fc54",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.67956,
+        "scar_magnitude": 0.488352,
+        "peak_neutrophils": 37.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.081392,
+        "time_to_50pct_h": 420.0,
+        "time_to_90pct_h": 860.0,
+        "time_to_50pct_days": 17.5,
+        "time_to_90pct_days": 35.833333333333336
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "RvD1 assumed 25% recovery, day 0",
+      "arm": 1,
+      "seed": 43,
+      "config_sha256": "8ef3811b15134b1490e7cf39ad7bc996fca6d4b6440184fc3375d87bb7c2232f",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 56.33164954185486,
+      "metrics_sha256": "4adc0225548c4e76e23afbea45c69f40a227bd947de92024499c267e02b94893",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.66117,
+        "scar_magnitude": 0.67972,
+        "peak_neutrophils": 35.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.113287,
+        "time_to_50pct_h": 440.0,
+        "time_to_90pct_h": 800.0,
+        "time_to_50pct_days": 18.333333333333332,
+        "time_to_90pct_days": 33.333333333333336
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "RvD1 assumed 25% recovery, day 0",
+      "arm": 1,
+      "seed": 44,
+      "config_sha256": "da67dcbc5b7320d5925dc4a1026980ef51fa3dc78ed3b6817e0e4f2f8883682f",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 54.65983867645264,
+      "metrics_sha256": "3262ceebe81d269839af3b4729ac3b175613afb913a7dfc5e4179357f7c55910",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.65333,
+        "scar_magnitude": 0.778565,
+        "peak_neutrophils": 37.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.129761,
+        "time_to_50pct_h": 360.0,
+        "time_to_90pct_h": 760.0,
+        "time_to_50pct_days": 15.0,
+        "time_to_90pct_days": 31.666666666666668
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "RvD1 assumed 25% recovery, day 0",
+      "arm": 1,
+      "seed": 45,
+      "config_sha256": "9922794e7d8a663730b13b6189b7d933a400a1feb9ccd3453eadc219a42033b0",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 57.90906095504761,
+      "metrics_sha256": "372965c2ae88699ea31a305f90423355b9534a579cae36d8bc5d89506097b149",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.6603,
+        "scar_magnitude": 0.534968,
+        "peak_neutrophils": 35.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.0891613,
+        "time_to_50pct_h": 420.0,
+        "time_to_90pct_h": 820.0,
+        "time_to_50pct_days": 17.5,
+        "time_to_90pct_days": 34.166666666666664
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "RvD1 assumed 25% recovery, day 0",
+      "arm": 1,
+      "seed": 46,
+      "config_sha256": "50fc7066fff8f8781c534993128d12e5eaf3e38b85067c5b660485387b53500b",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 62.17558526992798,
+      "metrics_sha256": "b6e4fd15111d760d4fc4ba82a71160bdaf7018a586cb83b9bdf6ceef128aabf2",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.65902,
+        "scar_magnitude": 0.57562,
+        "peak_neutrophils": 37.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.0959366,
+        "time_to_50pct_h": 400.0,
+        "time_to_90pct_h": 800.0,
+        "time_to_50pct_days": 16.666666666666668,
+        "time_to_90pct_days": 33.333333333333336
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "RvD1 assumed 50% recovery, day 0",
+      "arm": 2,
+      "seed": 42,
+      "config_sha256": "06515c7185a7a8934b16fd7b5bbe1dd4ffa88e415775e9c203f12a436ff5a256",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 60.77084231376648,
+      "metrics_sha256": "87964268267e7a5e626c5848dc959a6f8e9188af038ab981868bfbcd7c99533c",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.67449,
+        "scar_magnitude": 0.609411,
+        "peak_neutrophils": 37.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.101569,
+        "time_to_50pct_h": 420.0,
+        "time_to_90pct_h": 780.0,
+        "time_to_50pct_days": 17.5,
+        "time_to_90pct_days": 32.5
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "RvD1 assumed 50% recovery, day 0",
+      "arm": 2,
+      "seed": 43,
+      "config_sha256": "19a7b5e53471d91cdd026d71e578afd1c3b80b4b04ae0156f7fcf93a3a357eae",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 55.05916166305542,
+      "metrics_sha256": "d57d97bdfe12b436b4021aecdd7fd09daa743d8261896ca9409cf63962550be0",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.65505,
+        "scar_magnitude": 0.441517,
+        "peak_neutrophils": 36.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.0735862,
+        "time_to_50pct_h": 400.0,
+        "time_to_90pct_h": 740.0,
+        "time_to_50pct_days": 16.666666666666668,
+        "time_to_90pct_days": 30.833333333333332
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "RvD1 assumed 50% recovery, day 0",
+      "arm": 2,
+      "seed": 44,
+      "config_sha256": "08fda7c09a2de6a25520ef0fcd83049ceba7ba6c23861a1d0a21d7585e16bb15",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 64.09767508506775,
+      "metrics_sha256": "02d5e911312ff9751fbfeb64133d6eb4ab9ce9adf09a8602a9ad9ed0576e24fe",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.64918,
+        "scar_magnitude": 0.576276,
+        "peak_neutrophils": 37.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.0960461,
+        "time_to_50pct_h": 380.0,
+        "time_to_90pct_h": 760.0,
+        "time_to_50pct_days": 15.833333333333334,
+        "time_to_90pct_days": 31.666666666666668
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "RvD1 assumed 50% recovery, day 0",
+      "arm": 2,
+      "seed": 45,
+      "config_sha256": "d621610e9187768c9ac1f7ab4c5b9b0271c0eb5ae042cab223cf0bf08c7857cb",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 41.72599387168884,
+      "metrics_sha256": "615caacb772908b783c5553760bdd27cd86bcb4a9fa4636df566ebb9a7687ada",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.64078,
+        "scar_magnitude": 0.853879,
+        "peak_neutrophils": 34.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.142313,
+        "time_to_50pct_h": 420.0,
+        "time_to_90pct_h": 780.0,
+        "time_to_50pct_days": 17.5,
+        "time_to_90pct_days": 32.5
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "RvD1 assumed 50% recovery, day 0",
+      "arm": 2,
+      "seed": 46,
+      "config_sha256": "c00e1b75819628510a598032f46c42d5231b0ac7bd113ec727fe1cd809b807f6",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 54.16087746620178,
+      "metrics_sha256": "3a15400e00119f1e1280c9b54c68a5f67e33ae2dbeeb658f8ba7e67abc9394f9",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.65214,
+        "scar_magnitude": 0.713823,
+        "peak_neutrophils": 36.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.118971,
+        "time_to_50pct_h": 400.0,
+        "time_to_90pct_h": 800.0,
+        "time_to_50pct_days": 16.666666666666668,
+        "time_to_90pct_days": 33.333333333333336
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "RvD1 assumed 75% recovery, day 0",
+      "arm": 3,
+      "seed": 42,
+      "config_sha256": "a4b43af69974e70c88ce9d21506775a487dcf4818f243b2164c9f323f9c3abbf",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 55.59970545768738,
+      "metrics_sha256": "4850b16b184ffa5033cda78eac92728968870c933e0a8e6aa4665d9e21eb4ecb",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.66904,
+        "scar_magnitude": 0.463973,
+        "peak_neutrophils": 37.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.0773289,
+        "time_to_50pct_h": 380.0,
+        "time_to_90pct_h": 780.0,
+        "time_to_50pct_days": 15.833333333333334,
+        "time_to_90pct_days": 32.5
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "RvD1 assumed 75% recovery, day 0",
+      "arm": 3,
+      "seed": 43,
+      "config_sha256": "c16849bf9230004eeb5a063690b6209bfef9a2cae77439124042e90ef3d4b05a",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 30.484209299087524,
+      "metrics_sha256": "f53505843b9431670c4b1df406c93add390f37ef3f5b7495db79292ccd1409e8",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.65185,
+        "scar_magnitude": 0.567557,
+        "peak_neutrophils": 36.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.0945929,
+        "time_to_50pct_h": 400.0,
+        "time_to_90pct_h": 820.0,
+        "time_to_50pct_days": 16.666666666666668,
+        "time_to_90pct_days": 34.166666666666664
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "RvD1 assumed 75% recovery, day 0",
+      "arm": 3,
+      "seed": 44,
+      "config_sha256": "4e6a6b9dd7617dda7ca1cdbb32259281bab0a74d948588dc321f9638cfce620b",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 27.998989582061768,
+      "metrics_sha256": "dd8a66dc4b4ce8353f6736b71c359c792d687b73b64dda6392cff7f831a6a7a5",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.64304,
+        "scar_magnitude": 0.538335,
+        "peak_neutrophils": 38.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.0897226,
+        "time_to_50pct_h": 420.0,
+        "time_to_90pct_h": 780.0,
+        "time_to_50pct_days": 17.5,
+        "time_to_90pct_days": 32.5
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "RvD1 assumed 75% recovery, day 0",
+      "arm": 3,
+      "seed": 45,
+      "config_sha256": "072c1f2af31b6cc82e378362baaec33eb5cc3a8671fa7f7b2b4ca3b43fd6bf5d",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 31.88270330429077,
+      "metrics_sha256": "fdcf97602c7f43e40155a5fe9984d013136dad32f952a200c9c514461a974825",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.63732,
+        "scar_magnitude": 0.417125,
+        "peak_neutrophils": 34.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.0695208,
+        "time_to_50pct_h": 420.0,
+        "time_to_90pct_h": 840.0,
+        "time_to_50pct_days": 17.5,
+        "time_to_90pct_days": 35.0
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "RvD1 assumed 75% recovery, day 0",
+      "arm": 3,
+      "seed": 46,
+      "config_sha256": "5a91c20f874f2c0b89df9819354d1012f5bb8b7b77b9497e8d50cd2a3aa029e4",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 27.38339900970459,
+      "metrics_sha256": "91b5b737201a6efe6a7a81a4aaf6f303bea8fddaedb74ba29d404fad53cc3d60",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.64706,
+        "scar_magnitude": 0.623482,
+        "peak_neutrophils": 37.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.103914,
+        "time_to_50pct_h": 400.0,
+        "time_to_90pct_h": 800.0,
+        "time_to_50pct_days": 16.666666666666668,
+        "time_to_90pct_days": 33.333333333333336
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "RvD1 assumed 50% recovery, day 7",
+      "arm": 4,
+      "seed": 42,
+      "config_sha256": "953d186bdd3d97f81c9e4d0560b9a7df5eb787111c16dbc078623f62d80d4da2",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 32.81786918640137,
+      "metrics_sha256": "38c8b7e7056a643ed62998e0e4013107c59b42c944df02238ef02b665a17e163",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.69763,
+        "scar_magnitude": 0.177039,
+        "peak_neutrophils": 37.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.0295065,
+        "time_to_50pct_h": 400.0,
+        "time_to_90pct_h": 900.0,
+        "time_to_50pct_days": 16.666666666666668,
+        "time_to_90pct_days": 37.5
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "RvD1 assumed 50% recovery, day 7",
+      "arm": 4,
+      "seed": 43,
+      "config_sha256": "0ff035dc6882f4dff177aa9197e280c67bbee26e1e420d6f75c274221c221b60",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 24.454796314239502,
+      "metrics_sha256": "07c3810473b332b50fb1de2ed4f7c7f842dcb44bb76a41573dde9edd7a81b2fb",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.6662,
+        "scar_magnitude": 0.364092,
+        "peak_neutrophils": 35.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.0606819,
+        "time_to_50pct_h": 380.0,
+        "time_to_90pct_h": 760.0,
+        "time_to_50pct_days": 15.833333333333334,
+        "time_to_90pct_days": 31.666666666666668
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "RvD1 assumed 50% recovery, day 7",
+      "arm": 4,
+      "seed": 44,
+      "config_sha256": "d8501a053d7caf77370b89b2678de47358cc41e0e5f81a00417385827ced571d",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 23.7847101688385,
+      "metrics_sha256": "73a2ec1e3639ff55b4b092972d4e4a00d9b4c3b3f6aef077ccb913f53dc863f2",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.65702,
+        "scar_magnitude": 0.719677,
+        "peak_neutrophils": 38.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.119946,
+        "time_to_50pct_h": 440.0,
+        "time_to_90pct_h": 820.0,
+        "time_to_50pct_days": 18.333333333333332,
+        "time_to_90pct_days": 34.166666666666664
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "RvD1 assumed 50% recovery, day 7",
+      "arm": 4,
+      "seed": 45,
+      "config_sha256": "dca062dafb330403bd7c8257490f9bee72386712e50c34a02cc2399f59b8b4e5",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 19.48184871673584,
+      "metrics_sha256": "c443ffd9b3e8908f842b2b8fd62d2fe73fa1756e8400f72d5ca5f92015a194d0",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.70348,
+        "scar_magnitude": 0.547882,
+        "peak_neutrophils": 35.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.0913137,
+        "time_to_50pct_h": 420.0,
+        "time_to_90pct_h": 760.0,
+        "time_to_50pct_days": 17.5,
+        "time_to_90pct_days": 31.666666666666668
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "RvD1 assumed 50% recovery, day 7",
+      "arm": 4,
+      "seed": 46,
+      "config_sha256": "8a3b9289873f9e8bbee27bd7ac28a877884453e1cf6a0128b49a842de03da090",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 21.933017253875732,
+      "metrics_sha256": "187c9d4c86641dc22dfd145316be442da223c7980aab95f7c1dacc7c3db5359a",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.68604,
+        "scar_magnitude": 0.314359,
+        "peak_neutrophils": 36.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.0523931,
+        "time_to_50pct_h": 420.0,
+        "time_to_90pct_h": 820.0,
+        "time_to_50pct_days": 17.5,
+        "time_to_90pct_days": 34.166666666666664
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "RvD1 assumed 50% recovery, day 14",
+      "arm": 5,
+      "seed": 42,
+      "config_sha256": "cd2aaaf862c00c8cc91e3dcc3e009481381e8c22abdeb56ef20c9f8482acd9e0",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 21.14875078201294,
+      "metrics_sha256": "5e4969280ae2ea012444fd59b6505ecd3e8423f1d7a30dc059959b8158ed26f0",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.69763,
+        "scar_magnitude": 0.136444,
+        "peak_neutrophils": 37.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.0227407,
+        "time_to_50pct_h": 400.0,
+        "time_to_90pct_h": 740.0,
+        "time_to_50pct_days": 16.666666666666668,
+        "time_to_90pct_days": 30.833333333333332
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "RvD1 assumed 50% recovery, day 14",
+      "arm": 5,
+      "seed": 43,
+      "config_sha256": "00f3d9991ebb0aacdf733a562664f9226fb5b90b2146ad373f5a6d50e41fbc34",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 20.39453101158142,
+      "metrics_sha256": "b7572aaa30ba45e1f0fa5a7b8cadf0db63f66302838abd1d5ba68991d6844cc3",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.6662,
+        "scar_magnitude": 0.450724,
+        "peak_neutrophils": 35.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.0751207,
+        "time_to_50pct_h": 400.0,
+        "time_to_90pct_h": 800.0,
+        "time_to_50pct_days": 16.666666666666668,
+        "time_to_90pct_days": 33.333333333333336
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "RvD1 assumed 50% recovery, day 14",
+      "arm": 5,
+      "seed": 44,
+      "config_sha256": "f791d91f8d94cc08d75047d395b37eac4370582fa6ffb66c29a96fc2c48ab6bf",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 23.007326364517212,
+      "metrics_sha256": "84aa5f9dbacaa62625a70e68752f50f7239e43feed91641e64d8168acd80e16d",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.65702,
+        "scar_magnitude": 0.459948,
+        "peak_neutrophils": 38.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.0766579,
+        "time_to_50pct_h": 420.0,
+        "time_to_90pct_h": 840.0,
+        "time_to_50pct_days": 17.5,
+        "time_to_90pct_days": 35.0
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "RvD1 assumed 50% recovery, day 14",
+      "arm": 5,
+      "seed": 45,
+      "config_sha256": "76dee734cd3fab3206527fdffe41e8dff68855280a2981e91ce693a3924f2541",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 23.36542057991028,
+      "metrics_sha256": "d422b67515b18d8cc26a367871509a9b9080304706586cd0881aebc0b1ae0805",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.70348,
+        "scar_magnitude": 0.885066,
+        "peak_neutrophils": 35.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.147511,
+        "time_to_50pct_h": 400.0,
+        "time_to_90pct_h": 800.0,
+        "time_to_50pct_days": 16.666666666666668,
+        "time_to_90pct_days": 33.333333333333336
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    },
+    {
+      "label": "RvD1 assumed 50% recovery, day 14",
+      "arm": 5,
+      "seed": 46,
+      "config_sha256": "b7f996a1ec1d0463eae0a880bbad17644a94dc78c43e15072f2920d1c5cd113e",
+      "status": "complete",
+      "exit_code": 0,
+      "elapsed_seconds": 20.376384973526,
+      "metrics_sha256": "9d08850f11c507b3412c655773c944c48d545f7ade77ab406d07f95ca04f339e",
+      "metrics_rows": 51,
+      "last_time_h": 1000.0,
+      "outcomes": {
+        "wound_closure_pct": 100.0,
+        "peak_inflammation": 1.68604,
+        "scar_magnitude": 0.4868,
+        "peak_neutrophils": 36.0,
+        "peak_macrophages": 25.0,
+        "peak_collagen": 0.0811333,
+        "time_to_50pct_h": 440.0,
+        "time_to_90pct_h": 820.0,
+        "time_to_50pct_days": 18.333333333333332,
+        "time_to_90pct_days": 34.166666666666664
+      },
+      "analysis": {
+        "condition": "diabetic",
+        "profile": "diabetic",
+        "study": "diabetic-wound"
+      }
+    }
+  ],
+  "limits": "Model sensitivity only; no clinical dose fit. Original run configs are byte-preserved. Analysis identity is supplemental metadata when absent from the original config. Executable and shared library are retained in the local frozen result directory, not this archive."
+}

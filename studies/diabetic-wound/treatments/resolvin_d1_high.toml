@@ -1,0 +1,6 @@
+# Exploratory Resolvin D1: assumed 75% recovery toward healthy factors.
+# Mechanism evidence: Tang et al., Diabetes 2013; doi:10.2337/db12-0684.
+# Model magnitudes are sensitivity assumptions, not measured dose responses.
+[skin.diabetic]
+efferocytosis_factor = 0.875
+resolution_factor = 0.825

@@ -1,0 +1,125 @@
+{
+  "sources": [
+    {
+      "file": "output\\treatment-evidence\\tang2013.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3554373/fullTextXML",
+      "doi": "10.2337/db12-0684",
+      "format": "xml",
+      "inspected_utc": "2026-10-07T17:11:42.222190+00:00",
+      "cached": true,
+      "supplementary_material_nodes": 0,
+      "status": "verified",
+      "bytes": 89567,
+      "sha256": "8bdd8947e6541576fdf752d26abbddca13458714c130d5145140d70ff516da43"
+    },
+    {
+      "file": "output\\treatment-evidence\\senolytic_xml.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6796530/fullTextXML",
+      "doi": "10.1016/j.ebiom.2019.08.069",
+      "format": "xml",
+      "inspected_utc": "2026-10-07T17:11:42.226545+00:00",
+      "cached": true,
+      "supplementary_material_nodes": 0,
+      "status": "verified",
+      "bytes": 162253,
+      "sha256": "082579b077477d9807f52160acc1b39d64ab9f5571aead17aba7c1c613ed9fc8"
+    },
+    {
+      "file": "output\\treatment-evidence\\hbo_xml.xml",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC2858204/fullTextXML",
+      "doi": "10.2337/dc09-1754",
+      "format": "xml",
+      "inspected_utc": "2026-10-07T17:11:42.229670+00:00",
+      "cached": true,
+      "supplementary_material_nodes": 0,
+      "status": "verified",
+      "bytes": 76085,
+      "sha256": "6b0ecdc34be45a2f920f6f45b16b275b3624ec0060e8005a3a466c99855dfdb3"
+    },
+    {
+      "file": "output\\treatment-evidence\\npwt.json",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&resultType=core&query=EXT_ID%3A16291063",
+      "doi": "10.1016/s0140-6736(05)67695-7",
+      "format": "json",
+      "inspected_utc": "2026-10-07T17:11:42.231828+00:00",
+      "cached": true,
+      "pmid": "16291063",
+      "status": "verified",
+      "bytes": 9204,
+      "sha256": "672574ed784ce86a79e6f26791094c9dad1c7c0b688485fefccb99b25e31f54b"
+    },
+    {
+      "file": "output\\treatment-evidence\\pdgf.json",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&resultType=core&query=EXT_ID%3A10564562",
+      "doi": "10.1046/j.1524-475x.1999.00335.x",
+      "format": "json",
+      "inspected_utc": "2026-10-07T17:11:42.232555+00:00",
+      "cached": true,
+      "pmid": "10564562",
+      "status": "verified",
+      "bytes": 11061,
+      "sha256": "d00eee372f83fb0448b604b8d01bfebe611849dede18014c8cabb0152e04b73e"
+    },
+    {
+      "file": "output\\treatment-evidence\\lobmann2002.json",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&resultType=core&query=EXT_ID%3A12136400",
+      "doi": "10.1007/s00125-002-0868-8",
+      "format": "json",
+      "inspected_utc": "2026-10-07T17:11:42.233092+00:00",
+      "cached": true,
+      "pmid": "12136400",
+      "status": "verified",
+      "bytes": 12901,
+      "sha256": "5b517b8cc33dafd196ea9cdfa6ec963804522a711016f2b3509c58ada0c57fda"
+    },
+    {
+      "file": "output\\treatment-evidence\\npwt_basic.json",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&resultType=core&query=EXT_ID%3A9188970",
+      "doi": "10.1097/00000637-199706000-00001",
+      "format": "json",
+      "inspected_utc": "2026-10-07T17:11:42.233361+00:00",
+      "cached": true,
+      "pmid": "9188970",
+      "status": "verified",
+      "bytes": 10072,
+      "sha256": "0d428f01753df131eacbe51eb3e970994665be4d173ec18985481e851bb9164b"
+    },
+    {
+      "file": "output\\treatment-evidence\\msc_primary.json",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&resultType=core&query=EXT_ID%3A28842435",
+      "doi": "10.1152/physiolgenomics.00090.2016",
+      "format": "json",
+      "inspected_utc": "2026-10-07T17:11:42.233581+00:00",
+      "cached": true,
+      "pmid": "28842435",
+      "status": "verified",
+      "bytes": 17042,
+      "sha256": "dae3492e7e0216f6773f9a85ed501831dcb6d46918f54a03a3a3f856e5bb4bf8"
+    },
+    {
+      "file": "output\\treatment-evidence\\winter_original.json",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&resultType=core&query=EXT_ID%3A14007593",
+      "doi": "10.1038/193293a0",
+      "format": "json",
+      "inspected_utc": "2026-10-07T17:11:42.233850+00:00",
+      "cached": true,
+      "pmid": "14007593",
+      "status": "verified",
+      "bytes": 3990,
+      "sha256": "5c3a11121143f1ea50bcee0e1a1294bcd4340ad262fab6dc34256fed43f22f95"
+    },
+    {
+      "file": "output\\treatment-evidence\\anti.json",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&resultType=core&query=EXT_ID%3A23493576",
+      "doi": "10.2337/db12-1450",
+      "format": "json",
+      "inspected_utc": "2026-10-07T17:11:42.234078+00:00",
+      "cached": true,
+      "pmid": "23493576",
+      "status": "verified",
+      "bytes": 13540,
+      "sha256": "b27c2f5fcca7030358a1bef6ad383a908ed0d654267702a4d6e2607189973ce3"
+    }
+  ],
+  "limits": "Summary extraction only. No individual subject data or model parameter fit. Tang XML contains no supplementary-material nodes; outcome magnitudes are in inaccessible figure assets."
+}
