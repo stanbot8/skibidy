@@ -1,0 +1,162 @@
+diff --git a/modules/fibroblast/post_hook.h b/modules/fibroblast/post_hook.h
+index 9920fb1..f2f85f1 100644
+--- a/modules/fibroblast/post_hook.h
++++ b/modules/fibroblast/post_hook.h
+@@ -34,7 +34,16 @@ struct FibroblastPostHook {
+       col_grid = reg.Get(fields::kCollagenId);
+   }
+ 
++  inline void ApplyDermal(const VoxelSnapshot& snap, SignalBoard& sig) {
++    ApplyVoxel(snap, sig);
++  }
++
+   inline void ApplyEpiWound(const VoxelSnapshot& snap, SignalBoard& sig) {
++    ApplyVoxel(snap, sig);
++  }
++
++  // These local sinks also act where dermal fibroblasts deposit collagen.
++  inline void ApplyVoxel(const VoxelSnapshot& snap, SignalBoard& sig) {
+     // Decorin-mediated TGF-beta sequestration
+     if (do_decorin && col_grid) {
+       real_t col_val = col_grid->GetConcentration(snap.coarse_si);
+diff --git a/modules/lymphatic/post_hook.h b/modules/lymphatic/post_hook.h
+index 6a28b90..7187ade 100644
+--- a/modules/lymphatic/post_hook.h
++++ b/modules/lymphatic/post_hook.h
+@@ -25,9 +25,17 @@ struct LymphaticPostHook {
+   }
+ 
+   inline void ApplyEpiWound(const VoxelSnapshot& snap, SignalBoard& sig) {
++    ApplyVoxel(snap, sig);
++  }
++
++  inline void ApplyDermal(const VoxelSnapshot& snap, SignalBoard& sig) {
++    ApplyVoxel(snap, sig);
++  }
++
++  inline void ApplyVoxel(const VoxelSnapshot& snap, SignalBoard& sig) {
+     real_t tgfb_val = tgfb_grid->GetConcentration(snap.idx);
+     if (tgfb_val <= 1e-10) return;
+-    real_t lymph_val = lymph_grid->GetConcentration(snap.coarse_si);
++    real_t lymph_val = lymph_grid->GetConcentration(snap.idx);
+     if (lymph_val <= 1e-10) return;
+     real_t sink = sp_->edema_drainage_rate * lymph_val * tgfb_val;
+     tgfb_grid->ChangeConcentrationBy(snap.idx, -std::min(sink, tgfb_val));
+diff --git a/modules/lymphatic/source_hook.h b/modules/lymphatic/source_hook.h
+index c4684a3..4b33513 100644
+--- a/modules/lymphatic/source_hook.h
++++ b/modules/lymphatic/source_hook.h
+@@ -39,7 +39,8 @@ struct LymphaticSourceHook {
+     if (!snap.in_wound || !snap.post_wound) return;
+ 
+     // Lymphatic regeneration
+-    size_t l_si = snap.coarse_si;
++    // Lymphatic density diffuses on the fine grid, unlike structural ECM.
++    size_t l_si = snap.idx;
+     real_t lymph_val = lymph_grid->GetConcentration(l_si);
+     real_t lymph_target = sp_->lymphatic.basal_density;
+     if (sp_->diabetic.mode) {
+@@ -57,7 +58,7 @@ struct LymphaticSourceHook {
+       }
+       real_t gain = std::min(lymph_target - lymph_val, rate);
+       if (gain > 1e-10) {
+-        lymph_grid->ChangeConcentrationBy(l_si, gain * snap.coarse_w);
++        lymph_grid->ChangeConcentrationBy(l_si, gain);
+       }
+     }
+ 
+diff --git a/modules/mmp/post_hook.h b/modules/mmp/post_hook.h
+index 521d03f..2cc667d 100644
+--- a/modules/mmp/post_hook.h
++++ b/modules/mmp/post_hook.h
+@@ -32,7 +32,9 @@ struct MMPPostHook {
+ 
+   inline void Init(const GridRegistry& reg, SignalBoard& sig) {
+     sp_ = reg.Params();
+-    do_ecm = sp_->mmp.enabled && sp_->fibroblast.enabled;
++    do_ecm = sp_->mmp.enabled && (sp_->fibroblast.enabled ||
++        sp_->fibronectin.enabled || sp_->elastin.enabled ||
++        sp_->hemostasis.enabled);
+     do_prommp = sp_->mmp.enabled;
+     active = do_ecm || do_prommp;
+     if (!active) return;
+@@ -67,8 +69,18 @@ struct MMPPostHook {
+       temp_grid = reg.Get(fields::kTemperatureId);
+   }
+ 
+-  // Called per epidermal wound voxel.
++  inline void ApplyDermal(const VoxelSnapshot& snap, SignalBoard& sig) {
++    ApplyVoxel(snap, sig, false);
++  }
++
+   inline void ApplyEpiWound(const VoxelSnapshot& snap, SignalBoard& sig) {
++    ApplyVoxel(snap, sig, true);
++  }
++
++  // Local matrix reactions occur in both layers. Only the epidermis has
++  // keratinocyte production at a migration front.
++  inline void ApplyVoxel(const VoxelSnapshot& snap, SignalBoard& sig,
++                         bool epidermal) {
+     // -- MMP-mediated ECM degradation --
+     real_t total_degraded = 0;
+     if (do_ecm) {
+@@ -162,7 +174,7 @@ struct MMPPostHook {
+ 
+     // -- Keratinocyte pro-MMP-1 at wound migration front --
+     // Pilcher et al. 1997
+-    if (sp_->mmp.keratinocyte_rate > 0 && prommp_grid) {
++    if (epidermal && sp_->mmp.keratinocyte_rate > 0 && prommp_grid) {
+       real_t edge = snap.stratum * (1.0 - snap.stratum) * 4.0;  // peaks at sv=0.5
+       if (edge > 1e-10) {
+         prommp_grid->ChangeConcentrationBy(snap.idx,
+@@ -172,7 +184,7 @@ struct MMPPostHook {
+ 
+     // -- Keratinocyte TIMP-1 at wound migration front --
+     // Saarialho-Kere et al. 1995 (doi:10.1172/JCI117883)
+-    if (timp_grid && sp_->mmp.timp_keratinocyte_rate > 0) {
++    if (epidermal && timp_grid && sp_->mmp.timp_keratinocyte_rate > 0) {
+       real_t edge = snap.stratum * (1.0 - snap.stratum) * 4.0;
+       if (edge > 1e-10) {
+         real_t rate = sp_->mmp.timp_keratinocyte_rate;
+diff --git a/modules/perfusion/post_hook.h b/modules/perfusion/post_hook.h
+index 60e96e6..538eb23 100644
+--- a/modules/perfusion/post_hook.h
++++ b/modules/perfusion/post_hook.h
+@@ -25,7 +25,15 @@ struct PerfusionPostHook {
+     if (!tgfb_grid || !perf_grid) active = false;
+   }
+ 
++  inline void ApplyDermal(const VoxelSnapshot& snap, SignalBoard& sig) {
++    ApplyVoxel(snap, sig);
++  }
++
+   inline void ApplyEpiWound(const VoxelSnapshot& snap, SignalBoard& sig) {
++    ApplyVoxel(snap, sig);
++  }
++
++  inline void ApplyVoxel(const VoxelSnapshot& snap, SignalBoard& sig) {
+     real_t tgfb_val = tgfb_grid->GetConcentration(snap.idx);
+     if (tgfb_val <= 1e-10) return;
+     real_t perf = perf_grid->GetConcentration(snap.idx);
+diff --git a/modules/ros/post_hook.h b/modules/ros/post_hook.h
+index f35c953..a0d1793 100644
+--- a/modules/ros/post_hook.h
++++ b/modules/ros/post_hook.h
+@@ -41,8 +41,16 @@ struct ROSPostHook {
+       sen_grid = reg.Get(fields::kSenescenceId);
+   }
+ 
+-  // Called per epidermal wound voxel.
++  inline void ApplyDermal(const VoxelSnapshot& snap, SignalBoard& sig) {
++    ApplyVoxel(snap, sig);
++  }
++
+   inline void ApplyEpiWound(const VoxelSnapshot& snap, SignalBoard& sig) {
++    ApplyVoxel(snap, sig);
++  }
++
++  // Local oxidative reactions also act where dermal ROS is produced.
++  inline void ApplyVoxel(const VoxelSnapshot& snap, SignalBoard& sig) {
+     real_t ros_val = ros_grid->GetConcentration(snap.idx);
+     if (ros_val <= 1e-10) return;
+ 

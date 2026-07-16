@@ -1,0 +1,530 @@
+{
+  "status": "published_existing_baseline_evidence",
+  "source": "batch/results/baseline-20261007-run2",
+  "requested_runs": 9,
+  "runs": [
+    {
+      "cohort": "normal-wound",
+      "seed": 42,
+      "condition_from_saved_config": "normal",
+      "duration_days": 30,
+      "metrics_rows": 72,
+      "last_time_h": 710.0,
+      "execution_status": "complete_metrics_verified",
+      "historical_validation_exit": 1,
+      "saved_validation_status": "fail",
+      "config_sha256": "e0bb4cc29d073db7f6547371c263bbc922709f4d0cf7583f10bbb4cd0fb1776a",
+      "metrics_sha256": "b0485b1228eb9fe22b0a036b772e457b9970c9a9f59ddf6cd3ca1a92d7d224da",
+      "validation_sha256": "11c1486857ae73e793a9f3b75e9265c56f467cd3daf00bb2fc1875ea6720cdd7"
+    },
+    {
+      "cohort": "normal-wound",
+      "seed": 43,
+      "condition_from_saved_config": "normal",
+      "duration_days": 30,
+      "metrics_rows": 72,
+      "last_time_h": 710.0,
+      "execution_status": "complete_metrics_verified",
+      "historical_validation_exit": 1,
+      "saved_validation_status": "fail",
+      "config_sha256": "86dc52ba4e5f42bbc2fec0416684c460efa281add183d68c977c5c8d11fb5a7d",
+      "metrics_sha256": "345e037c68ab2c621ab0eaeed3e35de1a78bc15eccd8e07f8a073b8cd10e2834",
+      "validation_sha256": "3a392d2f345dba44c172d90de0127fb13dcbbd782c56f1632dfd2f23fe5414f8"
+    },
+    {
+      "cohort": "normal-wound",
+      "seed": 44,
+      "condition_from_saved_config": "normal",
+      "duration_days": 30,
+      "metrics_rows": 72,
+      "last_time_h": 710.0,
+      "execution_status": "complete_metrics_verified",
+      "historical_validation_exit": 1,
+      "saved_validation_status": "fail",
+      "config_sha256": "7c93e39f5a9d5eac23af28c2af98664d0aaea0d36a4f300f7a76a628ff7650a1",
+      "metrics_sha256": "b7738319e1f010a441da5487bca758eb81bfd717394ec3e2d5b3a8c817052925",
+      "validation_sha256": "b4fda4ee271f0697c57a9d22973da20f8c99c4990b295554c098f9360f442b24"
+    },
+    {
+      "cohort": "diabetic-diabetic-wound",
+      "seed": 42,
+      "condition_from_saved_config": "diabetic",
+      "duration_days": 35,
+      "metrics_rows": 42,
+      "last_time_h": 820.0,
+      "execution_status": "complete_metrics_verified",
+      "historical_validation_exit": 1,
+      "saved_validation_status": "fail",
+      "config_sha256": "b47aa6f8f91814b38e7fbcedfd0524deab98b3b067a69fbf5577b48838beb479",
+      "metrics_sha256": "7376df6c0087b4d98d2c67c072a4aae70c7be8ab47f104ddd95d36f1bfe6f0ee",
+      "validation_sha256": "90bc8c1577ad594d509ec7a52991361063abdb91a7b4da93812e916731a11b63"
+    },
+    {
+      "cohort": "diabetic-diabetic-wound",
+      "seed": 43,
+      "condition_from_saved_config": "diabetic",
+      "duration_days": 35,
+      "metrics_rows": 42,
+      "last_time_h": 820.0,
+      "execution_status": "complete_metrics_verified",
+      "historical_validation_exit": 1,
+      "saved_validation_status": "fail",
+      "config_sha256": "8974118b1a5c4bcd176c6f96816d812c87b707d32bc7247a797438ddc77e48a0",
+      "metrics_sha256": "d84557d613e80ce6482293c03433d8fab48770e520f7809c4f0eff24cf0fa67d",
+      "validation_sha256": "cd764f07bd32338557254afa37427b00c01fd1e28a296c4884d4d76e9558b564"
+    },
+    {
+      "cohort": "diabetic-diabetic-wound",
+      "seed": 44,
+      "condition_from_saved_config": "diabetic",
+      "duration_days": 35,
+      "metrics_rows": 42,
+      "last_time_h": 820.0,
+      "execution_status": "complete_metrics_verified",
+      "historical_validation_exit": 1,
+      "saved_validation_status": "fail",
+      "config_sha256": "ec5ba94f8697d8cf6c7a4498e7426dd20e61fd03e0efb3f5c45c8ade0f2d98b5",
+      "metrics_sha256": "c1c8fe843acfd7e44e5d401c3ef6f19aeb2811bbc0fe26ce9e59a76086c39282",
+      "validation_sha256": "1f4d0db46627824de64e41c4e98d3ff36ff280b7b6bcd996146693f45726e5e7"
+    },
+    {
+      "cohort": "normal-full-model",
+      "seed": 42,
+      "condition_from_saved_config": "normal",
+      "duration_days": 30,
+      "metrics_rows": 72,
+      "last_time_h": 710.0,
+      "execution_status": "complete_metrics_verified",
+      "historical_validation_exit": 1,
+      "saved_validation_status": "fail",
+      "config_sha256": "1c216fad56d26c3118bee08467cb621d348dd52267388f9ea624427c99e08fce",
+      "metrics_sha256": "8abd2fc2119a218bdd8a4a80582441506a57812f6745d6ab2d1aeb7615dbe42e",
+      "validation_sha256": "95f6fb14fd7879bf9a645c07f135cbae779a25bc7b6e6cc61afa95809298c37a"
+    },
+    {
+      "cohort": "normal-full-model",
+      "seed": 43,
+      "condition_from_saved_config": "normal",
+      "duration_days": 30,
+      "metrics_rows": 72,
+      "last_time_h": 710.0,
+      "execution_status": "complete_metrics_verified",
+      "historical_validation_exit": 1,
+      "saved_validation_status": "fail",
+      "config_sha256": "efc28ca9888876290122458cb021880a9bc24b0e57bd22a24790a74b34e716ae",
+      "metrics_sha256": "8de6dc93fe18edd63a357575ad75276f6dcf276a22634604ba2feb7815f537d7",
+      "validation_sha256": "aebb2957998ce3a9b12199135dd09697fee94336fc6d91ec374fd1999dec54d1"
+    },
+    {
+      "cohort": "normal-full-model",
+      "seed": 44,
+      "condition_from_saved_config": "normal",
+      "duration_days": 30,
+      "metrics_rows": 72,
+      "last_time_h": 710.0,
+      "execution_status": "complete_metrics_verified",
+      "historical_validation_exit": 1,
+      "saved_validation_status": "fail",
+      "config_sha256": "5822e7fc63b42e2791d84ab4f38907c15c623379565da9613d369d7a61d5f83f",
+      "metrics_sha256": "7b6eb0ccd3158c54aa51ba87911545a00f292e657dc406757a1934fbbf4bddfc",
+      "validation_sha256": "ac180dd5db0afbc4875011f24234843adf83346bb3701c42e01f505e46290392"
+    }
+  ],
+  "cohorts": [
+    {
+      "cohort": "normal-wound",
+      "n": 3,
+      "summary_verified": true,
+      "standard_deviation": "sample SD, ddof=1; time_h column is the time coordinate",
+      "verification_precision": "existing writer's six significant digits; SD numerical noise below 1e-14 tolerated"
+    },
+    {
+      "cohort": "diabetic-diabetic-wound",
+      "n": 3,
+      "summary_verified": true,
+      "standard_deviation": "sample SD, ddof=1; time_h column is the time coordinate",
+      "verification_precision": "existing writer's six significant digits; SD numerical noise below 1e-14 tolerated"
+    },
+    {
+      "cohort": "normal-full-model",
+      "n": 3,
+      "summary_verified": true,
+      "standard_deviation": "sample SD, ddof=1; time_h column is the time coordinate",
+      "verification_precision": "existing writer's six significant digits; SD numerical noise below 1e-14 tolerated"
+    }
+  ],
+  "archive_sha256": "188793d3d2c174076495312235a651b8cacaf5094625217263025179bd51cca7",
+  "files": [
+    {
+      "path": "runtime.json",
+      "sha256": "78088a817dc8863c9c050c784522881caac9ea2b705d67a4996f001ee7e8ae5a",
+      "bytes": 335
+    },
+    {
+      "path": "validation-summary.json",
+      "sha256": "81a7c6fb939ccb5da3bdd91a0546662856cde817512adff6a91cd65ef980c7b0",
+      "bytes": 74235
+    },
+    {
+      "path": "normal-wound/seed42/bdm.toml",
+      "sha256": "e0bb4cc29d073db7f6547371c263bbc922709f4d0cf7583f10bbb4cd0fb1776a",
+      "bytes": 59167
+    },
+    {
+      "path": "normal-wound/seed42/receipt.json",
+      "sha256": "68fea8e828641dd0f97cdbfcd99548ff576339334bb95a54195429929ef35df6",
+      "bytes": 151
+    },
+    {
+      "path": "normal-wound/seed42/stdout.log",
+      "sha256": "b6ff1b3bc857398b6d359ff631f01cb03ad657c722b19625c981cf98158abf12",
+      "bytes": 159
+    },
+    {
+      "path": "normal-wound/seed42/stderr.log",
+      "sha256": "69b0e5c2c0fc8b4d0752ce6ad49e5efeb64dd5f547c24a64fe7045487cc22250",
+      "bytes": 12145
+    },
+    {
+      "path": "normal-wound/seed42/validation.txt",
+      "sha256": "809fe032d6359b90ad138c6a935e8956e063ba0b01c3f2cb3ff659c45479d41f",
+      "bytes": 3668
+    },
+    {
+      "path": "normal-wound/seed42/skibidy/metrics.csv",
+      "sha256": "b0485b1228eb9fe22b0a036b772e457b9970c9a9f59ddf6cd3ca1a92d7d224da",
+      "bytes": 24195
+    },
+    {
+      "path": "normal-wound/seed42/skibidy/validation.json",
+      "sha256": "11c1486857ae73e793a9f3b75e9265c56f467cd3daf00bb2fc1875ea6720cdd7",
+      "bytes": 6982
+    },
+    {
+      "path": "normal-wound/seed43/bdm.toml",
+      "sha256": "86dc52ba4e5f42bbc2fec0416684c460efa281add183d68c977c5c8d11fb5a7d",
+      "bytes": 59167
+    },
+    {
+      "path": "normal-wound/seed43/receipt.json",
+      "sha256": "45b99f8722d972e391dd5a46e13c4ca01f4399733d4dcd5d8b889c45afe41140",
+      "bytes": 151
+    },
+    {
+      "path": "normal-wound/seed43/stdout.log",
+      "sha256": "fa0cc7405ac114045965ad1bb0971d74d445950a172c7132277c695cae9d5a6d",
+      "bytes": 159
+    },
+    {
+      "path": "normal-wound/seed43/stderr.log",
+      "sha256": "69b0e5c2c0fc8b4d0752ce6ad49e5efeb64dd5f547c24a64fe7045487cc22250",
+      "bytes": 12145
+    },
+    {
+      "path": "normal-wound/seed43/validation.txt",
+      "sha256": "8be77a4bba15900d899a7be17252a7bf366245e8dea05d89e1d35b6cc147fb99",
+      "bytes": 3667
+    },
+    {
+      "path": "normal-wound/seed43/skibidy/metrics.csv",
+      "sha256": "345e037c68ab2c621ab0eaeed3e35de1a78bc15eccd8e07f8a073b8cd10e2834",
+      "bytes": 24278
+    },
+    {
+      "path": "normal-wound/seed43/skibidy/validation.json",
+      "sha256": "3a392d2f345dba44c172d90de0127fb13dcbbd782c56f1632dfd2f23fe5414f8",
+      "bytes": 6983
+    },
+    {
+      "path": "normal-wound/seed44/bdm.toml",
+      "sha256": "7c93e39f5a9d5eac23af28c2af98664d0aaea0d36a4f300f7a76a628ff7650a1",
+      "bytes": 59167
+    },
+    {
+      "path": "normal-wound/seed44/receipt.json",
+      "sha256": "34c940510df69a5dc8bffb0c02231885e12b2abbf34febebbaffe0df0ae6a5be",
+      "bytes": 151
+    },
+    {
+      "path": "normal-wound/seed44/stdout.log",
+      "sha256": "dfbf959238414409e80c058f4f69516eda13faeeff4ba7e856f540c40a06019e",
+      "bytes": 159
+    },
+    {
+      "path": "normal-wound/seed44/stderr.log",
+      "sha256": "69b0e5c2c0fc8b4d0752ce6ad49e5efeb64dd5f547c24a64fe7045487cc22250",
+      "bytes": 12145
+    },
+    {
+      "path": "normal-wound/seed44/validation.txt",
+      "sha256": "e44ebe4cbaf5e0bc49f0628d9e47c140d4e0e6eb8248392fd3ac2c181d294ab4",
+      "bytes": 3667
+    },
+    {
+      "path": "normal-wound/seed44/skibidy/metrics.csv",
+      "sha256": "b7738319e1f010a441da5487bca758eb81bfd717394ec3e2d5b3a8c817052925",
+      "bytes": 24252
+    },
+    {
+      "path": "normal-wound/seed44/skibidy/validation.json",
+      "sha256": "b4fda4ee271f0697c57a9d22973da20f8c99c4990b295554c098f9360f442b24",
+      "bytes": 6985
+    },
+    {
+      "path": "normal-wound/consensus_metrics.csv",
+      "sha256": "f51bfc523c708085f7eb1bb733b075fb844e0cb6cb63ba716907237617cb7fed",
+      "bytes": 26099
+    },
+    {
+      "path": "normal-wound/sample_std.csv",
+      "sha256": "3ff3898a0a711f6d822dbdb52eed87c0727b0bc0ad35dbcf6201ba4011952b11",
+      "bytes": 27725
+    },
+    {
+      "path": "diabetic-diabetic-wound/seed42/bdm.toml",
+      "sha256": "b47aa6f8f91814b38e7fbcedfd0524deab98b3b067a69fbf5577b48838beb479",
+      "bytes": 59163
+    },
+    {
+      "path": "diabetic-diabetic-wound/seed42/receipt.json",
+      "sha256": "bd6bc3a731e5df72808b9e5dde3738774e0e1d4d4a7329286223bf2167793008",
+      "bytes": 162
+    },
+    {
+      "path": "diabetic-diabetic-wound/seed42/stdout.log",
+      "sha256": "c40be6c8096896d032d8b04710fe31ecef7d0765cfe76b17092fc6507006e045",
+      "bytes": 160
+    },
+    {
+      "path": "diabetic-diabetic-wound/seed42/stderr.log",
+      "sha256": "69b0e5c2c0fc8b4d0752ce6ad49e5efeb64dd5f547c24a64fe7045487cc22250",
+      "bytes": 12145
+    },
+    {
+      "path": "diabetic-diabetic-wound/seed42/validation.txt",
+      "sha256": "6b06001a15cadb8df32e07fb4037c974c44341e56cb804dc48d397a2f6d039c0",
+      "bytes": 4766
+    },
+    {
+      "path": "diabetic-diabetic-wound/seed42/skibidy/metrics.csv",
+      "sha256": "7376df6c0087b4d98d2c67c072a4aae70c7be8ab47f104ddd95d36f1bfe6f0ee",
+      "bytes": 14412
+    },
+    {
+      "path": "diabetic-diabetic-wound/seed42/skibidy/validation.json",
+      "sha256": "90bc8c1577ad594d509ec7a52991361063abdb91a7b4da93812e916731a11b63",
+      "bytes": 5826
+    },
+    {
+      "path": "diabetic-diabetic-wound/seed43/bdm.toml",
+      "sha256": "8974118b1a5c4bcd176c6f96816d812c87b707d32bc7247a797438ddc77e48a0",
+      "bytes": 59163
+    },
+    {
+      "path": "diabetic-diabetic-wound/seed43/receipt.json",
+      "sha256": "977a189a76cb6989dab854ea53f949c7a190800933773599be571419554ac3f4",
+      "bytes": 161
+    },
+    {
+      "path": "diabetic-diabetic-wound/seed43/stdout.log",
+      "sha256": "d13ea97b57641a1d80a72367da9dbe0333144a7d3040d7b85c72602f54195a74",
+      "bytes": 160
+    },
+    {
+      "path": "diabetic-diabetic-wound/seed43/stderr.log",
+      "sha256": "69b0e5c2c0fc8b4d0752ce6ad49e5efeb64dd5f547c24a64fe7045487cc22250",
+      "bytes": 12145
+    },
+    {
+      "path": "diabetic-diabetic-wound/seed43/validation.txt",
+      "sha256": "8802f22e7154ee32c772047f71c0e02f7c634cf2910144759747aef867906a54",
+      "bytes": 4767
+    },
+    {
+      "path": "diabetic-diabetic-wound/seed43/skibidy/metrics.csv",
+      "sha256": "d84557d613e80ce6482293c03433d8fab48770e520f7809c4f0eff24cf0fa67d",
+      "bytes": 14334
+    },
+    {
+      "path": "diabetic-diabetic-wound/seed43/skibidy/validation.json",
+      "sha256": "cd764f07bd32338557254afa37427b00c01fd1e28a296c4884d4d76e9558b564",
+      "bytes": 5828
+    },
+    {
+      "path": "diabetic-diabetic-wound/seed44/bdm.toml",
+      "sha256": "ec5ba94f8697d8cf6c7a4498e7426dd20e61fd03e0efb3f5c45c8ade0f2d98b5",
+      "bytes": 59163
+    },
+    {
+      "path": "diabetic-diabetic-wound/seed44/receipt.json",
+      "sha256": "f6e045c9827f3107cf12e5ff03e244f614371c02c02ec5a9898cd130d071d406",
+      "bytes": 162
+    },
+    {
+      "path": "diabetic-diabetic-wound/seed44/stdout.log",
+      "sha256": "b5c4128960829ddeedf0b5d7724ca6681b220f01e04c55272efd65e470658d87",
+      "bytes": 159
+    },
+    {
+      "path": "diabetic-diabetic-wound/seed44/stderr.log",
+      "sha256": "69b0e5c2c0fc8b4d0752ce6ad49e5efeb64dd5f547c24a64fe7045487cc22250",
+      "bytes": 12145
+    },
+    {
+      "path": "diabetic-diabetic-wound/seed44/validation.txt",
+      "sha256": "1ee7c8fd1f726c89d19c354d42781b9d280db88ec05f02d5c8d4267107557ef4",
+      "bytes": 4767
+    },
+    {
+      "path": "diabetic-diabetic-wound/seed44/skibidy/metrics.csv",
+      "sha256": "c1c8fe843acfd7e44e5d401c3ef6f19aeb2811bbc0fe26ce9e59a76086c39282",
+      "bytes": 14321
+    },
+    {
+      "path": "diabetic-diabetic-wound/seed44/skibidy/validation.json",
+      "sha256": "1f4d0db46627824de64e41c4e98d3ff36ff280b7b6bcd996146693f45726e5e7",
+      "bytes": 5830
+    },
+    {
+      "path": "diabetic-diabetic-wound/consensus_metrics.csv",
+      "sha256": "5c91cfc198b2c4c7208bc42cd141790e348d2db8cbf4c4fd6f1594cae391d456",
+      "bytes": 15745
+    },
+    {
+      "path": "diabetic-diabetic-wound/sample_std.csv",
+      "sha256": "b0b19eba411b0deb1742a909f9657c1047939519d069880f9bf0366f820d7f66",
+      "bytes": 16615
+    },
+    {
+      "path": "normal-full-model/seed42/bdm.toml",
+      "sha256": "1c216fad56d26c3118bee08467cb621d348dd52267388f9ea624427c99e08fce",
+      "bytes": 59169
+    },
+    {
+      "path": "normal-full-model/seed42/receipt.json",
+      "sha256": "b27e3ad9f04cf5bb8de26a28123436617661cf4e290b610edced2033f3605a28",
+      "bytes": 156
+    },
+    {
+      "path": "normal-full-model/seed42/stdout.log",
+      "sha256": "dfbf959238414409e80c058f4f69516eda13faeeff4ba7e856f540c40a06019e",
+      "bytes": 159
+    },
+    {
+      "path": "normal-full-model/seed42/stderr.log",
+      "sha256": "69b0e5c2c0fc8b4d0752ce6ad49e5efeb64dd5f547c24a64fe7045487cc22250",
+      "bytes": 12145
+    },
+    {
+      "path": "normal-full-model/seed42/validation.txt",
+      "sha256": "2f4b80e8486c280f9cacbfff3315d3560de949d8e153a677aac977bccc18653d",
+      "bytes": 3673
+    },
+    {
+      "path": "normal-full-model/seed42/skibidy/metrics.csv",
+      "sha256": "8abd2fc2119a218bdd8a4a80582441506a57812f6745d6ab2d1aeb7615dbe42e",
+      "bytes": 24271
+    },
+    {
+      "path": "normal-full-model/seed42/skibidy/validation.json",
+      "sha256": "95f6fb14fd7879bf9a645c07f135cbae779a25bc7b6e6cc61afa95809298c37a",
+      "bytes": 6991
+    },
+    {
+      "path": "normal-full-model/seed43/bdm.toml",
+      "sha256": "efc28ca9888876290122458cb021880a9bc24b0e57bd22a24790a74b34e716ae",
+      "bytes": 59169
+    },
+    {
+      "path": "normal-full-model/seed43/receipt.json",
+      "sha256": "f81a1d605a69fabb4828444912a0c2e74a06660523a24e6931219ddd2c5022be",
+      "bytes": 150
+    },
+    {
+      "path": "normal-full-model/seed43/stdout.log",
+      "sha256": "fa0cc7405ac114045965ad1bb0971d74d445950a172c7132277c695cae9d5a6d",
+      "bytes": 159
+    },
+    {
+      "path": "normal-full-model/seed43/stderr.log",
+      "sha256": "69b0e5c2c0fc8b4d0752ce6ad49e5efeb64dd5f547c24a64fe7045487cc22250",
+      "bytes": 12145
+    },
+    {
+      "path": "normal-full-model/seed43/validation.txt",
+      "sha256": "2a48c034591029649269582de06a9a0d3ee9b423e2b0d1fff7a4576be9506e35",
+      "bytes": 3673
+    },
+    {
+      "path": "normal-full-model/seed43/skibidy/metrics.csv",
+      "sha256": "8de6dc93fe18edd63a357575ad75276f6dcf276a22634604ba2feb7815f537d7",
+      "bytes": 24299
+    },
+    {
+      "path": "normal-full-model/seed43/skibidy/validation.json",
+      "sha256": "aebb2957998ce3a9b12199135dd09697fee94336fc6d91ec374fd1999dec54d1",
+      "bytes": 6995
+    },
+    {
+      "path": "normal-full-model/seed44/bdm.toml",
+      "sha256": "5822e7fc63b42e2791d84ab4f38907c15c623379565da9613d369d7a61d5f83f",
+      "bytes": 59169
+    },
+    {
+      "path": "normal-full-model/seed44/receipt.json",
+      "sha256": "0a52b5fb80e8ca5368f7345ca9e127526a648321921dba663ae78e5b4c89b014",
+      "bytes": 156
+    },
+    {
+      "path": "normal-full-model/seed44/stdout.log",
+      "sha256": "873e55229e70731aebf83cd651ff6b75d6263380e1d4221ab67d559cfe69acab",
+      "bytes": 159
+    },
+    {
+      "path": "normal-full-model/seed44/stderr.log",
+      "sha256": "69b0e5c2c0fc8b4d0752ce6ad49e5efeb64dd5f547c24a64fe7045487cc22250",
+      "bytes": 12145
+    },
+    {
+      "path": "normal-full-model/seed44/validation.txt",
+      "sha256": "063c97398cb969e65d4cd99d1f2d6371ed2ce83a5b6b5edbb828b2189e359d03",
+      "bytes": 3671
+    },
+    {
+      "path": "normal-full-model/seed44/skibidy/metrics.csv",
+      "sha256": "7b6eb0ccd3158c54aa51ba87911545a00f292e657dc406757a1934fbbf4bddfc",
+      "bytes": 24291
+    },
+    {
+      "path": "normal-full-model/seed44/skibidy/validation.json",
+      "sha256": "ac180dd5db0afbc4875011f24234843adf83346bb3701c42e01f505e46290392",
+      "bytes": 6991
+    },
+    {
+      "path": "normal-full-model/consensus_metrics.csv",
+      "sha256": "8f2f7811105c343b65d8cc4ef69de8b595d27af54f60dc430ba8fa4645d388e6",
+      "bytes": 26013
+    },
+    {
+      "path": "normal-full-model/sample_std.csv",
+      "sha256": "ae95fc3f9505eafa899e7246b75c073bf11604b45ef1b28d21a1e558bdc6fff6",
+      "bytes": 27623
+    }
+  ],
+  "runtime_provenance": {
+    "historical_executable_sha256": "069fb62a98dfe127664ccba0237da4225ba3ea77140201a29adb7e43516aa815",
+    "known_frozen_files": [
+      {
+        "path": ".git/baseline-runtime/build/skibidy",
+        "sha256": "069fb62a98dfe127664ccba0237da4225ba3ea77140201a29adb7e43516aa815"
+      },
+      {
+        "path": ".git/baseline-runtime/build/libskibidy.so",
+        "sha256": "8347b214b9c5bdc18857daf88178ec71e878c79379e4331927b663790f944780"
+      }
+    ],
+    "loaded_shared_library_identity": "not recorded",
+    "limitation": "Frozen library hash identifies a known file only. The old runner did not prepend its selected build directory or capture dependency resolution/process mappings; these nine runs do not prove which libskibidy, BioDynaMo or ROOT libraries were loaded."
+  },
+  "limits": "Three stochastic model seeds per condition; no new simulation or validation run. Saved validation failures are retained. Original configs and evidence are byte-preserved."
+}

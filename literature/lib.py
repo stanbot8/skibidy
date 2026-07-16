@@ -1,0 +1,1249 @@
+"""Shared utilities for validation scripts.
+
+Provides CSV loading, interpolation, normalization, error metrics,
+module-level validate/plot/print functions used by validate_all.py
+and the individual compare_*.py wrappers.
+"""
+
+import csv
+import copy
+import json
+import math
+import os
+from batch.lib import load_csv
+
+
+# ---------------------------------------------------------------------------
+# Low-level helpers
+# ---------------------------------------------------------------------------
+
+def plots_dir(csv_path):
+    """Derive plots output directory from a metrics CSV path.
+
+    Returns <csv_parent>/plots/, e.g. studies/wound/results/plots/.
+    """
+    return os.path.join(os.path.dirname(os.path.abspath(csv_path)), "plots")
+
+
+# load_csv imported from batch.lib (canonical version)
+def interpolate(x_ref, y_ref, x_query, extrapolate=True):
+    """Linear interpolation of (x_ref, y_ref) at x_query points."""
+    result = []
+    for xq in x_query:
+        if not extrapolate and (xq < x_ref[0] or xq > x_ref[-1]):
+            result.append(float("nan"))
+        elif xq <= x_ref[0]:
+            result.append(y_ref[0])
+        elif xq >= x_ref[-1]:
+            result.append(y_ref[-1])
+        else:
+            for i in range(len(x_ref) - 1):
+                if x_ref[i] <= xq <= x_ref[i + 1]:
+                    t = (xq - x_ref[i]) / (x_ref[i + 1] - x_ref[i])
+                    result.append(y_ref[i] + t * (y_ref[i + 1] - y_ref[i]))
+                    break
+    return result
+
+
+def _window_normalize(values, days, reference_days, mode="peak", reference_values=None):
+    """Define normalization only within the observed reference window."""
+    start, end = max(days[0], reference_days[0]), min(days[-1], reference_days[-1])
+    if start > end:
+        return values, 0
+    # Include interpolated boundaries: the final recorded sample inside the
+    # window is not necessarily the value at the reference endpoint.
+    inside = interpolate(days, values, [start, end], extrapolate=False)
+    inside += [v for d, v in zip(days, values) if start <= d <= end]
+    denominator = max(inside) if mode == "peak" else interpolate(days, values, [end])[0]
+    if reference_values is not None:
+        reference_inside = interpolate(reference_days, reference_values, [start, end])
+        reference_inside += [v for d, v in zip(reference_days, reference_values) if start <= d <= end]
+        target = max(reference_inside) if mode == "peak" else reference_inside[1]
+        # Match the reference's peak/endpoint in the same observed overlap.
+        # A partial run must not be forced to its unobserved full-window anchor.
+        # A zero target supplies no scale anchor.
+        denominator = denominator / target if target > 0 else 0
+    return ([v / denominator for v in values], denominator) if denominator > 0 else (values, 0)
+
+
+def curve_rmse(days, values, reference_days, reference_values,
+               day_start=None, day_end=None, normalization_denominator=None):
+    """Time-weighted RMSE of piecewise-linear curves on their date overlap.
+
+    Integrate squared residuals exactly between all simulation/reference knots.
+    Redundant samples on a straight segment cannot change its weight. No
+    extrapolation, independent-observation claim, or biological uncertainty.
+    """
+    if len(days) != len(values) or len(reference_days) != len(reference_values):
+        raise ValueError("Comparison lengths differ")
+    if not days or not reference_days:
+        return float("nan")
+    for dates, series in ((days, values), (reference_days, reference_values)):
+        if (not all(math.isfinite(v) for v in dates + series)
+                or any(b <= a for a, b in zip(dates, dates[1:]))):
+            raise ValueError("Comparison curves require finite values and strictly increasing dates")
+    if normalization_denominator == 0 and any(v != 0 for v in values):
+        return float("nan")  # No scale anchor for a nonzero normalized curve.
+    start = max(days[0], reference_days[0], day_start if day_start is not None else -math.inf)
+    end = min(days[-1], reference_days[-1], day_end if day_end is not None else math.inf)
+    if start >= end:
+        return float("nan")
+    knots = sorted({start, end} | {d for d in days + reference_days if start < d < end})
+    errors = [s - r for s, r in zip(interpolate(days, values, knots),
+                                   interpolate(reference_days, reference_values, knots))]
+    integral = math.fsum((b - a) * (e0 * e0 + e0 * e1 + e1 * e1) / 3
+                         for a, b, e0, e1 in zip(knots, knots[1:], errors, errors[1:]))
+    return math.sqrt(integral / (end - start))
+
+
+def peak_normalize(values):
+    """Normalize a list by its maximum value. Returns (normalized, peak)."""
+    peak = max(values)
+    if peak > 0:
+        return [v / peak for v in values], peak
+    return values, 0
+
+
+def end_normalize(values):
+    """Normalize a list by its final value. Returns (normalized, final)."""
+    final = values[-1] if values else 0
+    if final > 0:
+        return [v / final for v in values], final
+    return values, 0
+
+
+def compute_rmse(sim, ref):
+    """Compute root-mean-square error between two lists."""
+    if len(sim) != len(ref):
+        raise ValueError("Comparison lengths differ")
+    errors = [s - r for s, r in zip(sim, ref) if math.isfinite(r)]
+    if not errors:
+        return float("nan")
+    return math.sqrt(sum(e ** 2 for e in errors) / len(errors))
+
+
+
+
+def phase_rmse(sim_days, sim_vals, ref_at_sim, day_start, day_end):
+    """Compute RMSE over a day range."""
+    indices = [i for i, d in enumerate(sim_days)
+               if day_start <= d <= day_end and math.isfinite(ref_at_sim[i])]
+    if not indices:
+        return float("nan")
+    errors = [sim_vals[i] - ref_at_sim[i] for i in indices]
+    return math.sqrt(sum(e ** 2 for e in errors) / len(errors))
+
+
+def surface_fraction(n_cells, cell_diameter=4.0, packing=0.5):
+    """Estimate surface-shell fraction for a sphere of n_cells."""
+    if n_cells <= 1:
+        return 1.0
+    R = (cell_diameter / 2.0) * (n_cells / packing) ** (1.0 / 3.0)
+    ratio = max(0, 1 - cell_diameter / R)
+    return 1.0 - ratio ** 3
+
+
+# ---------------------------------------------------------------------------
+# Reference data resolution (consensus CSVs live inside each module)
+# ---------------------------------------------------------------------------
+
+_MODULES_DIR = os.path.join(os.path.dirname(__file__), os.pardir, "modules")
+_STUDIES_DIR = os.path.join(os.path.dirname(__file__), os.pardir, "studies")
+
+_FILE_MODULE_MAP = {
+    "closure_kinetics_punch_biopsy.csv": "wound",
+    "inflammation_timecourse.csv": "inflammation",
+    "immune_cell_kinetics.csv": "immune",
+    "myofibroblast_kinetics.csv": "fibroblast",
+    "collagen_deposition.csv": "fibroblast",
+    "tgfb_kinetics.csv": "fibroblast",
+    "fibroblast_kinetics.csv": "fibroblast",
+    "fibronectin_kinetics.csv": "fibronectin",
+    "mmp_kinetics.csv": "mmp",
+    "vegf_kinetics.csv": "angiogenesis",
+    "diabetic_closure_kinetics.csv": "diabetic",
+    "diabetic_inflammation_timecourse.csv": "diabetic",
+    "diabetic_immune_cell_kinetics.csv": "diabetic",
+    "diabetic_mmp_kinetics.csv": "diabetic",
+    "diabetic_tgfb_kinetics.csv": "diabetic",
+    "tumor_doubling_time.csv": "tumor",
+    "tumor_growth_rate.csv": "tumor",
+    "tumor_proliferation_index.csv": "tumor",
+    "ph_kinetics.csv": "ph",
+    "burn_closure_kinetics.csv": "burn",
+    "burn_inflammation_timecourse.csv": "burn",
+    "burn_immune_cell_kinetics.csv": "burn",
+    "pressure_closure_kinetics.csv": "pressure",
+    "pressure_inflammation_timecourse.csv": "pressure",
+    "pressure_immune_cell_kinetics.csv": "pressure",
+    "surgical_closure_kinetics.csv": "wound",
+    "surgical_inflammation_timecourse.csv": "wound",
+    "surgical_immune_cell_kinetics.csv": "wound",
+    "venous_closure_kinetics.csv": "wound",
+    "p16_p21_age_cross_section.csv": "senescence",
+    "scar_posas_observer_normal.csv": "scar",
+    "scleroderma_mrss_trajectory.csv": "scar",
+}
+
+
+def _ref_path(filename):
+    """Resolve a consensus CSV filename to its module data path."""
+    module = _FILE_MODULE_MAP[filename]
+    return os.path.join(_MODULES_DIR, module, "data", filename)
+
+
+def _study_ref_path(study, module, filename):
+    """Resolve a consensus CSV filename for a study-scoped module."""
+    return os.path.join(_STUDIES_DIR, study, "modules", module, "data", filename)
+
+
+# ---------------------------------------------------------------------------
+# Condition detection (normal vs diabetic)
+# ---------------------------------------------------------------------------
+
+def condition_from_config(config):
+    """Use saved condition metadata and active modes, never directory names."""
+    skin = config.get("skin", {})
+    active = [name for name, section in
+              [("diabetic", "diabetic"), ("burn", "burn"),
+               ("pressure", "pressure"), ("rheumatoid", "ra")]
+              if skin.get(section, {}).get("mode", False)
+              or (section == "ra" and skin.get(section, {}).get("enabled", False))]
+    if len(active) > 1:
+        raise ValueError(f"ambiguous active conditions: {active}")
+    metadata = config.get("analysis", {})
+    declared = metadata.get("condition") or metadata.get("profile")
+    if active:
+        if declared and declared not in (active[0], "normal", "default"):
+            raise ValueError(f"saved condition {declared} conflicts with {active[0]}")
+        return active[0]
+    return declared or "normal"
+
+
+def detect_condition(config_path=None):
+    """Read the run's TOML; missing evidence is an error."""
+    from batch.lib import parse_toml
+    if config_path is None:
+        config_path = os.path.join(os.path.dirname(__file__), os.pardir, "bdm.toml")
+    return condition_from_config(parse_toml(config_path))
+
+
+SIM_COLOR = "#D46664"
+REF_COLOR = "#4A90D9"
+REF_KW = dict(color=REF_COLOR, linewidth=1.5, linestyle="--",
+              marker="o", markersize=4, label="Modeling target")
+SIM_KW = dict(color=SIM_COLOR, linewidth=2, label="Simulation")
+
+
+def show_normalized_range(ax):
+    """Keep large normalized residuals visible instead of clipping at one."""
+    lo, hi = ax.get_xlim()
+    visible = [float(y) for line in ax.lines
+               for x, y in zip(line.get_xdata(), line.get_ydata())
+               if lo <= x <= hi and math.isfinite(y)]
+    maximum = max(visible, default=1)
+    if maximum > 1.15:
+        ax.set_yscale("symlog", linthresh=1)
+        ax.set_ylim(-.05, max(maximum, ax.dataLim.ymax) * 1.2)
+
+def detect_modules(sim, config=None):
+    """Return (has_wound, has_fibroblast, has_tumor, has_microenv, has_ph, has_ra) booleans."""
+    if config is not None:
+        skin = config.get("skin", {})
+        enabled = lambda name: skin.get(name, {}).get("enabled", False)
+        wound = enabled("wound")
+        return (wound, wound and enabled("fibroblast"), enabled("tumor"),
+                wound and any(enabled(name) for name in ("fibroblast", "mmp", "angiogenesis", "fibronectin")),
+                wound and "ph" in skin, enabled("ra"))
+    has_wound = ("wound_closure_pct" in sim
+                 and max(sim["wound_closure_pct"]) > 0)
+    has_fibroblast = (has_wound and "n_myofibroblasts" in sim
+                      and max(sim["n_myofibroblasts"]) > 0)
+    has_tumor = ("n_tumor_cells" in sim
+                 and (max(sim["n_tumor_cells"]) > 0
+                      or ("tumor_field_cells" in sim
+                          and max(sim["tumor_field_cells"]) > 0)))
+    has_microenv = (has_wound
+                    and "mean_tgfb_wound" in sim
+                    and max(sim["mean_tgfb_wound"]) > 0)
+    has_ph = (has_wound
+              and "mean_ph_wound" in sim
+              and max(sim["mean_ph_wound"]) > 0)
+    has_ra = ("mean_tnf_alpha_wound" in sim
+              and max(sim["mean_tnf_alpha_wound"]) > 0)
+    return has_wound, has_fibroblast, has_tumor, has_microenv, has_ph, has_ra
+
+
+# ---------------------------------------------------------------------------
+# Validate functions (pure computation, no I/O)
+# ---------------------------------------------------------------------------
+
+def validate_wound(sim, sim_days, condition="normal"):
+    """Compute wound validation metrics. Returns result dict.
+
+    Supports conditions: normal, diabetic, burn, pressure, surgical.
+    Each loads condition-specific reference curves from the corresponding
+    module data directory.
+    """
+    if condition not in ("normal", "diabetic", "burn", "pressure", "surgical"):
+        return None
+    if condition == "diabetic":
+        ref_closure = load_csv(_ref_path("diabetic_closure_kinetics.csv"))
+        ref_infl = load_csv(_ref_path("diabetic_inflammation_timecourse.csv"))
+        ref_immune = load_csv(_ref_path("diabetic_immune_cell_kinetics.csv"))
+    elif condition == "burn":
+        ref_closure = load_csv(_ref_path("burn_closure_kinetics.csv"))
+        ref_infl = load_csv(_ref_path("burn_inflammation_timecourse.csv"))
+        ref_immune = load_csv(_ref_path("burn_immune_cell_kinetics.csv"))
+    elif condition == "pressure":
+        ref_closure = load_csv(_ref_path("pressure_closure_kinetics.csv"))
+        ref_infl = load_csv(_ref_path("pressure_inflammation_timecourse.csv"))
+        ref_immune = load_csv(_ref_path("pressure_immune_cell_kinetics.csv"))
+    elif condition == "surgical":
+        ref_closure = load_csv(_ref_path("surgical_closure_kinetics.csv"))
+        ref_infl = load_csv(_ref_path("surgical_inflammation_timecourse.csv"))
+        ref_immune = load_csv(_ref_path("surgical_immune_cell_kinetics.csv"))
+    else:
+        ref_closure = load_csv(_ref_path("closure_kinetics_punch_biopsy.csv"))
+        ref_infl = load_csv(_ref_path("inflammation_timecourse.csv"))
+        ref_immune = load_csv(_ref_path("immune_cell_kinetics.csv"))
+
+    sim_closure = sim["wound_closure_pct"]
+    ref_closure_at_sim = interpolate(
+        ref_closure["day"], ref_closure["closure_pct"], sim_days, extrapolate=False)
+    closure_rmse = curve_rmse(sim_days, sim_closure, ref_closure['day'], ref_closure['closure_pct'])
+    closure_ci = None  # Interpolated times are not independent biological replicates.
+    closure_max = max((abs(s - r) for s, r in zip(sim_closure, ref_closure_at_sim) if math.isfinite(r)), default=float("nan"))
+
+    infl_rmse = curve_rmse(sim_days, sim_closure, ref_closure['day'], ref_closure['closure_pct'], 0, 3)
+    prolif_rmse = curve_rmse(sim_days, sim_closure, ref_closure['day'], ref_closure['closure_pct'], 3, 14)
+    remod_rmse = curve_rmse(sim_days, sim_closure, ref_closure['day'], ref_closure['closure_pct'], 14, 28)
+
+    sim_infl, infl_peak = _window_normalize(sim["mean_infl_wound"], sim_days, ref_infl["day"], "peak", ref_infl["inflammation_normalized"]) if ref_infl is not None else (sim["mean_infl_wound"], 0)
+    ref_infl_at_sim = interpolate(
+        ref_infl["day"], ref_infl["inflammation_normalized"], sim_days, extrapolate=False)
+    inflammation_rmse = curve_rmse(sim_days, sim_infl, ref_infl['day'], ref_infl['inflammation_normalized'], normalization_denominator=infl_peak)
+
+    sim_neut, neut_peak = _window_normalize(sim["n_neutrophils"], sim_days, ref_immune["day"], "peak", ref_immune["neutrophils_normalized"]) if ref_immune is not None else (sim["n_neutrophils"], 0)
+    ref_neut_at_sim = interpolate(
+        ref_immune["day"], ref_immune["neutrophils_normalized"], sim_days, extrapolate=False)
+    neut_rmse = curve_rmse(sim_days, sim_neut, ref_immune['day'], ref_immune['neutrophils_normalized'], normalization_denominator=neut_peak)
+
+    sim_mac, mac_peak = _window_normalize(sim["n_macrophages"], sim_days, ref_immune["day"], "peak", ref_immune["macrophages_normalized"]) if ref_immune is not None else (sim["n_macrophages"], 0)
+    ref_mac_at_sim = interpolate(
+        ref_immune["day"], ref_immune["macrophages_normalized"], sim_days, extrapolate=False)
+    mac_rmse = curve_rmse(sim_days, sim_mac, ref_immune['day'], ref_immune['macrophages_normalized'], normalization_denominator=mac_peak)
+
+    return dict(
+        # Series for plotting
+        condition=condition,
+        sim_closure=sim_closure, ref_closure=ref_closure,
+        ref_closure_at_sim=ref_closure_at_sim,
+        sim_infl=sim_infl, ref_infl=ref_infl,
+        ref_infl_at_sim=ref_infl_at_sim, infl_peak=infl_peak,
+        sim_neut=sim_neut, ref_immune=ref_immune,
+        ref_neut_at_sim=ref_neut_at_sim, neut_peak=neut_peak,
+        sim_mac=sim_mac, ref_mac_at_sim=ref_mac_at_sim, mac_peak=mac_peak,
+        # Metrics
+        closure_rmse=closure_rmse, closure_max=closure_max,
+        closure_ci=closure_ci,
+        infl_rmse=infl_rmse, prolif_rmse=prolif_rmse, remod_rmse=remod_rmse,
+        inflammation_rmse=inflammation_rmse,
+        neut_rmse=neut_rmse, mac_rmse=mac_rmse,
+    )
+
+
+def validate_fibroblast(sim, sim_days, condition="normal"):
+    """Compute fibroblast/collagen validation metrics. Returns result dict.
+
+    Reference data is only available for normal wounds. Returns None for
+    non-normal conditions so callers don't report bogus RMSE.
+    """
+    if condition != "normal":
+        return None
+    ref_myofib = load_csv(_ref_path("myofibroblast_kinetics.csv"))
+    ref_collagen = load_csv(_ref_path("collagen_deposition.csv"))
+    ref_fibro = load_csv(_ref_path("fibroblast_kinetics.csv"))
+
+    sim_myofib, myofib_peak = _window_normalize(sim["n_myofibroblasts"], sim_days, ref_myofib["day"], "peak", ref_myofib["myofibroblasts_normalized"]) if ref_myofib is not None else (sim["n_myofibroblasts"], 0)
+    ref_myofib_at_sim = interpolate(
+        ref_myofib["day"], ref_myofib["myofibroblasts_normalized"], sim_days, extrapolate=False)
+    myofib_rmse = curve_rmse(sim_days, sim_myofib, ref_myofib['day'], ref_myofib['myofibroblasts_normalized'], normalization_denominator=myofib_peak)
+
+    sim_collagen, collagen_final = _window_normalize(sim["mean_collagen_wound"], sim_days, ref_collagen["day"], "end",
+                                                    ref_collagen["collagen_normalized"])
+    ref_collagen_at_sim = interpolate(
+        ref_collagen["day"], ref_collagen["collagen_normalized"], sim_days, extrapolate=False)
+    collagen_rmse = curve_rmse(sim_days, sim_collagen, ref_collagen['day'], ref_collagen['collagen_normalized'], normalization_denominator=collagen_final)
+
+    sim_fibro, fibro_peak = _window_normalize(sim["n_fibroblasts"], sim_days, ref_fibro["day"], "peak", ref_fibro["fibroblasts_normalized"]) if ref_fibro is not None else (sim["n_fibroblasts"], 0)
+    ref_fibro_at_sim = interpolate(
+        ref_fibro["day"], ref_fibro["fibroblasts_normalized"], sim_days, extrapolate=False)
+    fibro_rmse = curve_rmse(sim_days, sim_fibro, ref_fibro['day'], ref_fibro['fibroblasts_normalized'], normalization_denominator=fibro_peak)
+
+    return dict(
+        sim_myofib=sim_myofib, ref_myofib=ref_myofib,
+        ref_myofib_at_sim=ref_myofib_at_sim, myofib_peak=myofib_peak,
+        sim_collagen=sim_collagen, ref_collagen=ref_collagen,
+        ref_collagen_at_sim=ref_collagen_at_sim, collagen_final=collagen_final,
+        sim_fibro=sim_fibro, ref_fibro=ref_fibro,
+        ref_fibro_at_sim=ref_fibro_at_sim, fibro_peak=fibro_peak,
+        myofib_rmse=myofib_rmse, collagen_rmse=collagen_rmse,
+        fibro_rmse=fibro_rmse,
+    )
+
+
+def validate_tumor(sim, sim_days):
+    """Compute tumor validation metrics. Returns result dict."""
+    ref_td = load_csv(_ref_path("tumor_doubling_time.csv"))
+    ref_ki67 = load_csv(_ref_path("tumor_proliferation_index.csv"))
+
+    bcc_doubling_days = 148.0
+    for i, t in enumerate(ref_td["tumor_type"]):
+        if t == "bcc_mean":
+            bcc_doubling_days = ref_td["doubling_time_days"][i]
+            break
+
+    bcc_ki67_pct = 27.4
+    for i, t in enumerate(ref_ki67["tumor_type"]):
+        if t == "bcc_all":
+            bcc_ki67_pct = ref_ki67["ki67_pct"][i]
+            break
+
+    # The binary field records occupied voxels, not conserved cell numbers.
+    sim_tumor = sim["n_tumor_cells"]
+    occupied_voxels = sim.get("tumor_field_cells", [])
+
+    nonzero = [(d, n) for d, n in zip(sim_days, sim_tumor) if n > 0]
+    observed_doubling = float("inf")
+    if len(nonzero) >= 2:
+        d0, n0 = nonzero[0]
+        d1, n1 = nonzero[-1]
+        if n1 > n0 and n0 > 0:
+            observed_doubling = (d1 - d0) * math.log(2) / math.log(n1 / n0)
+
+    ref_tumor_exp = []
+    if nonzero:
+        n_init = nonzero[0][1]
+        d_start = nonzero[0][0]
+        for d in sim_days:
+            if d >= d_start and n_init > 0:
+                ref_tumor_exp.append(
+                    n_init * 2 ** ((d - d_start) / bcc_doubling_days))
+            else:
+                ref_tumor_exp.append(0)
+
+    has_cycling = "n_tumor_cycling" in sim
+    sim_ki67 = []
+    mean_ki67 = float("nan")
+    if has_cycling:
+        sim_ki67 = [100.0 * c / n if n > 0 else float("nan")
+                    for c, n in zip(sim["n_tumor_cycling"], sim_tumor)]
+        half = len(sim_ki67) // 2
+        tail = [value for value in sim_ki67[half:] if math.isfinite(value)]
+        mean_ki67 = sum(tail) / len(tail) if tail else float("nan")
+
+    sim_span = sim_days[-1] - (nonzero[0][0] if nonzero else 0)
+    n_init = nonzero[0][1] if nonzero else 0
+    ref_final = n_init * 2 ** (sim_span / bcc_doubling_days) if n_init > 0 else 0
+    obs_final = sim_tumor[-1]
+    obs_x = obs_final / n_init if n_init > 0 else 0
+    ref_x = ref_final / n_init if n_init > 0 else 0
+    sf = surface_fraction(obs_final)
+
+    return dict(
+        sim_tumor=sim_tumor, ref_tumor_exp=ref_tumor_exp,
+        nonzero=nonzero, observed_doubling=observed_doubling,
+        bcc_doubling_days=bcc_doubling_days, bcc_ki67_pct=bcc_ki67_pct,
+        has_cycling=has_cycling, sim_ki67=sim_ki67, mean_ki67=mean_ki67,
+        sim_span=sim_span, n_init=n_init,
+        occupied_voxels=occupied_voxels,
+        interpretation="Active agents only. Handoff/death can reduce this census. Occupied voxels are a separate footprint, not total viable cells or clinical volume.",
+        ref_final=ref_final, obs_final=obs_final,
+        obs_x=obs_x, ref_x=ref_x, sf=sf,
+    )
+
+
+def validate_microenvironment(sim, sim_days, condition="normal"):
+    """Compute microenvironment validation metrics (TGF-b, VEGF, fibronectin, MMP).
+
+    Diabetic MMP and TGF-b targets are constructed trajectories. Lobmann 2002
+    and diabetic fibroblast/macrophage citations supply context, not extracted
+    quantitative timecourses for these files.
+    """
+    if condition not in ("normal", "diabetic"):
+        return None
+    # Diabetic-specific references only exist for TGF-b and MMP; VEGF and
+    # fibronectin have no diabetic reference data so we skip them for
+    # non-normal conditions to avoid bogus RMSE against mismatched curves.
+    if condition == "diabetic":
+        ref_tgfb = load_csv(_ref_path("diabetic_tgfb_kinetics.csv"))
+        ref_mmp = load_csv(_ref_path("diabetic_mmp_kinetics.csv"))
+    else:
+        ref_tgfb = load_csv(_ref_path("tgfb_kinetics.csv"))
+        ref_mmp = load_csv(_ref_path("mmp_kinetics.csv"))
+    has_vegf_ref = (condition == "normal")
+    has_fn_ref = (condition == "normal")
+    ref_vegf = load_csv(_ref_path("vegf_kinetics.csv")) if has_vegf_ref else None
+    ref_fn = load_csv(_ref_path("fibronectin_kinetics.csv")) if has_fn_ref else None
+
+    sim_tgfb, tgfb_peak = _window_normalize(sim["mean_tgfb_wound"], sim_days, ref_tgfb["day"], "peak", ref_tgfb["tgfb_normalized"]) if ref_tgfb is not None else (sim["mean_tgfb_wound"], 0)
+    ref_tgfb_at_sim = interpolate(
+        ref_tgfb["day"], ref_tgfb["tgfb_normalized"], sim_days, extrapolate=False)
+    tgfb_rmse = curve_rmse(sim_days, sim_tgfb, ref_tgfb['day'], ref_tgfb['tgfb_normalized'], normalization_denominator=tgfb_peak)
+
+    sim_vegf, vegf_peak = _window_normalize(sim["mean_vegf_wound"], sim_days, ref_vegf["day"], "peak", ref_vegf["vegf_normalized"]) if ref_vegf is not None else (sim["mean_vegf_wound"], 0)
+    if has_vegf_ref:
+        ref_vegf_at_sim = interpolate(
+            ref_vegf["day"], ref_vegf["vegf_normalized"], sim_days, extrapolate=False)
+        vegf_rmse = curve_rmse(sim_days, sim_vegf, ref_vegf['day'], ref_vegf['vegf_normalized'], normalization_denominator=vegf_peak)
+    else:
+        ref_vegf_at_sim, vegf_rmse = None, None
+
+    sim_fn, fn_peak = _window_normalize(sim["mean_fibronectin_wound"], sim_days, ref_fn["day"], "peak", ref_fn["fibronectin_normalized"]) if ref_fn is not None else (sim["mean_fibronectin_wound"], 0)
+    if has_fn_ref:
+        ref_fn_at_sim = interpolate(
+            ref_fn["day"], ref_fn["fibronectin_normalized"], sim_days, extrapolate=False)
+        fn_rmse = curve_rmse(sim_days, sim_fn, ref_fn['day'], ref_fn['fibronectin_normalized'], normalization_denominator=fn_peak)
+    else:
+        ref_fn_at_sim, fn_rmse = None, None
+
+    sim_mmp, mmp_peak = _window_normalize(sim["mean_mmp_wound"], sim_days, ref_mmp["day"], "peak", ref_mmp["mmp_normalized"]) if ref_mmp is not None else (sim["mean_mmp_wound"], 0)
+    ref_mmp_at_sim = interpolate(
+        ref_mmp["day"], ref_mmp["mmp_normalized"], sim_days, extrapolate=False)
+    mmp_rmse = curve_rmse(sim_days, sim_mmp, ref_mmp['day'], ref_mmp['mmp_normalized'], normalization_denominator=mmp_peak)
+
+    return dict(
+        sim_tgfb=sim_tgfb, ref_tgfb=ref_tgfb,
+        ref_tgfb_at_sim=ref_tgfb_at_sim, tgfb_peak=tgfb_peak,
+        sim_vegf=sim_vegf, ref_vegf=ref_vegf,
+        ref_vegf_at_sim=ref_vegf_at_sim, vegf_peak=vegf_peak,
+        sim_fn=sim_fn, ref_fn=ref_fn,
+        ref_fn_at_sim=ref_fn_at_sim, fn_peak=fn_peak,
+        sim_mmp=sim_mmp, ref_mmp=ref_mmp,
+        ref_mmp_at_sim=ref_mmp_at_sim, mmp_peak=mmp_peak,
+        tgfb_rmse=tgfb_rmse, vegf_rmse=vegf_rmse,
+        fn_rmse=fn_rmse, mmp_rmse=mmp_rmse,
+    )
+
+
+def validate_ph(sim, sim_days):
+    """Compute wound pH (alkalinity) validation metrics. Returns result dict.
+
+    pH is modeled as normalized alkalinity: 1.0 = fresh wound (pH 7.4),
+    0.0 = healed acidic skin (pH 5.5). Reference: Schneider et al. 2007.
+    """
+    ref_ph = load_csv(_ref_path("ph_kinetics.csv"))
+
+    sim_ph = sim["mean_ph_wound"]
+    ref_ph_at_sim = interpolate(
+        ref_ph["day"], ref_ph["ph_alkalinity_normalized"], sim_days, extrapolate=False)
+    ph_rmse = curve_rmse(sim_days, sim_ph, ref_ph['day'], ref_ph['ph_alkalinity_normalized'])
+
+    return dict(
+        sim_ph=sim_ph, ref_ph=ref_ph,
+        ref_ph_at_sim=ref_ph_at_sim,
+        ph_rmse=ph_rmse,
+    )
+
+
+def validate_ra(sim, sim_days):
+    """Compute RA validation metrics. Returns result dict.
+
+    Six observables: TNF-alpha, IL-6 (peak-normalized), cartilage and bone
+    (absolute integrity), T cell density and synovial pannus (peak-normalized).
+    Reference kinetics derived from Feldmann & Maini 2003, Kishimoto 2005,
+    McInnes & Schett 2011, Schett & Gravallese 2012, Firestein 2003.
+    """
+    ref_tnf = load_csv(_study_ref_path("rheumatoid", "rheumatoid",
+                                        "tnf_alpha_kinetics.csv"))
+    ref_il6 = load_csv(_study_ref_path("rheumatoid", "rheumatoid",
+                                        "il6_kinetics.csv"))
+    ref_cart = load_csv(_study_ref_path("rheumatoid", "rheumatoid",
+                                         "cartilage_erosion.csv"))
+    ref_bone = load_csv(_study_ref_path("rheumatoid", "rheumatoid",
+                                         "bone_erosion.csv"))
+    ref_tcell = load_csv(_study_ref_path("rheumatoid", "rheumatoid",
+                                          "tcell_density.csv"))
+    ref_syn = load_csv(_study_ref_path("rheumatoid", "rheumatoid",
+                                        "synovial_pannus.csv"))
+
+    # TNF-alpha: peak-normalize simulation, compare to reference
+    sim_tnf, tnf_peak = _window_normalize(sim["mean_tnf_alpha_wound"], sim_days, ref_tnf["day"], "peak", ref_tnf["tnf_alpha_normalized"]) if ref_tnf is not None else (sim["mean_tnf_alpha_wound"], 0)
+    ref_tnf_at_sim = interpolate(
+        ref_tnf["day"], ref_tnf["tnf_alpha_normalized"], sim_days, extrapolate=False)
+    tnf_rmse = curve_rmse(sim_days, sim_tnf, ref_tnf['day'], ref_tnf['tnf_alpha_normalized'], normalization_denominator=tnf_peak)
+
+    # IL-6: peak-normalize simulation
+    sim_il6, il6_peak = _window_normalize(sim["mean_il6_wound"], sim_days, ref_il6["day"], "peak", ref_il6["il6_normalized"]) if ref_il6 is not None else (sim["mean_il6_wound"], 0)
+    ref_il6_at_sim = interpolate(
+        ref_il6["day"], ref_il6["il6_normalized"], sim_days, extrapolate=False)
+    il6_rmse = curve_rmse(sim_days, sim_il6, ref_il6['day'], ref_il6['il6_normalized'], normalization_denominator=il6_peak)
+
+    # Cartilage: normalize to initial value (wound cylinder includes non-cartilage voxels)
+    sim_cart_raw = sim["mean_cartilage_wound"]
+    cart_init = sim_cart_raw[0] if sim_cart_raw[0] > 1e-6 else 1.0
+    sim_cart = [v / cart_init for v in sim_cart_raw]
+    ref_cart_at_sim = interpolate(
+        ref_cart["day"], ref_cart["cartilage_integrity"], sim_days, extrapolate=False)
+    cart_rmse = curve_rmse(sim_days, sim_cart, ref_cart['day'], ref_cart['cartilage_integrity'])
+
+    # Phase-specific RMSE for TNF
+    tnf_flare_rmse = curve_rmse(sim_days, sim_tnf, ref_tnf['day'], ref_tnf['tnf_alpha_normalized'], 0, 7, normalization_denominator=tnf_peak)
+    tnf_chronic_rmse = curve_rmse(sim_days, sim_tnf, ref_tnf['day'], ref_tnf['tnf_alpha_normalized'], 7, 30, normalization_denominator=tnf_peak)
+
+    # Bone: absolute integrity comparison (slower erosion than cartilage)
+    has_bone = "mean_bone_wound" in sim
+    bone_rmse = 0.0
+    sim_bone = []
+    ref_bone_at_sim = []
+    if has_bone:
+        sim_bone_raw = sim["mean_bone_wound"]
+        bone_init = sim_bone_raw[0] if sim_bone_raw[0] > 1e-6 else 1.0
+        sim_bone = [v / bone_init for v in sim_bone_raw]
+        ref_bone_at_sim = interpolate(
+            ref_bone["day"], ref_bone["bone_integrity"], sim_days, extrapolate=False)
+        bone_rmse = curve_rmse(sim_days, sim_bone, ref_bone['day'], ref_bone['bone_integrity'])
+
+    # T cell density: peak-normalize
+    has_tcell = "mean_tcell_wound" in sim
+    tcell_rmse = 0.0
+    sim_tcell = []
+    tcell_peak = 0.0
+    ref_tcell_at_sim = []
+    if has_tcell:
+        sim_tcell, tcell_peak = _window_normalize(sim["mean_tcell_wound"], sim_days, ref_tcell["day"], "peak", ref_tcell["tcell_normalized"]) if ref_tcell is not None else (sim["mean_tcell_wound"], 0)
+        ref_tcell_at_sim = interpolate(
+            ref_tcell["day"], ref_tcell["tcell_normalized"], sim_days, extrapolate=False)
+        tcell_rmse = curve_rmse(sim_days, sim_tcell, ref_tcell['day'], ref_tcell['tcell_normalized'], normalization_denominator=tcell_peak)
+
+    # Synovial pannus: peak-normalize
+    has_syn = "mean_synovial_wound" in sim
+    syn_rmse = 0.0
+    sim_syn = []
+    syn_peak = 0.0
+    ref_syn_at_sim = []
+    if has_syn:
+        sim_syn, syn_peak = _window_normalize(sim["mean_synovial_wound"], sim_days, ref_syn["day"], "peak", ref_syn["synovial_normalized"]) if ref_syn is not None else (sim["mean_synovial_wound"], 0)
+        ref_syn_at_sim = interpolate(
+            ref_syn["day"], ref_syn["synovial_normalized"], sim_days, extrapolate=False)
+        syn_rmse = curve_rmse(sim_days, sim_syn, ref_syn['day'], ref_syn['synovial_normalized'], normalization_denominator=syn_peak)
+
+    return dict(
+        sim_tnf=sim_tnf, ref_tnf=ref_tnf,
+        ref_tnf_at_sim=ref_tnf_at_sim, tnf_peak=tnf_peak,
+        sim_il6=sim_il6, ref_il6=ref_il6,
+        ref_il6_at_sim=ref_il6_at_sim, il6_peak=il6_peak,
+        sim_cart=sim_cart, ref_cart=ref_cart,
+        ref_cart_at_sim=ref_cart_at_sim,
+        tnf_rmse=tnf_rmse, il6_rmse=il6_rmse, cart_rmse=cart_rmse,
+        tnf_flare_rmse=tnf_flare_rmse, tnf_chronic_rmse=tnf_chronic_rmse,
+        has_bone=has_bone, sim_bone=sim_bone, ref_bone=ref_bone,
+        ref_bone_at_sim=ref_bone_at_sim, bone_rmse=bone_rmse,
+        has_tcell=has_tcell, sim_tcell=sim_tcell, ref_tcell=ref_tcell,
+        ref_tcell_at_sim=ref_tcell_at_sim, tcell_peak=tcell_peak,
+        tcell_rmse=tcell_rmse,
+        has_syn=has_syn, sim_syn=sim_syn, ref_syn=ref_syn,
+        ref_syn_at_sim=ref_syn_at_sim, syn_peak=syn_peak,
+        syn_rmse=syn_rmse,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Plot functions (draw into provided axes)
+# ---------------------------------------------------------------------------
+
+def plot_wound_panels(r, sim_days, axes):
+    """Draw 4 wound panels into a 2x2 axes array."""
+    sim_days = r.get("simulation_days", sim_days)
+    cond = r.get("condition", "normal")
+    ref_label = f"Modeling target ({cond})" if cond != "normal" else "Modeling target"
+    ref_kw = dict(REF_KW, label=ref_label)
+
+    ax = axes[0, 0]
+    ax.plot(sim_days, r["sim_closure"], **SIM_KW)
+    ax.plot(r["ref_closure"]["day"], r["ref_closure"]["closure_pct"], **ref_kw)
+    ax.axhline(90, color="gray", linestyle=":", linewidth=0.8, alpha=0.6)
+    ax.set_ylabel("Wound closure (%)")
+    ax.set_title("Wound Closure" + (f" ({cond})" if cond != "normal" else ""))
+    ax.set_ylim(-2, 105)
+    ax.set_xlim(0, 30)
+    ax.legend(fontsize=8)
+    ax.grid(True, alpha=0.3)
+    ax.text(0.98, 0.05, f"RMSE = {r['closure_rmse']:.1f} pp",
+            transform=ax.transAxes, ha="right", va="bottom",
+            fontsize=8, color="gray")
+
+    ax = axes[0, 1]
+    ax.plot(sim_days, r["sim_infl"], **SIM_KW)
+    ax.plot(r["ref_infl"]["day"], r["ref_infl"]["inflammation_normalized"], **ref_kw)
+    ax.set_ylabel("Inflammation (normalized)")
+    ax.set_title("Inflammation Timecourse")
+    ax.set_ylim(-0.05, 1.15)
+    ax.set_xlim(0, 30)
+    ax.legend(fontsize=8)
+    ax.grid(True, alpha=0.3)
+    ax.text(0.98, 0.95, f"RMSE = {r['inflammation_rmse'] * 100:.1f}%",
+            transform=ax.transAxes, ha="right", va="top",
+            fontsize=8, color="gray")
+
+    ax = axes[1, 0]
+    ax.plot(sim_days, r["sim_neut"], **SIM_KW)
+    ax.plot(r["ref_immune"]["day"], r["ref_immune"]["neutrophils_normalized"], **ref_kw)
+    ax.set_ylabel("Neutrophils (normalized)")
+    ax.set_title("Neutrophil Kinetics")
+    ax.set_ylim(-0.05, 1.15)
+    ax.set_xlim(0, 30)
+    ax.legend(fontsize=8)
+    ax.grid(True, alpha=0.3)
+    ax.text(0.98, 0.85, f"RMSE = {r['neut_rmse'] * 100:.1f}%",
+            transform=ax.transAxes, ha="right", va="top",
+            fontsize=8, color="gray")
+
+    ax = axes[1, 1]
+    ax.plot(sim_days, r["sim_mac"], **SIM_KW)
+    ax.plot(r["ref_immune"]["day"], r["ref_immune"]["macrophages_normalized"], **ref_kw)
+    ax.set_ylabel("Macrophages (normalized)")
+    ax.set_title("Macrophage Kinetics")
+    ax.set_ylim(-0.05, 1.15)
+    ax.set_xlim(0, 30)
+    ax.legend(fontsize=8)
+    ax.grid(True, alpha=0.3)
+    ax.text(0.98, 0.85, f"RMSE = {r['mac_rmse'] * 100:.1f}%",
+            transform=ax.transAxes, ha="right", va="top",
+            fontsize=8, color="gray")
+
+    for a in axes[-1]:
+        a.set_xlabel("Days since wound")
+
+
+def plot_fibroblast_panels(r, sim_days, axes):
+    """Draw 3 fibroblast panels into axes array."""
+    sim_days = r.get("simulation_days", sim_days)
+    ax = axes[0]
+    ax.plot(sim_days, r["sim_fibro"], **SIM_KW)
+    ax.plot(r["ref_fibro"]["day"], r["ref_fibro"]["fibroblasts_normalized"], **REF_KW)
+    ax.set_ylabel("Fibroblasts (normalized)")
+    ax.set_title("Fibroblast Kinetics")
+    ax.set_ylim(-0.05, 1.15)
+    ax.set_xlim(0, 30)
+    ax.legend(fontsize=8)
+    ax.grid(True, alpha=0.3)
+    ax.text(0.98, 0.85, f"RMSE = {r['fibro_rmse'] * 100:.1f}%",
+            transform=ax.transAxes, ha="right", va="top",
+            fontsize=8, color="gray")
+
+    ax = axes[1]
+    ax.plot(sim_days, r["sim_myofib"], **SIM_KW)
+    ax.plot(r["ref_myofib"]["day"], r["ref_myofib"]["myofibroblasts_normalized"], **REF_KW)
+    ax.set_ylabel("Myofibroblasts (normalized)")
+    ax.set_title("Myofibroblast Kinetics")
+    ax.set_ylim(-0.05, 1.15)
+    ax.set_xlim(0, 30)
+    ax.legend(fontsize=8)
+    ax.grid(True, alpha=0.3)
+    ax.text(0.98, 0.85, f"RMSE = {r['myofib_rmse'] * 100:.1f}%",
+            transform=ax.transAxes, ha="right", va="top",
+            fontsize=8, color="gray")
+
+    ax = axes[2]
+    ax.plot(sim_days, r["sim_collagen"], **SIM_KW)
+    ax.plot(r["ref_collagen"]["day"], r["ref_collagen"]["collagen_normalized"], **REF_KW)
+    ax.set_ylabel("Collagen (normalized)")
+    ax.set_title("Collagen Deposition")
+    ax.set_ylim(-0.05, 1.15)
+    ax.set_xlim(0, 30)
+    show_normalized_range(ax)
+    ax.legend(fontsize=8, loc="upper left")
+    ax.grid(True, alpha=0.3)
+    ax.text(0.98, 0.85, f"RMSE = {r['collagen_rmse'] * 100:.1f}%",
+            transform=ax.transAxes, ha="right", va="top",
+            fontsize=8, color="gray")
+
+    axes[-1].set_xlabel("Days since wound")
+
+
+def plot_tumor_panels(r, sim_days, axes):
+    """Draw tumor panels into axes (2 or 3 element array)."""
+    td = r["bcc_doubling_days"]
+
+    # Left: log scale growth
+    ax = axes[0]
+    ax.plot(sim_days, r["sim_tumor"], **SIM_KW)
+    if r["ref_tumor_exp"]:
+        ax.plot(sim_days, r["ref_tumor_exp"], color=REF_COLOR, linewidth=1.5,
+                linestyle="--", label=f"Illustrative Td={td:.0f}d")
+    ax.set_ylabel("Active tumor agents")
+    ax.set_title("Active Agent Census (handoff affects counts)")
+    ax.set_yscale("log")
+    ax.set_ylim(bottom=1)
+    ax.legend(fontsize=8)
+    ax.grid(True, alpha=0.3)
+    if r["observed_doubling"] < float("inf"):
+        ax.text(0.98, 0.05, f"Obs Td = {r['observed_doubling']:.0f}d",
+                transform=ax.transAxes, ha="right", va="bottom",
+                fontsize=8, color="gray")
+
+    # Right: Ki-67 or linear growth
+    ax = axes[1]
+    if r["has_cycling"]:
+        ax.plot(sim_days, r["sim_ki67"], **SIM_KW)
+        ax.axhline(r["bcc_ki67_pct"], color=REF_COLOR, linewidth=1.5,
+                   linestyle="--",
+                   label=f"BCC Ki-67 = {r['bcc_ki67_pct']:.1f}% (established)")
+        ax.set_ylabel("Cycling fraction (%)")
+        ax.set_title("Cycling Among Active Agents")
+        ax.set_ylim(0, 105)
+        ax.text(0.98, 0.85, f"Mean = {r['mean_ki67']:.1f}%",
+                transform=ax.transAxes, ha="right", va="top",
+                fontsize=8, color="gray")
+    else:
+        ax.plot(sim_days, r["occupied_voxels"] or [0] * len(sim_days), **SIM_KW)
+        ax.set_ylabel("Occupied voxels")
+        ax.set_title("Binary Handoff Footprint")
+    ax.legend(fontsize=8)
+    ax.grid(True, alpha=0.3)
+
+    axes[-1].set_xlabel("Time (days)")
+
+
+def plot_microenvironment_panels(r, sim_days, axes):
+    """Plot supported comparisons and explicitly label absent scores."""
+    sim_days = r.get("simulation_days", sim_days)
+    specs = [("tgfb", "TGF-b1 Kinetics", "tgfb_normalized"),
+             ("vegf", "VEGF Kinetics", "vegf_normalized"),
+             ("fn", "Fibronectin Kinetics", "fibronectin_normalized"),
+             ("mmp", "MMP Activity", "mmp_normalized")]
+    for ax, (key, title, column) in zip(axes.flat, specs):
+        ax.plot(sim_days, r["sim_" + key], **SIM_KW)
+        reference = r["ref_" + key]
+        if reference is not None:
+            ax.plot(reference["day"], reference[column], **REF_KW)
+        score = r.get(key + "_rmse")
+        label = f"RMSE = {score * 100:.1f}%" if score is not None and math.isfinite(score) else "Not tested"
+        ax.set(title=title, ylabel="Normalized level", ylim=(-.05, 1.15), xlim=(0, 30))
+        ax.legend(fontsize=8)
+        ax.grid(True, alpha=.3)
+        ax.text(.98, .85, label, transform=ax.transAxes, ha="right", fontsize=8, color="gray")
+    for ax in axes[-1]:
+        ax.set_xlabel("Days since wound")
+
+
+def plot_ph_panel(r, sim_days, ax):
+    """Draw wound pH (alkalinity) panel into a single axes."""
+    sim_days = r.get("simulation_days", sim_days)
+    ax.plot(sim_days, r["sim_ph"], **SIM_KW)
+    ax.plot(r["ref_ph"]["day"], r["ref_ph"]["ph_alkalinity_normalized"], **REF_KW)
+    ax.set_ylabel("Wound alkalinity (normalized)")
+    ax.set_title("Wound pH Recovery")
+    ax.set_ylim(-0.05, 1.15)
+    ax.set_xlim(0, 30)
+    ax.legend(fontsize=8)
+    ax.grid(True, alpha=0.3)
+    ax.text(0.98, 0.85, f"RMSE = {r['ph_rmse'] * 100:.1f}%",
+            transform=ax.transAxes, ha="right", va="top",
+            fontsize=8, color="gray")
+    ax.set_xlabel("Days since wound")
+
+
+def plot_ra_panels(r, sim_days, axes):
+    """Draw RA panels into axes array.
+
+    Expects 3 axes for core panels (TNF, IL-6, cartilage).
+    If extended data is available (bone, T cell, synovial), expects 6 axes.
+    """
+    ax = axes[0]
+    ax.plot(sim_days, r["sim_tnf"], **SIM_KW)
+    ax.plot(r["ref_tnf"]["day"], r["ref_tnf"]["tnf_alpha_normalized"], **REF_KW)
+    ax.set_ylabel("TNF-alpha (normalized)")
+    ax.set_title("TNF-alpha Kinetics")
+    ax.set_ylim(-0.05, 1.15)
+    ax.set_xlim(0, 30)
+    ax.legend(fontsize=8)
+    ax.grid(True, alpha=0.3)
+    ax.text(0.98, 0.85, f"RMSE = {r['tnf_rmse'] * 100:.1f}%",
+            transform=ax.transAxes, ha="right", va="top",
+            fontsize=8, color="gray")
+
+    ax = axes[1]
+    ax.plot(sim_days, r["sim_il6"], **SIM_KW)
+    ax.plot(r["ref_il6"]["day"], r["ref_il6"]["il6_normalized"], **REF_KW)
+    ax.set_ylabel("IL-6 (normalized)")
+    ax.set_title("IL-6 Kinetics")
+    ax.set_ylim(-0.05, 1.15)
+    ax.set_xlim(0, 30)
+    ax.legend(fontsize=8)
+    ax.grid(True, alpha=0.3)
+    ax.text(0.98, 0.85, f"RMSE = {r['il6_rmse'] * 100:.1f}%",
+            transform=ax.transAxes, ha="right", va="top",
+            fontsize=8, color="gray")
+
+    ax = axes[2]
+    ax.plot(sim_days, r["sim_cart"], **SIM_KW)
+    ax.plot(r["ref_cart"]["day"], r["ref_cart"]["cartilage_integrity"], **REF_KW)
+    ax.set_ylabel("Cartilage integrity")
+    ax.set_title("Cartilage Erosion")
+    ax.set_ylim(-0.05, 1.15)
+    ax.set_xlim(0, 30)
+    ax.legend(fontsize=8, loc="lower left")
+    ax.grid(True, alpha=0.3)
+    ax.text(0.98, 0.15, f"RMSE = {r['cart_rmse'] * 100:.1f}%",
+            transform=ax.transAxes, ha="right", va="bottom",
+            fontsize=8, color="gray")
+
+    # Extended panels (bone, T cell, synovial) if axes available
+    if len(axes) < 6:
+        axes[-1].set_xlabel("Time (days)")
+        return
+
+    if r.get("has_bone") and r["sim_bone"]:
+        ax = axes[3]
+        ax.plot(sim_days, r["sim_bone"], **SIM_KW)
+        ax.plot(r["ref_bone"]["day"], r["ref_bone"]["bone_integrity"], **REF_KW)
+        ax.set_ylabel("Bone integrity")
+        ax.set_title("Subchondral Bone Erosion")
+        ax.set_ylim(-0.05, 1.15)
+        ax.set_xlim(0, 30)
+        ax.legend(fontsize=8, loc="lower left")
+        ax.grid(True, alpha=0.3)
+        ax.text(0.98, 0.15, f"RMSE = {r['bone_rmse'] * 100:.1f}%",
+                transform=ax.transAxes, ha="right", va="bottom",
+                fontsize=8, color="gray")
+    else:
+        axes[3].set_visible(False)
+
+    if r.get("has_tcell") and r["sim_tcell"]:
+        ax = axes[4]
+        ax.plot(sim_days, r["sim_tcell"], **SIM_KW)
+        ax.plot(r["ref_tcell"]["day"], r["ref_tcell"]["tcell_normalized"], **REF_KW)
+        ax.set_ylabel("T cell density (normalized)")
+        ax.set_title("T Cell Infiltration")
+        ax.set_ylim(-0.05, 1.15)
+        ax.set_xlim(0, 30)
+        ax.legend(fontsize=8)
+        ax.grid(True, alpha=0.3)
+        ax.text(0.98, 0.85, f"RMSE = {r['tcell_rmse'] * 100:.1f}%",
+                transform=ax.transAxes, ha="right", va="top",
+                fontsize=8, color="gray")
+    else:
+        axes[4].set_visible(False)
+
+    if r.get("has_syn") and r["sim_syn"]:
+        ax = axes[5]
+        ax.plot(sim_days, r["sim_syn"], **SIM_KW)
+        ax.plot(r["ref_syn"]["day"], r["ref_syn"]["synovial_normalized"], **REF_KW)
+        ax.set_ylabel("Pannus density (normalized)")
+        ax.set_title("Synovial Pannus Growth")
+        ax.set_ylim(-0.05, 1.15)
+        ax.set_xlim(0, 30)
+        ax.legend(fontsize=8)
+        ax.grid(True, alpha=0.3)
+        ax.text(0.98, 0.85, f"RMSE = {r['syn_rmse'] * 100:.1f}%",
+                transform=ax.transAxes, ha="right", va="top",
+                fontsize=8, color="gray")
+    else:
+        axes[5].set_visible(False)
+
+    axes[-1].set_xlabel("Time (days)")
+
+
+# ---------------------------------------------------------------------------
+# Print summary
+# ---------------------------------------------------------------------------
+
+def validation_report(wound=None, fibroblast=None, tumor=None, microenv=None,
+                      ph=None, ra=None):
+    """Machine-readable screening results; absence of evidence never passes.
+
+    The existing 15% RMSE is an engineering screening threshold, not a claim
+    of biological validity. Tumor comparisons have no agreed acceptance gate.
+    """
+    coverage = {}
+    groups = [
+        (wound, [("Wound closure", "closure_rmse", 1),
+                 ("Inflammation", "inflammation_rmse", 100),
+                 ("Neutrophils", "neut_rmse", 100),
+                 ("Macrophages", "mac_rmse", 100)]),
+        (fibroblast, [("Fibroblasts", "fibro_rmse", 100),
+                     ("Myofibroblasts", "myofib_rmse", 100),
+                     ("Collagen", "collagen_rmse", 100)]),
+        (microenv, [("TGF-b", "tgfb_rmse", 100), ("VEGF", "vegf_rmse", 100),
+                   ("Fibronectin", "fn_rmse", 100), ("MMP", "mmp_rmse", 100)]),
+        (ph, [("pH", "ph_rmse", 100)]),
+        (ra, [("TNF-alpha", "tnf_rmse", 100), ("IL-6", "il6_rmse", 100),
+              ("Cartilage", "cart_rmse", 100), ("Bone", "bone_rmse", 100),
+              ("T cells", "tcell_rmse", 100), ("Synovium", "syn_rmse", 100)])]
+    for result, observables in groups:
+        for name, key, scale in observables:
+            value = result.get(key) if result is not None else None
+            if result is not None and result is ra and key in ("bone_rmse", "tcell_rmse", "syn_rmse"):
+                flag = {"bone_rmse": "has_bone", "tcell_rmse": "has_tcell", "syn_rmse": "has_syn"}[key]
+                if not result.get(flag, False):
+                    value = None
+            if value is None or not math.isfinite(value):
+                coverage[name] = dict(status="not_tested", reason="disabled, unavailable output, no condition-matched reference, no date overlap, or no usable normalization anchor")
+            else:
+                value *= scale
+                coverage[name] = dict(status="pass" if math.isfinite(value) and value <= 15 else "fail",
+                                      rmse_pct=value if math.isfinite(value) else None,
+                                      threshold_pct=15)
+                coverage[name]["rmse_units"] = "percentage points" if name == "Wound closure" else "percent of target scale"
+    coverage["Tumor"] = dict(status="not_tested", reason="descriptive comparison only; acceptance criterion has not been established" if tumor else "disabled or unavailable output")
+    tested = [r for r in coverage.values() if r["status"] != "not_tested"]
+    status = "fail" if any(r["status"] == "fail" for r in tested) else ("pass" if tested else "not_tested")
+    return dict(status=status, tested=len(tested), coverage=coverage,
+                empirical_validation=False,
+                scoring_method="time-weighted piecewise-linear RMSE v2",
+                evidence="Qualitative modeling targets. Numerical extraction, species/assay matching and uncertainty are not established. See literature/provenance.md.",
+                criterion="15% RMSE engineering screen. Passing the observed overlap does not establish biological validity, absolute magnitude, full reference coverage or untested mechanisms")
+
+
+def wound_comparison_days(sim_days, config):
+    """Match wound reference day zero to the simulation's scheduled injury.
+
+    BDM_ASSIGN_HOURS truncates trigger_h * 10 to an integer step. The
+    simulation timestep is fixed at 0.1 hours, so use the actual event time.
+    """
+    trigger = config.get("skin", {}).get("wound", {}).get("trigger_h", 0)
+    if (isinstance(trigger, bool) or not isinstance(trigger, (int, float))
+            or not math.isfinite(trigger) or trigger < 0):
+        raise ValueError("skin.wound.trigger_h must be a finite nonnegative number")
+    origin_days = int(trigger * 10.0) * 0.1 / 24.0
+    return [0.0 if math.isclose(day, origin_days, rel_tol=0, abs_tol=1e-12)
+            else day - origin_days for day in sim_days]
+
+
+def evaluate_run(sim, sim_days, config, condition):
+    """Shared computation for command-line validation and the dashboard."""
+    saved_condition = condition_from_config(config)
+    if condition != saved_condition:
+        raise ValueError(f"Requested condition {condition!r} differs from saved run condition {saved_condition!r}")
+    hw, hf, ht, hm, hp, hr = detect_modules(sim, config)
+    wound_days = wound_comparison_days(sim_days, config)
+    results = dict(wound=validate_wound(sim, wound_days, condition) if hw else None,
+                   fibroblast=validate_fibroblast(sim, wound_days, condition) if hf else None,
+                   tumor=validate_tumor(sim, sim_days) if ht else None,
+                   microenv=validate_microenvironment(sim, wound_days, condition) if hm else None,
+                   ph=validate_ph(sim, wound_days) if hp and condition == "normal" else None,
+                   ra=validate_ra(sim, sim_days) if hr else None)
+    for group, result in results.items():
+        if result is not None:
+            result["simulation_days"] = (sim_days if group in ("ra", "tumor")
+                                         else wound_days)
+    microenv = results["microenv"]
+    if microenv is not None:
+        for key, owner in [("tgfb", "fibroblast"), ("vegf", "angiogenesis"),
+                           ("fn", "fibronectin"), ("mmp", "mmp")]:
+            if not config.get("skin", {}).get(owner, {}).get("enabled", False):
+                microenv[key + "_rmse"] = None
+    report = validation_report(**results)
+    report["condition"] = condition
+    report["comparison_scope"] = "Only the overlap with each reference's recorded dates; normalization uses that same window."
+    names = {"closure": "Wound closure", "inflammation": "Inflammation",
+             "neut": "Neutrophils", "mac": "Macrophages", "fibro": "Fibroblasts",
+             "myofib": "Myofibroblasts", "collagen": "Collagen", "tgfb": "TGF-b",
+             "vegf": "VEGF", "fn": "Fibronectin", "mmp": "MMP", "ph": "pH",
+             "tnf": "TNF-alpha", "il6": "IL-6", "cart": "Cartilage",
+             "bone": "Bone", "tcell": "T cells", "syn": "Synovium"}
+    for group, result in results.items():
+        if result is None:
+            continue
+        for key, name in names.items():
+            prefix = "infl" if key == "inflammation" else key
+            reference = result.get("ref_" + prefix + "_at_sim")
+            if reference is None:
+                continue
+            dates = [day for day, value in zip(result["simulation_days"], reference)
+                     if math.isfinite(value)]
+            ref_key = "immune" if key in ("neut", "mac") else prefix
+            ref_curve = result.get("ref_" + ref_key)
+            ref_days = ref_curve["day"] if ref_curve else []
+            curve_days = result["simulation_days"]
+            start = max(curve_days[0], ref_days[0]) if ref_days else None
+            end = min(curve_days[-1], ref_days[-1]) if ref_days else None
+            supported = start is not None and start < end
+            report["coverage"][name]["comparison_dates"] = dict(
+                time_origin="simulation" if group in ("ra", "tumor") else "wound",
+                start_day=start if supported else (min(dates) if dates else None),
+                end_day=end if supported else (max(dates) if dates else None),
+                simulation_samples=len(dates),
+                sample_days=dates,
+                reference_start_day=ref_days[0] if ref_days else None,
+                reference_end_day=ref_days[-1] if ref_days else None,
+                full_reference_window=bool(supported and curve_days[0] <= ref_days[0] and curve_days[-1] >= ref_days[-1]),
+                uncertainty="Interpolated simulation samples are not biological replicates.")
+            item = report["coverage"][name]
+            item["comparison_kind"] = ("closure percentage" if key == "closure" else
+                                       "scaled alkalinity proxy" if key == "ph" else
+                                       "initial-relative integrity" if key in ("cart", "bone") else
+                                       "endpoint-normalized shape" if key == "collagen" else "peak-normalized shape")
+            denominator_key = "collagen_final" if key == "collagen" else prefix + "_peak"
+            if denominator_key in result:
+                item["normalization_denominator"] = result[denominator_key]
+                item["normalization_limit"] = "Absolute amplitude is not tested. Small denominators amplify relative errors. No physical concentration calibration is established."
+    return results, report
+
+
+def save_screen_figure(fig, path, **kwargs):
+    """Keep evidence limits on exported plots as well as console reports."""
+    if not any(text.get_gid() == "screen-evidence" for text in fig.texts):
+        text = fig.text(.5, -.01,
+                        "Descriptive simulation results. Constructed targets. RMSE tests observed overlap, not biological validity.\n"
+                        "Normalized curves do not test absolute amplitude. SD bands describe seed variation, not patient uncertainty.",
+                        ha="center", fontsize=7)
+        text.set_gid("screen-evidence")
+    kwargs.setdefault("bbox_inches", "tight")
+    fig.savefig(path, **kwargs)
+
+
+def saved_config_path(csv_path):
+    """Resolve evidence saved beside a run; never infer it from today's config."""
+    parent = os.path.dirname(os.path.abspath(csv_path))
+    for directory in (parent, os.path.dirname(parent)):
+        for filename in ("run-config.toml", "bdm.toml"):
+            candidate = os.path.join(directory, filename)
+            if os.path.isfile(candidate):
+                return candidate
+    return None
+
+
+def screen_saved_cohort(csv_path, report, config=None):
+    """Gate a saved batch on every recorded replicate, never its mean alone."""
+    from batch.lib import aggregate_csvs, file_sha256, parse_toml, validate_run_metrics
+    directory = os.path.dirname(os.path.abspath(csv_path))
+    manifest_path = os.path.join(directory, "cohort.json")
+    if not os.path.isfile(manifest_path):
+        if "consensus" in os.path.basename(csv_path) or os.path.isdir(os.path.join(directory, "raw")) or any(key.endswith("_std") for key in load_csv(csv_path)):
+            return dict(report, status="not_tested", consensus_status=report["status"],
+                        dataset_kind="unverified_consensus", empirical_validation=False,
+                        cohort_gate="Individual run evidence is unavailable. This mean trajectory cannot establish a cohort pass.")
+        return report
+    with open(manifest_path) as stream:
+        manifest = json.load(stream)
+    records = manifest.get("runs", [])
+    n = manifest.get("requested_runs")
+    if (manifest.get("status") != "complete" or isinstance(n, bool)
+            or not isinstance(n, int) or n < 1 or not isinstance(records, list) or len(records) != n):
+        raise ValueError("Batch evidence is incomplete. No cohort screen can pass.")
+    if os.path.basename(csv_path) not in ("metrics.csv", "consensus.csv"):
+        raise ValueError("Unrecognized batch summary. Select metrics.csv or consensus.csv.")
+    hash_key = "metrics_sha256" if os.path.basename(csv_path) == "metrics.csv" else "consensus_sha256"
+    if not manifest.get(hash_key) or file_sha256(csv_path) != manifest[hash_key]:
+        raise ValueError("Batch summary differs from its recorded evidence hash")
+    reports, paths, seeds, indices, configurations = [], [], set(), set(), []
+    for record in records:
+        if not isinstance(record, dict):
+            raise ValueError("Batch replicate evidence must be a record")
+        index, seed = record.get("run"), record.get("seed")
+        if (isinstance(index, bool) or not isinstance(index, int) or index < 0 or index >= n
+                or index in indices or isinstance(seed, bool) or not isinstance(seed, int)
+                or seed in seeds or record.get("status") != "ok"
+                or record.get("success") is not True or record.get("returncode") != 0):
+            raise ValueError("Batch has failed, duplicate or unidentified replicates")
+        indices.add(index)
+        seeds.add(seed)
+        metrics = os.path.join(directory, "raw", f"run_{index:03d}", "skibidy", "metrics.csv")
+        config_path = saved_config_path(metrics)
+        for path, key in ((metrics, "metrics_sha256"), (config_path, "config_sha256")):
+            if not path or not record.get(key) or file_sha256(path) != record[key]:
+                raise ValueError(f"Replicate {index} has missing or changed {key}")
+        run_config = parse_toml(config_path)
+        if run_config.get("simulation", {}).get("random_seed") != seed:
+            raise ValueError(f"Replicate {index} seed disagrees with saved configuration")
+        validate_run_metrics(metrics, run_config)
+        normalized = copy.deepcopy(run_config)
+        for key in ("random_seed", "output_dir"):
+            normalized.get("simulation", {}).pop(key, None)
+        configurations.append(normalized)
+        if normalized != configurations[0]:
+            raise ValueError("Batch mixes configurations beyond seed and output directory")
+        sim = load_csv(metrics)
+        _, individual = evaluate_run(sim, [h / 24 for h in sim["time_h"]], run_config,
+                                     condition_from_config(run_config))
+        individual["coverage"] = {name: individual["coverage"][name] for name in report["coverage"]}
+        tested = [item for item in individual["coverage"].values() if item["status"] != "not_tested"]
+        individual.update(seed=seed, tested=len(tested),
+                          status="fail" if any(item["status"] == "fail" for item in tested)
+                          else "pass" if tested else "not_tested")
+        reports.append(individual)
+        paths.append(metrics)
+    summary_config = saved_config_path(csv_path)
+    if summary_config is None:
+        raise ValueError("Batch summary configuration is missing")
+    summary_config = parse_toml(summary_config)
+    for key in ("random_seed", "output_dir"):
+        summary_config.get("simulation", {}).pop(key, None)
+    if summary_config != configurations[0]:
+        raise ValueError("Batch summary configuration differs from its replicates")
+    if config is not None:
+        selected_config = copy.deepcopy(config)
+        for key in ("random_seed", "output_dir"):
+            selected_config.get("simulation", {}).pop(key, None)
+        if selected_config != summary_config:
+            raise ValueError("Selected screening configuration differs from the saved cohort")
+    expected, spread = aggregate_csvs(paths)
+    actual = load_csv(csv_path)
+    columns = set(expected)
+    if os.path.basename(csv_path) == "consensus.csv":
+        columns |= {key + "_std" for key in spread}
+    if set(actual) != columns:
+        raise ValueError("Batch summary has missing or unexpected measurement columns")
+    if (set(expected) != {key for key in actual if not key.endswith("_std")}
+            or any(len(actual[key]) != len(values)
+                   or any(not math.isclose(a, b, rel_tol=1e-9, abs_tol=1e-9)
+                          for a, b in zip(actual[key], [float(f"{v:.6g}") for v in values]))
+                   for key, values in expected.items())):
+        raise ValueError("Batch mean differs from its recorded replicate measurements")
+    for key, values in spread.items():
+        if key + "_std" in actual and (len(actual[key + "_std"]) != len(values)
+                or any(not math.isclose(a, b, rel_tol=1e-9, abs_tol=1e-9)
+                       for a, b in zip(actual[key + "_std"], [float(f"{v:.6g}") for v in values]))):
+            raise ValueError("Batch spread differs from its recorded replicate measurements")
+    result = dict(report, dataset_kind="simulation_seed_consensus", consensus_status=report["status"],
+                  replicates=reports, empirical_validation=False)
+    statuses = [item["status"] for item in reports]
+    result["status"] = ("fail" if "fail" in statuses or report["status"] == "fail"
+                        else "pass" if all(value == "pass" for value in statuses) and report["status"] == "pass"
+                        else "not_tested")
+    result["cohort_gate"] = "Every recorded seed must pass its engineering screen. The mean trajectory is descriptive. Seed variation is not patient uncertainty."
+    return result
+
+
+def print_summary(wound=None, fibroblast=None, tumor=None, microenv=None,
+                  ph=None, ra=None, *, report=None):
+    """Print every observable's screening status and coverage limits."""
+    report = report if report is not None else validation_report(wound, fibroblast, tumor, microenv, ph, ra)
+    print("=" * 60)
+    print("  skibidy Engineering Screen Summary")
+    if "replicates" in report:
+        print("  Observable scores below describe the mean trajectory.")
+    for name, item in report["coverage"].items():
+        if item["status"] == "not_tested":
+            print(f"  {name}: NOT TESTED ({item['reason']})")
+        else:
+            unit = "pp" if name == "Wound closure" else "%"
+            print(f"  {name}: {item['status'].upper()} RMSE = {item['rmse_pct']:.2f}{unit}")
+            window = item.get("comparison_dates")
+            if window:
+                extent = "full reference window" if window["full_reference_window"] else "PARTIAL reference window"
+                print(f"    {extent}: {window['start_day']} to {window['end_day']} days")
+    if wound:
+        for name, key in [("Closure window 0-3d", "infl_rmse"),
+                          ("Closure window 3-14d", "prolif_rmse"),
+                          ("Closure window 14-28d", "remod_rmse")]:
+            score = wound[key]
+            value = f"{score:.2f} pp" if math.isfinite(score) else "not tested (no reference overlap)"
+            print(f"    {name}: {value}")
+    if tumor:
+        print(f"  Active-agent doubling: {tumor['observed_doubling']:.0f}d. Clinical volume context: {tumor['bcc_doubling_days']:.0f}d. These are different observables.")
+    if "replicates" in report:
+        for item in report["replicates"]:
+            print(f"  Seed {item['seed']}: {item['status'].upper()} ({item['tested']} tested observables)")
+    if "cohort_gate" in report:
+        print(f"  {report['cohort_gate']}")
+    print(f"  ENGINEERING SCREEN {report['status'].upper()}: {report['tested']} tested observables")
+    print(f"  {report['criterion']}")
+    print(f"  {report['scoring_method']}")
+    print(f"  {report['evidence']}")
+    print("=" * 60)
+    return report["status"] == "pass"
