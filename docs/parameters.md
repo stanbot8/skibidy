@@ -1,0 +1,97 @@
+> [Home](../README.md) / [Docs](README.md) / Parameters
+
+# Parameter Reference
+
+Each module documents its own parameters with defaults, units, and literature sources in its README. This page provides a central index and explains the configuration layering system.
+
+For configuration layering and profiles, see [Guide](guide.md). For architecture details, see [Architecture](architecture.md).
+
+## Configuration layering
+
+Parameters are layered at runtime:
+
+1. `bdm.core.toml` contains core tissue parameters under `[skin]` and visualization/simulation settings
+2. `modules/*/config.toml` contains per-module parameters under `[skin.modulename]`
+3. `profiles/*.toml` provides skin phenotype overlays (normal, aged, diabetic, aged_diabetic, rheumatoid, burn, pressure, surgical, tumor, tumor_wound)
+4. `studies/*/preset.toml` provides study experiment configs (wound, diabetic-wound, tumor, tumor-wound, burn, pressure-ulcer, surgical, rheumatoid, baseline, full-model)
+
+The merge script (`scripts/config/merge_config.py`) combines layers 1 and 2 into `bdm.toml` (gitignored). Profiles and study configs are applied as sparse overrides via `scripts/config/apply_preset.py`.
+
+## Module parameter index
+
+| Module | Config file | Parameters |
+|--------|-------------|------------|
+| [Tissue](../modules/tissue/README.md#parameters) | `bdm.core.toml` `[skin]` | Cell cycle, division, calcium, differentiation, KGF, O2, water, mechanics, shedding |
+| [Wound](../modules/wound/README.md#parameters) | `modules/wound/config.toml` | Wound geometry, trigger time, inward bias, resolution |
+| [Inflammation](../modules/inflammation/README.md#parameters) | `modules/inflammation/config.toml` | Diffusion/decay, Hill thresholds, wound source, split mode |
+| [Perfusion](../modules/perfusion/README.md#parameters) | `modules/perfusion/config.toml` | Per-layer profiles, angiogenesis rate/delay |
+| [Immune](../modules/immune/README.md#parameters) | `modules/immune/config.toml` | Neutrophil/macrophage timing, cytokine rates, efferocytosis, chemotaxis |
+| [Fibroblast](../modules/fibroblast/README.md#parameters) | `modules/fibroblast/config.toml` | State machine thresholds, TGF-beta/collagen PDE, recruitment waves |
+| [MMP](../modules/mmp/README.md#parameters) | `modules/mmp/config.toml` | MMP diffusion/decay/production, TIMP dynamics, MMP*TIMP neutralization rates |
+| [Fibronectin](../modules/fibronectin/README.md#parameters) | `modules/fibronectin/config.toml` | Deposition, serum leakage, migration boost |
+| [Scar](../modules/scar/README.md#parameters) | `modules/scar/config.toml` | Collagen threshold, proportional mode, accumulation rate |
+| [Angiogenesis](../modules/angiogenesis/README.md#parameters) | `modules/angiogenesis/config.toml` | VEGF diffusion/decay/production, hypoxia threshold |
+| [Dermis](../modules/dermis/README.md#parameters) | `modules/dermis/config.toml` | Sub-layer densities, collagen recovery, MMP degradation |
+| [Diabetic](../modules/diabetic/README.md#parameters) | `modules/diabetic/config.toml` | 16 scaling factors across all systems |
+| [Biofilm](../modules/biofilm/README.md#parameters) | `modules/biofilm/config.toml` | Growth, clearance, seeding, M1 block threshold |
+| [Tumor](../modules/tumor/README.md#parameters) | `modules/tumor/config.toml` | BCC cycle factor, soft CI, apoptosis, handoff |
+| [Elastin](../modules/elastin/README.md#parameters) | `modules/elastin/config.toml` | Sub-layer densities, production, MMP degradation |
+| [Hyaluronan](../modules/hyaluronan/README.md#parameters) | `modules/hyaluronan/config.toml` | Sub-layer densities, water retention, migration scaffold |
+| [Hemostasis](../modules/hemostasis/README.md#parameters) | `modules/hemostasis/config.toml` | Fibrin deposition, platelet activation, clot dissolution |
+| [Glucose](../modules/glucose/README.md#parameters) | `modules/glucose/config.toml` | Supply, consumption, diabetic hyperglycemia threshold |
+| [Temperature](../modules/temperature/README.md#parameters) | `modules/temperature/config.toml` | Q10 factors, wound surface, body core |
+| [Lactate](../modules/lactate/README.md#parameters) | `modules/lactate/config.toml` | Hypoxia production, VEGF boost, perfusion clearance |
+| [Nitric Oxide](../modules/nitric_oxide/README.md#parameters) | `modules/nitric_oxide/config.toml` | iNOS/eNOS production, vasodilation, antimicrobial |
+| [pH](../modules/ph/README.md#parameters) | `modules/ph/config.toml` | Wound bed pH, acid mantle, enzyme activity |
+| [Senescence](../modules/senescence/README.md#parameters) | `modules/senescence/config.toml` | DNA damage, SASP output (inflammation, MMP, TGF-beta) |
+| [Neuropathy](../modules/neuropathy/README.md#parameters) | `modules/neuropathy/config.toml` | Nerve density, Wallerian degeneration, neuropeptide signaling |
+| [ROS](../modules/ros/README.md#parameters) | `modules/ros/config.toml` | Oxidative stress, mitochondrial superoxide, antioxidant defense |
+| [Bioelectric](../modules/bioelectric/config.toml) | `modules/bioelectric/config.toml` | Transepithelial potential, galvanotaxis |
+| [Lymphatic](../modules/lymphatic/config.toml) | `modules/lymphatic/config.toml` | Lymphangiogenesis, interstitial fluid dynamics |
+| [Mechanotransduction](../modules/mechanotransduction/config.toml) | `modules/mechanotransduction/config.toml` | Tissue stiffness, wound contraction |
+| [Body Site](../modules/body_site/config.toml) | `modules/body_site/config.toml` | Anatomical region scaling factors (opt-in) |
+| [Photon](../modules/photon/README.md#parameters) | `modules/photon/config.toml` | SLM light transport, opsin kinetics, phototoxicity |
+| [Burn](../modules/burn/README.md#parameters) | `modules/burn/config.toml` | Jackson's thermal injury, stasis zone, TEWL, contracture |
+| [Pressure](../modules/pressure/README.md#parameters) | `modules/pressure/config.toml` | Ischemia-reperfusion, compression, shear, repositioning |
+| [Blood](../modules/blood/README.md#parameters) | `modules/blood/config.toml` | Hematocrit, platelet aggregation |
+| [Scab](../modules/scab/README.md#parameters) | `modules/scab/config.toml` | Eschar formation, provisional wound cover |
+
+## Simulation settings
+
+These parameters live in `bdm.core.toml` under `[skin]` and control simulation infrastructure:
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `duration_days` | 30 | Simulation duration in days |
+| `tissue_min` | -20 | Min x/y for boundary removal |
+| `tissue_max` | 20 | Max x/y for boundary removal |
+| `metrics_interval_h` | 10 | Hours between CSV rows (0 = disabled) |
+| `metrics_autoopen` | true | Open CSV in default app after simulation |
+| `subcycle_slow` | 10 | PDE sub-cycling for slow fields (water, hyaluronan, vascular) |
+| `subcycle_medium` | 5 | PDE sub-cycling for medium fields (inflammation, TGF-beta, MMP, VEGF) |
+| `hot_reload` | false | Watch bdm.toml for runtime parameter changes |
+
+## Mechanistic toggles
+
+Optional biophysical replacements for simplified parametric models. All default to `false`.
+
+| Toggle | Config section | Description |
+|--------|---------------|-------------|
+| `mech_immune_recruitment` | `skin.immune` | Gradient-driven monocyte extravasation (Michaelis-Menten) |
+| `mech_m1_m2_transition` | `skin.immune` | Efferocytosis engulfment count drives M1 to M2 |
+| `mech_collagen_deposition` | `skin.fibroblast` | Constitutive basal + TGF-beta receptor occupancy collagen |
+| `mech_vegf_production` | `skin.angiogenesis` | HIF-1alpha stabilization drives VEGF production |
+
+See each module's README for parameter details. Enable via `studies/full-model/preset.toml` for testing.
+
+## Debug flags
+
+Under `[skin.debug]` in `bdm.core.toml`:
+
+| Flag | Default | What it enables |
+|------|---------|----------------|
+| `immune` | false | Immune cell spawning, migration, state transitions |
+| `fibroblast` | false | Collagen, TGF-beta, state transitions |
+| `wound` | false | Wound creation, resolution, coverage |
+| `scaled_grid` | false | ScaledGrid initialization diagnostics |
+| `perf` | false | Wall-clock timing of major operations |
