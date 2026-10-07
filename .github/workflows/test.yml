@@ -23,7 +23,8 @@ jobs:
           curl --fail --location "https://raw.githubusercontent.com/BioDynaMo/biodynamo/$BDM_INSTALL/util/install" --output "$RUNNER_TEMP/install-bdm.sh"
           # BioDynaMo's CI branch assumes its own GHA_REPOSITORY/GHA_BRANCH_NAME.
           # Use the standalone checkout path for this downstream project.
-          env -u GITHUB_ACTIONS SILENT_INSTALL=1 BDM_CMAKE_FLAGS="-Dnotebooks=off" bash "$RUNNER_TEMP/install-bdm.sh"
+          # Override setup-python's 3.12 root hint for BioDynaMo's exact 3.9.1 dependency.
+          env -u GITHUB_ACTIONS SILENT_INSTALL=1 BDM_CMAKE_FLAGS="-Dnotebooks=off -DPython_EXECUTABLE=$HOME/.pyenv/versions/3.9.1/bin/python -DPython_ROOT_DIR=$HOME/.pyenv/versions/3.9.1" bash "$RUNNER_TEMP/install-bdm.sh"
       - name: Build and test
         run: |
           export PYTHON="$(command -v python)"
