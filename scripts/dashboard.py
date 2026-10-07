@@ -11,6 +11,7 @@ import csv
 import glob
 import http.server
 import json
+import math
 import os
 import shutil
 import subprocess
@@ -18,9 +19,10 @@ import sys
 import threading
 import urllib.parse
 import webbrowser
-from batch.lib import load_csv
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, ROOT)
+from batch.lib import load_csv, get_tomllib, parse_toml
 sys.path.insert(0, os.path.join(ROOT, "literature"))
 PORT = 8501
 
@@ -41,12 +43,7 @@ def _read_skibidy_meta(study_dir, name):
     if not os.path.isfile(proj):
         return {"name": name, "description": "", "category": ""}
     meta = {"name": name, "description": "", "category": ""}
-    for line in open(proj):
-        line = line.strip()
-        if line.startswith("description"):
-            meta["description"] = line.split("=", 1)[1].strip().strip('"')
-        elif line.startswith("category"):
-            meta["category"] = line.split("=", 1)[1].strip().strip('"')
+    meta.update(parse_toml(proj).get("project", {}))
     return meta
 
 
@@ -137,7 +134,7 @@ def find_experiments(study_dir):
 
 def find_treatments(study_dir):
     out = []
-    for t in sorted(glob.glob(os.path.join(ROOT, "treatments", "*.toml"))):
+    for t in sorted(glob.glob(os.path.join(ROOT, "studies", "shared", "treatments", "*.toml"))):
         name = os.path.splitext(os.path.basename(t))[0]
         with open(t) as f:
             out.append({"name": name, "scope": "engine", "content": f.read()})
@@ -174,10 +171,26 @@ def find_profiles():
 
 def create_study(name, duration, profile, modules_list, description=""):
     """Create study directory scaffold in user studies directory."""
+    if not isinstance(name, str):
+        return {"ok": False, "error": "Study name must be text"}
     safe = name.strip().lower().replace(" ", "-")
     safe = "".join(c for c in safe if c.isalnum() or c in "-_")
     if not safe:
         return {"ok": False, "error": "Invalid study name"}
+    try:
+        duration = float(duration)
+        if not math.isfinite(duration) or duration <= 0:
+            raise ValueError("Duration must be finite and positive")
+        if not isinstance(profile, str) or (profile and profile not in find_profiles()):
+            raise ValueError("Unknown skin profile")
+        allowed = {m["name"] for m in find_modules()}
+        if (not isinstance(modules_list, list) or any(m not in allowed for m in modules_list)
+                or len(set(modules_list)) != len(modules_list)):
+            raise ValueError("Unknown module")
+        if not isinstance(description, str):
+            raise ValueError("Description must be text")
+    except (TypeError, ValueError) as error:
+        return {"ok": False, "error": str(error)}
     # Check both engine and user dirs for conflicts
     if os.path.exists(os.path.join(ENGINE_STUDIES_DIR, safe)):
         return {"ok": False, "error": f"Engine study '{safe}' already exists"}
@@ -188,15 +201,16 @@ def create_study(name, duration, profile, modules_list, description=""):
     os.makedirs(os.path.join(study_dir, "treatments"), exist_ok=True)
     os.makedirs(os.path.join(study_dir, "results"), exist_ok=True)
     # Write .skibidy project file
-    with open(os.path.join(study_dir, safe + ".skibidy"), "w") as f:
+    with open(os.path.join(study_dir, safe + ".skibidy"), "w", encoding="utf-8") as f:
         f.write("[project]\n")
-        f.write(f'name = "{safe}"\n')
-        f.write(f'description = "{description}"\n')
+        f.write(f'name = {json.dumps(safe, ensure_ascii=False)}\n')
+        f.write(f'description = {json.dumps(description, ensure_ascii=False)}\n')
+        f.write(f'profile = {json.dumps(profile, ensure_ascii=False)}\n')
         f.write('category = "custom"\n')
     # Write preset.toml
     lines = [f"# Study: {safe}\n"]
     lines.append(f"\n[skin]\n")
-    lines.append(f"duration_days = {int(duration)}\n")
+    lines.append(f"duration_days = {duration}\n")
     for mod in modules_list:
         section = f"skin.{mod}"
         lines.append(f"\n[{section}]\n")
@@ -208,6 +222,8 @@ def create_study(name, duration, profile, modules_list, description=""):
 
 def duplicate_study(source_name, new_name):
     """Duplicate an engine study into user studies directory."""
+    if not isinstance(new_name, str):
+        return {"ok": False, "error": "Study name must be text"}
     safe = new_name.strip().lower().replace(" ", "-")
     safe = "".join(c for c in safe if c.isalnum() or c in "-_")
     if not safe:
@@ -248,6 +264,8 @@ def duplicate_study(source_name, new_name):
 def create_experiment(study_name, exp_name, description, profile, runs,
                       configs):
     """Create an experiment TOML in the study's experiments/ dir."""
+    if not isinstance(exp_name, str) or not isinstance(description, str):
+        return {"ok": False, "error": "Experiment name and description must be text"}
     studies = find_studies()
     if study_name not in studies:
         return {"ok": False, "error": f"Study '{study_name}' not found"}
@@ -255,22 +273,41 @@ def create_experiment(study_name, exp_name, description, profile, runs,
     safe = "".join(c for c in safe if c.isalnum() or c == "_")
     if not safe:
         return {"ok": False, "error": "Invalid experiment name"}
+    try:
+        if isinstance(runs, bool) or float(runs) != int(runs):
+            raise ValueError("Run count must be an integer")
+        runs = int(runs)
+        if runs < 1:
+            raise ValueError("Run count must be positive")
+        if profile and profile not in find_profiles():
+            raise ValueError("Unknown skin profile")
+        if not configs or not isinstance(configs, list):
+            raise ValueError("At least one configuration is required")
+        for cfg in configs:
+            if not isinstance(cfg, dict) or not isinstance(cfg.get("label", "config"), str):
+                raise ValueError("Configurations require a text label")
+            if not isinstance(cfg.get("overrides", {}), dict):
+                raise ValueError("Overrides must be a table")
+            treats = cfg.get("treatments", [])
+            if not isinstance(treats, list) or any(not isinstance(t, str) for t in treats):
+                raise ValueError("Treatments must be a list of names")
+    except (TypeError, ValueError, OverflowError) as error:
+        return {"ok": False, "error": str(error)}
     exp_dir = os.path.join(studies[study_name], "experiments")
-    os.makedirs(exp_dir, exist_ok=True)
     path = os.path.join(exp_dir, safe + ".toml")
     if os.path.exists(path):
         return {"ok": False, "error": f"Experiment '{safe}' already exists"}
     lines = [f'[experiment]\n']
-    lines.append(f'name = "{exp_name}"\n')
+    lines.append(f'name = {json.dumps(exp_name, ensure_ascii=False)}\n')
     if description:
-        lines.append(f'description = "{description}"\n')
+        lines.append(f'description = {json.dumps(description, ensure_ascii=False)}\n')
     if profile:
-        lines.append(f'profile = "{profile}"\n')
-    lines.append(f'study = "{study_name}"\n')
+        lines.append(f'profile = {json.dumps(profile)}\n')
+    lines.append(f'study = {json.dumps(study_name)}\n')
     lines.append(f'runs_per_config = {int(runs)}\n')
     for cfg in configs:
         lines.append(f'\n[[experiment.configs]]\n')
-        lines.append(f'label = "{cfg.get("label", "config")}"\n')
+        lines.append(f'label = {json.dumps(cfg.get("label", "config"), ensure_ascii=False)}\n')
         treats = cfg.get("treatments", [])
         if treats:
             lines.append(f'treatments = {json.dumps(treats)}\n')
@@ -278,17 +315,21 @@ def create_experiment(study_name, exp_name, description, profile, runs,
         if overrides:
             lines.append(f'[experiment.configs.overrides]\n')
             for k, v in overrides.items():
-                if isinstance(v, str):
-                    lines.append(f'"{k}" = "{v}"\n')
-                else:
-                    lines.append(f'"{k}" = {v}\n')
-    with open(path, "w") as f:
+                lines.append(f'{json.dumps(k, ensure_ascii=False)} = {json.dumps(v, ensure_ascii=False)}\n')
+    try:
+        get_tomllib().loads("".join(lines))
+    except (TypeError, ValueError) as error:
+        return {"ok": False, "error": str(error)}
+    os.makedirs(exp_dir, exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
         f.writelines(lines)
     return {"ok": True, "name": safe}
 
 
 def create_treatment(study_name, treat_name, content):
     """Create a treatment TOML in the study's treatments/ dir."""
+    if not isinstance(treat_name, str):
+        return {"ok": False, "error": "Treatment name must be text"}
     studies = find_studies()
     if study_name not in studies:
         return {"ok": False, "error": f"Study '{study_name}' not found"}
@@ -296,57 +337,37 @@ def create_treatment(study_name, treat_name, content):
     safe = "".join(c for c in safe if c.isalnum() or c == "_")
     if not safe:
         return {"ok": False, "error": "Invalid treatment name"}
+    try:
+        if not isinstance(content, str) or not get_tomllib().loads(content):
+            raise ValueError("Treatment TOML must contain parameters")
+    except (TypeError, ValueError) as error:
+        return {"ok": False, "error": str(error)}
     treat_dir = os.path.join(studies[study_name], "treatments")
     os.makedirs(treat_dir, exist_ok=True)
     path = os.path.join(treat_dir, safe + ".toml")
     if os.path.exists(path):
         return {"ok": False, "error": f"Treatment '{safe}' already exists"}
-    with open(path, "w") as f:
+    with open(path, "w", encoding="utf-8") as f:
         f.write(content)
     return {"ok": True, "name": safe}
 
 
 def run_validation(csv_path):
     try:
-        from lib import (detect_modules, validate_wound, validate_fibroblast,
-                         validate_microenvironment, validate_ph, validate_ra)
+        from literature.lib import evaluate_run, saved_config_path, detect_condition
+        from batch.lib import parse_toml, validate_run_metrics
+        config_path = saved_config_path(csv_path)
+        if not config_path:
+            return {"status": "not_tested", "error": "No saved run configuration; condition and enabled mechanisms are unknown"}
+        config = parse_toml(config_path)
+        validate_run_metrics(csv_path, config)
         data = load_csv(csv_path)
         if not data:
             return {"error": "Empty CSV"}
         sim_days = [h / 24.0 for h in data["time_h"]]
-        hw, hf, ht, hm, hp, hr = detect_modules(data)
-        res = {}
-        if hw:
-            w = validate_wound(data, sim_days)
-            res["Wound closure"] = w["closure_rmse"] / 100.0
-            res["Inflammation"] = w["inflammation_rmse"]
-            res["Neutrophils"] = w["neut_rmse"]
-            res["Macrophages"] = w["mac_rmse"]
-        if hf:
-            f = validate_fibroblast(data, sim_days)
-            res["Fibroblasts"] = f["fibro_rmse"]
-            res["Myofibroblasts"] = f["myofib_rmse"]
-            res["Collagen"] = f["collagen_rmse"]
-        if hm:
-            m = validate_microenvironment(data, sim_days)
-            res[u"TGF-\u03b2"] = m["tgfb_rmse"]
-            res["VEGF"] = m["vegf_rmse"]
-            res["Fibronectin"] = m["fn_rmse"]
-            res["MMP"] = m["mmp_rmse"]
-        if hp:
-            res["Wound pH"] = validate_ph(data, sim_days)["ph_rmse"]
-        if hr:
-            a = validate_ra(data, sim_days)
-            res[u"TNF-\u03b1"] = a["tnf_rmse"]
-            res["IL-6"] = a["il6_rmse"]
-            res["Cartilage"] = a["cart_rmse"]
-            if a.get("has_bone"):
-                res["Bone erosion"] = a["bone_rmse"]
-            if a.get("has_tcell"):
-                res["T cells"] = a["tcell_rmse"]
-            if a.get("has_syn"):
-                res["Synovial pannus"] = a["syn_rmse"]
-        return res
+        results, report = evaluate_run(data, sim_days, config, detect_condition(config_path))
+        report.update(condition=detect_condition(config_path), config=config_path)
+        return report
     except Exception as e:
         return {"error": str(e)}
 
@@ -430,14 +451,10 @@ class DashHandler(http.server.BaseHTTPRequestHandler):
             if not csv_path or not os.path.isfile(csv_path):
                 self._json({"error": "not found"}, 404)
                 return
-            data = load_csv(csv_path)
-            # Only send columns that have data, keep payload small
-            skip = set()
-            for k, v in data.items():
-                if isinstance(v, list) and all(x == 0 for x in v):
-                    skip.add(k)
-            trimmed = {k: v for k, v in data.items() if k not in skip}
-            self._json(trimmed)
+            try:
+                self._json(load_csv(csv_path))
+            except (ValueError, ArithmeticError) as error:
+                self._json({"error": str(error)}, 400)
         elif path == "/api/validate":
             csv_path = qs.get("path", "")
             if not csv_path or not os.path.isfile(csv_path):
@@ -467,9 +484,11 @@ class DashHandler(http.server.BaseHTTPRequestHandler):
             ok = launch_paraview(d) if d else False
             self._json({"ok": ok})
         elif path == "/api/build":
+            if not os.environ.get("BDMSYS"):
+                self._json({"ok": False, "error": "Start the dashboard from a shell with BioDynaMo activated."}, 400)
+                return
             rc = subprocess.run(
-                ["bash", "-c",
-                 "source ~/biodynamo/build/bin/thisbdm.sh && biodynamo build 2>&1"],
+                [sys.executable, "-c", "from batch.lib import build_if_needed; build_if_needed()"],
                 capture_output=True, text=True, cwd=ROOT, timeout=300)
             self._json({"ok": rc.returncode == 0,
                         "log": (rc.stdout + rc.stderr)[-3000:]})
@@ -481,23 +500,33 @@ class DashHandler(http.server.BaseHTTPRequestHandler):
             if _run_state["proc"] and _run_state["proc"].poll() is None:
                 self._json({"ok": False, "error": "A run is already in progress"})
                 return
-            cmd = ("source ~/biodynamo/build/bin/thisbdm.sh && "
-                   f"python3 batch/batch.py -n {n}")
+            if not os.environ.get("BDMSYS"):
+                self._json({"ok": False, "error": "Start the dashboard from a shell with BioDynaMo activated."}, 400)
+                return
+            try:
+                n = int(n)
+                if n < 1:
+                    raise ValueError("Run count must be positive")
+            except ValueError as error:
+                self._json({"ok": False, "error": str(error)}, 400)
+                return
+            cmd = [sys.executable, "-u", os.path.join(ROOT, "batch", "batch.py"), "-n", str(n)]
             if study:
-                cmd += f" --study {study}"
+                cmd.extend(["--study", study])
             if skin:
-                cmd += f" --skin {skin}"
+                cmd.extend(["--skin", skin])
             if treatment:
-                cmd += f" --treatment {treatment}"
+                cmd.extend(["--treatment", treatment])
             _run_state["log"] = ""
             _run_state["proc"] = subprocess.Popen(
-                ["bash", "-c", cmd],
+                cmd,
                 cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                 text=True)
             # Read output in background thread
             def _reader(proc):
-                for line in proc.stdout:
-                    _run_state["log"] += line
+                with proc.stdout as stream:
+                    for line in stream:
+                        _run_state["log"] += line
                 proc.wait()
             threading.Thread(target=_reader, args=(_run_state["proc"],),
                              daemon=True).start()
@@ -1124,25 +1153,23 @@ async function renderValidation(){
     body.innerHTML = '<div class="spinner"></div> Validating...';
     let val = await api('validate',{path:r.csv});
     if(val.error){body.innerHTML=`<div class="info-box" style="color:var(--red)">${val.error}</div>`;return}
-    let entries = Object.entries(val);
-    if(!entries.length){body.innerHTML='<div class="info-box">No validatable modules detected.</div>';return}
-
-    let avg = entries.reduce((s,[_,v])=>s+v,0)/entries.length;
-    let passed = entries.filter(([_,v])=>v<0.10).length;
-    let worst = entries.reduce((a,b)=>b[1]>a[1]?b:a);
+    let entries = Object.entries(val.coverage || {});
+    let tested = entries.filter(([_,v])=>v.status!=='not_tested');
+    let passed = tested.filter(([_,v])=>v.status==='pass').length;
 
     let h = '<div class="cards">';
-    h += `<div class="card"><div class="card-label">Mean RMSE</div><div class="card-value">${(avg*100).toFixed(1)}%</div><div class="card-sub">across ${entries.length} observables</div></div>`;
-    h += `<div class="card"><div class="card-label">Passing</div><div class="card-value">${passed}/${entries.length}</div><div class="card-sub">&lt; 10% RMSE</div></div>`;
-    h += `<div class="card"><div class="card-label">Worst</div><div class="card-value">${worst[0]}</div><div class="card-sub">${(worst[1]*100).toFixed(1)}%</div></div>`;
+    h += `<div class="card"><div class="card-label">Screen</div><div class="card-value">${esc(val.status)}</div><div class="card-sub">${esc(val.condition)}</div></div>`;
+    h += `<div class="card"><div class="card-label">Passing</div><div class="card-value">${passed}/${tested.length}</div><div class="card-sub">tested observables</div></div>`;
+    h += `<div class="card"><div class="card-label">Not tested</div><div class="card-value">${entries.length-tested.length}</div></div>`;
     h += '</div>';
+    h += `<div class="info-box">${esc(val.criterion)}</div>`;
 
     h += '<div class="rmse-table">';
     entries.forEach(([name,val])=>{
-      let cls = val<0.10?'rmse-good':val<0.20?'rmse-ok':'rmse-bad';
-      let pcls = val<0.10?'pill-green':val<0.20?'pill-yellow':'pill-red';
-      let plbl = val<0.10?'PASS':val<0.20?'OK':'HIGH';
-      h += `<div class="rmse-row"><span>${name}</span><span><span class="${cls}">${(val*100).toFixed(1)}%</span> <span class="pill ${pcls}">${plbl}</span></span></div>`;
+      let cls = val.status==='pass'?'rmse-good':'rmse-bad';
+      let pcls = val.status==='pass'?'pill-green':val.status==='not_tested'?'pill-yellow':'pill-red';
+      let score = val.rmse_pct == null ? esc(val.reason || 'Unavailable') : val.rmse_pct.toFixed(1)+'%';
+      h += `<div class="rmse-row"><span>${esc(name)}</span><span><span class="${cls}">${score}</span> <span class="pill ${pcls}">${esc(val.status)}</span></span></div>`;
     });
     h += '</div>';
     body.innerHTML = h;

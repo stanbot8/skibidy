@@ -52,6 +52,38 @@ void bdm::skibidy::SimParam::LoadConfig(const skibidy::TomlConfig& config) {
   BDM_ASSIGN_CONFIG_VALUE(s_duration, "skin.s_duration");
   BDM_ASSIGN_CONFIG_VALUE(g2_duration, "skin.g2_duration");
   BDM_ASSIGN_CONFIG_VALUE(m_duration, "skin.m_duration");
+  if (auto node = config.at_path("skin.heterogeneity.cycle_distribution")) {
+    auto value = node.value<std::string>();
+    if (!value) Log::Fatal("SimParam::LoadConfig",
+                          "heterogeneity.cycle_distribution must be a string");
+    cycle_variation_distribution = *value;
+  }
+  if (auto node = config.at_path("skin.heterogeneity.cycle_cv")) {
+    auto value = node.value<real_t>();
+    if (!value) Log::Fatal("SimParam::LoadConfig",
+                          "heterogeneity.cycle_cv must be a number");
+    cycle_variation_cv = *value;
+  }
+
+  // Optional basement membrane integrity (initialization-only research model).
+  if (auto node = config.at_path("skin.basement_membrane.enabled")) {
+    auto value = node.value<bool>();
+    if (!value) Log::Fatal("SimParam::LoadConfig",
+                          "basement_membrane.enabled must be a boolean");
+    basement_membrane.enabled = *value;
+  }
+  if (auto node = config.at_path("skin.basement_membrane.wound_damage")) {
+    auto value = node.value<real_t>();
+    if (!value) Log::Fatal("SimParam::LoadConfig",
+                          "basement_membrane.wound_damage must be a number");
+    basement_membrane.wound_damage = *value;
+  }
+  if (auto node = config.at_path("skin.basement_membrane.repair_rate")) {
+    auto value = node.value<real_t>();
+    if (!value) Log::Fatal("SimParam::LoadConfig",
+                          "basement_membrane.repair_rate must be a number");
+    basement_membrane.repair_rate = *value;
+  }
 
   // Division mechanics
   BDM_ASSIGN_CONFIG_VALUE(growth_rate, "skin.growth_rate");
@@ -729,6 +761,27 @@ void bdm::skibidy::SimParam::ValidateConfig() const {
       Log::Fatal("SimParam::ValidateConfig", msg);
     }
   };
+  check(cycle_variation_distribution == "fixed" ||
+        cycle_variation_distribution == "normal" ||
+        cycle_variation_distribution == "lognormal",
+        "heterogeneity.cycle_distribution must be fixed, normal or lognormal");
+  check(std::isfinite(cycle_variation_cv) && cycle_variation_cv >= 0 &&
+        cycle_variation_cv <= 1,
+        "heterogeneity.cycle_cv must be finite and in [0,1]");
+  check(cycle_variation_distribution != "normal" || cycle_variation_cv <= 0.3,
+        "normal heterogeneity.cycle_cv must be <= 0.3 (positive durations)");
+  check(cycle_variation_distribution != "fixed" || cycle_variation_cv == 0,
+        "fixed heterogeneity.cycle_distribution requires cycle_cv = 0");
+
+  check(std::isfinite(basement_membrane.wound_damage) &&
+        basement_membrane.wound_damage >= 0 && basement_membrane.wound_damage <= 1,
+        "basement_membrane.wound_damage must be finite and in [0,1]");
+  check(std::isfinite(basement_membrane.repair_rate) &&
+        basement_membrane.repair_rate >= 0,
+        "basement_membrane.repair_rate must be finite and nonnegative");
+  check(!basement_membrane.enabled || !basal_density_enabled ||
+        (std::isfinite(basal_density_max) && basal_density_max > 0),
+        "basement_membrane continuum repair requires positive basal_density_max");
 
   // Geometry
   check(geo_patch_um > 0, "geometry.patch_um must be positive");

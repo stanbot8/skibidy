@@ -1,0 +1,1355 @@
+{
+  "selection": "Positive numeric recorded delta-T, numeric local generation > 1, and two daughter-fate labels from P/D/U to establish division. Single D/U, blank and other labels retained but not treated as confirmed completed cycles. Classified subset restricts source fates to PP/PD/DP/DD. NFSK expanding Fig2a has reset subclone generations and unresolved cell identity, so is excluded from fits.",
+  "sd_definition": "Sample SD, ddof=1; CV is SD / arithmetic mean of observed complete cycles.",
+  "fit_definition": "Exploratory marginal MLE; normal(mu,sigma), lognormal(shape,loc=0,scale), gamma(shape,loc=0,scale); AIC=4-2logL.",
+  "limitations": "Complete cycles only; clustered lineages and censored/untracked cells. AIC assumes independence and is descriptive. No latent propensity CV is identified.",
+  "neonatal_reconciliation": "The article reports 2127 post-plating complete cycles in 81 colonies. Table 1 has subclone generation resets and Outer labels; this extraction does not reconstruct the complete published neonatal cohort and does not fit its expanding sheet. Do not remove repeated times as duplicates without biological cell identity.",
+  "runtime": {
+    "python": "3.14.3",
+    "numpy": "2.4.3",
+    "scipy": "1.17.1",
+    "openpyxl": "3.1.5"
+  },
+  "source_hashes": {
+    "piedrafita2020_supplement_data2.xlsx": "78b57b6f45e8850b51f96c641147d2e9a6f80cba5aca6a00c37f8b9a707e54df",
+    "roshan2016_supplement_table1.xlsx": "9b79ad3f2d6a5fb3d37841912bd65bd82fb9739630780f6b4495efa84e77769b",
+    "xiao2024_supplement3.xlsx": "63e57c8a1561de25dd1717ca978c4bb5c1d435b798625c90e3a56b77e69c11b1"
+  },
+  "human_groups": {
+    "Roshan2016: Adult balanced (Suppl Fig1a)": {
+      "n_positive_recorded_intervals": 497,
+      "n_complete_cycles": 497,
+      "n_clones_with_complete_cycles": 32,
+      "mean_h": 17.151240778001345,
+      "median_h": 15.666666666666664,
+      "sample_sd_h": 7.001350925929311,
+      "observed_cv": 0.4082125029058794,
+      "min_h": 5.499999999999999,
+      "max_h": 62.333333333333336,
+      "q25_h": 12.333333333333332,
+      "q75_h": 20.0,
+      "n_over_48h": 4,
+      "division_types": {
+        "PD": 155,
+        "DD": 155,
+        "PP": 187
+      },
+      "descriptive_fits": {
+        "normal": {
+          "parameters": [
+            17.151240778001345,
+            6.994303766694144
+          ],
+          "log_likelihood": -1671.9251978761554,
+          "aic": 3347.8503957523108
+        },
+        "lognormal": {
+          "parameters": [
+            0.35460248971119007,
+            0.0,
+            16.04036619447549
+          ],
+          "log_likelihood": -1569.172683334882,
+          "aic": 3142.345366669764
+        },
+        "gamma": {
+          "parameters": [
+            7.629743574033026,
+            0.0,
+            2.2479445883835028
+          ],
+          "log_likelihood": -1590.3201546610612,
+          "aic": 3184.6403093221224
+        }
+      }
+    },
+    "Roshan2016: Adult expanding (Suppl Fig1b)": {
+      "n_positive_recorded_intervals": 465,
+      "n_complete_cycles": 465,
+      "n_clones_with_complete_cycles": 6,
+      "mean_h": 14.868100358422938,
+      "median_h": 14.500000000000007,
+      "sample_sd_h": 4.141191992672481,
+      "observed_cv": 0.278528654827545,
+      "min_h": 5.499999999999999,
+      "max_h": 27.83333333333333,
+      "q25_h": 11.666666666666671,
+      "q75_h": 17.833333333333332,
+      "n_over_48h": 0,
+      "division_types": {
+        "PP": 415,
+        "PD": 39,
+        "DD": 11
+      },
+      "descriptive_fits": {
+        "normal": {
+          "parameters": [
+            14.868100358422938,
+            4.136736701449651
+          ],
+          "log_likelihood": -1320.0632848427838,
+          "aic": 2644.1265696855676
+        },
+        "lognormal": {
+          "parameters": [
+            0.28346080153365305,
+            0.0,
+            14.294578839734482
+          ],
+          "log_likelihood": -1310.433921181979,
+          "aic": 2624.867842363958
+        },
+        "gamma": {
+          "parameters": [
+            12.874912022413033,
+            0.0,
+            1.1548118024061138
+          ],
+          "log_likelihood": -1308.5650881910724,
+          "aic": 2621.130176382145
+        }
+      }
+    },
+    "Roshan2016: NFSK EGF0 balanced(Suppl Fig5c)": {
+      "n_positive_recorded_intervals": 296,
+      "n_complete_cycles": 296,
+      "n_clones_with_complete_cycles": 38,
+      "mean_h": 16.556869369369373,
+      "median_h": 14.999999999999996,
+      "sample_sd_h": 6.432896688748638,
+      "observed_cv": 0.38853339633455464,
+      "min_h": 6.166666666666669,
+      "max_h": 54.33333333333332,
+      "q25_h": 12.166666666666664,
+      "q75_h": 19.583333333333332,
+      "n_over_48h": 1,
+      "division_types": {
+        "PP": 81,
+        "DD": 127,
+        "PD": 88
+      },
+      "descriptive_fits": {
+        "normal": {
+          "parameters": [
+            16.556869369369373,
+            6.422021115985751
+          ],
+          "log_likelihood": -970.4867394132401,
+          "aic": 1944.9734788264802
+        },
+        "lognormal": {
+          "parameters": [
+            0.34862849785351435,
+            0.0,
+            15.534395195672376
+          ],
+          "log_likelihood": -920.0410361550219,
+          "aic": 1844.0820723100437
+        },
+        "gamma": {
+          "parameters": [
+            8.006837790547342,
+            0.0,
+            2.067841238012336
+          ],
+          "log_likelihood": -930.2218046170414,
+          "aic": 1864.4436092340827
+        }
+      }
+    },
+    "Roshan2016: NFSK EGF0 expanding(SupplFig5d)": {
+      "n_positive_recorded_intervals": 361,
+      "n_complete_cycles": 361,
+      "n_clones_with_complete_cycles": 6,
+      "mean_h": 15.532779316712833,
+      "median_h": 15.16666666666666,
+      "sample_sd_h": 3.9723682569414676,
+      "observed_cv": 0.2557409833710385,
+      "min_h": 5.833333333333343,
+      "max_h": 29.666666666666668,
+      "q25_h": 12.333333333333343,
+      "q75_h": 18.49999999999999,
+      "n_over_48h": 0,
+      "division_types": {
+        "PP": 225,
+        "PD": 82,
+        "DD": 54
+      },
+      "descriptive_fits": {
+        "normal": {
+          "parameters": [
+            15.532779316712833,
+            3.966862546385687
+          ],
+          "log_likelihood": -1009.6859629804501,
+          "aic": 2023.3719259609002
+        },
+        "lognormal": {
+          "parameters": [
+            0.26195725393671154,
+            0.0,
+            15.022765040263627
+          ],
+          "log_likelihood": -1006.804203529593,
+          "aic": 2017.608407059186
+        },
+        "gamma": {
+          "parameters": [
+            15.14117877055047,
+            0.0,
+            1.025863280005915
+          ],
+          "log_likelihood": -1003.8689862777737,
+          "aic": 2011.7379725555475
+        }
+      }
+    },
+    "Roshan2016: NFSK Healed colonies (Fig7i)": {
+      "n_positive_recorded_intervals": 307,
+      "n_complete_cycles": 307,
+      "n_clones_with_complete_cycles": 38,
+      "mean_h": 16.66612377850163,
+      "median_h": 15.666666666666668,
+      "sample_sd_h": 5.762493899563648,
+      "observed_cv": 0.34576089654373887,
+      "min_h": 4.333333333333337,
+      "max_h": 44.33333333333333,
+      "q25_h": 13.166666666666671,
+      "q75_h": 18.833333333333336,
+      "n_over_48h": 0,
+      "division_types": {
+        "PD": 93,
+        "PP": 90,
+        "DD": 124
+      },
+      "descriptive_fits": {
+        "normal": {
+          "parameters": [
+            16.66612377850163,
+            5.7531010752274705
+          ],
+          "log_likelihood": -972.7840109400836,
+          "aic": 1949.5680218801672
+        },
+        "lognormal": {
+          "parameters": [
+            0.3082795620045711,
+            0.0,
+            15.861325582743618
+          ],
+          "log_likelihood": -922.8647448080283,
+          "aic": 1849.7294896160565
+        },
+        "gamma": {
+          "parameters": [
+            10.266014828436422,
+            0.0,
+            1.6234268172238733
+          ],
+          "log_likelihood": -931.6306242925344,
+          "aic": 1867.2612485850689
+        }
+      }
+    },
+    "Roshan2016: NFSK Migrating Front (Fig7g)": {
+      "n_positive_recorded_intervals": 35,
+      "n_complete_cycles": 35,
+      "n_clones_with_complete_cycles": 14,
+      "mean_h": 17.59047619047619,
+      "median_h": 16.83333333333333,
+      "sample_sd_h": 7.040190744169202,
+      "observed_cv": 0.40022741101124326,
+      "min_h": 10.833333333333337,
+      "max_h": 54.33333333333333,
+      "q25_h": 14.75,
+      "q75_h": 18.666666666666664,
+      "n_over_48h": 1,
+      "division_types": {
+        "PP": 5,
+        "PD": 8,
+        "DD": 22
+      },
+      "descriptive_fits": {
+        "normal": {
+          "parameters": [
+            17.59047619047619,
+            6.938887754194192
+          ],
+          "log_likelihood": -117.46280101196089,
+          "aic": 238.92560202392178
+        },
+        "lognormal": {
+          "parameters": [
+            0.26723883572997814,
+            0.0,
+            16.820863950289198
+          ],
+          "log_likelihood": -102.26811162100758,
+          "aic": 208.53622324201515
+        },
+        "gamma": {
+          "parameters": [
+            11.34040544724653,
+            0.0,
+            1.5511329178047322
+          ],
+          "log_likelihood": -106.47215751595095,
+          "aic": 216.9443150319019
+        }
+      }
+    },
+    "Roshan2016: NFSK Proliferating Zone(Fig7h)": {
+      "n_positive_recorded_intervals": 310,
+      "n_complete_cycles": 310,
+      "n_clones_with_complete_cycles": 34,
+      "mean_h": 16.005913978494625,
+      "median_h": 15.416666666666668,
+      "sample_sd_h": 4.445104552624896,
+      "observed_cv": 0.2777163839938969,
+      "min_h": 5.833333333333335,
+      "max_h": 43.333333333333336,
+      "q25_h": 13.208333333333334,
+      "q75_h": 17.958333333333336,
+      "n_over_48h": 0,
+      "division_types": {
+        "PP": 219,
+        "PD": 63,
+        "DD": 28
+      },
+      "descriptive_fits": {
+        "normal": {
+          "parameters": [
+            16.005913978494625,
+            4.437929237934705
+          ],
+          "log_likelihood": -901.8291880311223,
+          "aic": 1807.6583760622445
+        },
+        "lognormal": {
+          "parameters": [
+            0.256049939067872,
+            0.0,
+            15.476138200915056
+          ],
+          "log_likelihood": -866.7150875022508,
+          "aic": 1737.4301750045015
+        },
+        "gamma": {
+          "parameters": [
+            15.01967273406116,
+            0.0,
+            1.0656632978558114
+          ],
+          "log_likelihood": -872.5417343757888,
+          "aic": 1749.0834687515776
+        }
+      }
+    },
+    "Roshan2016: NFSK Y27632 balanced(SuppFig6a)": {
+      "n_positive_recorded_intervals": 107,
+      "n_complete_cycles": 107,
+      "n_clones_with_complete_cycles": 10,
+      "mean_h": 18.16822429906542,
+      "median_h": 16.333333333333332,
+      "sample_sd_h": 7.299360104026308,
+      "observed_cv": 0.401765190910913,
+      "min_h": 8.333333333333336,
+      "max_h": 50.5,
+      "q25_h": 14.249999999999998,
+      "q75_h": 19.833333333333332,
+      "n_over_48h": 1,
+      "division_types": {
+        "PD": 36,
+        "DD": 44,
+        "PP": 27
+      },
+      "descriptive_fits": {
+        "normal": {
+          "parameters": [
+            18.16822429906542,
+            7.2651708757712745
+          ],
+          "log_likelihood": -364.01724748844543,
+          "aic": 732.0344949768909
+        },
+        "lognormal": {
+          "parameters": [
+            0.32545410794394863,
+            0.0,
+            17.11740541231698
+          ],
+          "log_likelihood": -335.6055559311591,
+          "aic": 675.2111118623181
+        },
+        "gamma": {
+          "parameters": [
+            8.555575375218515,
+            0.0,
+            2.1235537649157106
+          ],
+          "log_likelihood": -342.95699849544656,
+          "aic": 689.9139969908931
+        }
+      }
+    },
+    "Roshan2016: NFSK Y27632 expanding(SupFig6b)": {
+      "n_positive_recorded_intervals": 348,
+      "n_complete_cycles": 348,
+      "n_clones_with_complete_cycles": 11,
+      "mean_h": 16.24616858237548,
+      "median_h": 16.166666666666657,
+      "sample_sd_h": 3.0168012836358122,
+      "observed_cv": 0.18569309239524723,
+      "min_h": 5.666666666666676,
+      "max_h": 26.333333333333325,
+      "q25_h": 14.33333333333334,
+      "q75_h": 18.333333333333325,
+      "n_over_48h": 0,
+      "division_types": {
+        "PP": 321,
+        "PD": 24,
+        "DD": 3
+      },
+      "descriptive_fits": {
+        "normal": {
+          "parameters": [
+            16.24616858237548,
+            3.012463680697026
+          ],
+          "log_likelihood": -877.550477960517,
+          "aic": 1759.100955921034
+        },
+        "lognormal": {
+          "parameters": [
+            0.19345498232397484,
+            0.0,
+            15.956082540459414
+          ],
+          "log_likelihood": -886.0317326155205,
+          "aic": 1776.063465231041
+        },
+        "gamma": {
+          "parameters": [
+            27.91723304510425,
+            0.0,
+            0.5819405009130915
+          ],
+          "log_likelihood": -880.4838733952975,
+          "aic": 1764.967746790595
+        }
+      }
+    },
+    "Roshan2016: NFSK balanced (Fig2b)": {
+      "n_positive_recorded_intervals": 982,
+      "n_complete_cycles": 982,
+      "n_clones_with_complete_cycles": 64,
+      "mean_h": 18.39053292600136,
+      "median_h": 15.166666666666668,
+      "sample_sd_h": 9.940716089848314,
+      "observed_cv": 0.540534422240352,
+      "min_h": 5.33333333333333,
+      "max_h": 100.16666666666669,
+      "q25_h": 12.666666666666664,
+      "q75_h": 20.833333333333336,
+      "n_over_48h": 17,
+      "division_types": {
+        "DD": 312,
+        "PD": 247,
+        "PP": 301,
+        "UU": 104,
+        "PU": 18
+      },
+      "descriptive_fits": {
+        "normal": {
+          "parameters": [
+            18.39053292600136,
+            9.935653336227421
+          ],
+          "log_likelihood": -3648.196941089896,
+          "aic": 7300.393882179792
+        },
+        "lognormal": {
+          "parameters": [
+            0.41559321263881543,
+            0.0,
+            16.657590994503774
+          ],
+          "log_likelihood": -3293.388598174003,
+          "aic": 6590.777196348006
+        },
+        "gamma": {
+          "parameters": [
+            5.21297345539561,
+            0.0,
+            3.527839357587082
+          ],
+          "log_likelihood": -3376.2374062802573,
+          "aic": 6756.474812560515
+        }
+      }
+    },
+    "Roshan2016: NFSK expanding (Fig2a)": null,
+    "Xiao2024: DIF": {
+      "n_positive_recorded_intervals": 221,
+      "n_complete_cycles": 210,
+      "n_clones_with_complete_cycles": 36,
+      "mean_h": 35.90952380952381,
+      "median_h": 32.0,
+      "sample_sd_h": 15.919246115986281,
+      "observed_cv": 0.4433154335442407,
+      "min_h": 15.0,
+      "max_h": 104.0,
+      "q25_h": 24.0,
+      "q75_h": 45.0,
+      "n_over_48h": 41,
+      "division_types": {
+        "PP": 66,
+        "PD": 54,
+        "DD": 54,
+        "UU": 23,
+        "DU": 5,
+        "PU": 8
+      },
+      "descriptive_fits": {
+        "normal": {
+          "parameters": [
+            35.90952380952381,
+            15.881297918708233
+          ],
+          "log_likelihood": -878.6569509059676,
+          "aic": 1761.3139018119352
+        },
+        "lognormal": {
+          "parameters": [
+            0.40663344096443,
+            0.0,
+            32.951328571883636
+          ],
+          "log_likelihood": -842.9666654596538,
+          "aic": 1689.9333309193075
+        },
+        "gamma": {
+          "parameters": [
+            5.977626907280157,
+            0.0,
+            6.0073210266417885
+          ],
+          "log_likelihood": -850.0356103015438,
+          "aic": 1704.0712206030876
+        }
+      }
+    },
+    "Xiao2024: EXP": {
+      "n_positive_recorded_intervals": 1903,
+      "n_complete_cycles": 1890,
+      "n_clones_with_complete_cycles": 13,
+      "mean_h": 21.321693121693123,
+      "median_h": 19.0,
+      "sample_sd_h": 7.804534068641904,
+      "observed_cv": 0.36603725717735863,
+      "min_h": 9.0,
+      "max_h": 106.0,
+      "q25_h": 17.0,
+      "q75_h": 23.0,
+      "n_over_48h": 27,
+      "division_types": {
+        "PP": 903,
+        "PD": 67,
+        "DD": 38,
+        "UU": 727,
+        "PU": 132,
+        "DU": 5,
+        "DP": 9,
+        "UP": 8,
+        "UD": 1
+      },
+      "descriptive_fits": {
+        "normal": {
+          "parameters": [
+            21.321693121693123,
+            7.802469103909731
+          ],
+          "log_likelihood": -6564.6858726380715,
+          "aic": 13133.371745276143
+        },
+        "lognormal": {
+          "parameters": [
+            0.28603765604821946,
+            0.0,
+            20.34862127798519
+          ],
+          "log_likelihood": -6010.804573210434,
+          "aic": 12025.609146420868
+        },
+        "gamma": {
+          "parameters": [
+            10.86793462646208,
+            0.0,
+            1.9618900788911104
+          ],
+          "log_likelihood": -6150.759986513396,
+          "aic": 12305.519973026792
+        }
+      }
+    }
+  },
+  "classified_human_groups": {
+    "Roshan2016: Adult balanced (Suppl Fig1a)": {
+      "n_positive_recorded_intervals": 497,
+      "n_complete_cycles": 497,
+      "n_clones_with_complete_cycles": 32,
+      "mean_h": 17.151240778001345,
+      "median_h": 15.666666666666664,
+      "sample_sd_h": 7.001350925929311,
+      "observed_cv": 0.4082125029058794,
+      "min_h": 5.499999999999999,
+      "max_h": 62.333333333333336,
+      "q25_h": 12.333333333333332,
+      "q75_h": 20.0,
+      "n_over_48h": 4,
+      "division_types": {
+        "PD": 155,
+        "DD": 155,
+        "PP": 187
+      },
+      "descriptive_fits": {
+        "normal": {
+          "parameters": [
+            17.151240778001345,
+            6.994303766694144
+          ],
+          "log_likelihood": -1671.9251978761554,
+          "aic": 3347.8503957523108
+        },
+        "lognormal": {
+          "parameters": [
+            0.35460248971119007,
+            0.0,
+            16.04036619447549
+          ],
+          "log_likelihood": -1569.172683334882,
+          "aic": 3142.345366669764
+        },
+        "gamma": {
+          "parameters": [
+            7.629743574033026,
+            0.0,
+            2.2479445883835028
+          ],
+          "log_likelihood": -1590.3201546610612,
+          "aic": 3184.6403093221224
+        }
+      }
+    },
+    "Roshan2016: Adult expanding (Suppl Fig1b)": {
+      "n_positive_recorded_intervals": 465,
+      "n_complete_cycles": 465,
+      "n_clones_with_complete_cycles": 6,
+      "mean_h": 14.868100358422938,
+      "median_h": 14.500000000000007,
+      "sample_sd_h": 4.141191992672481,
+      "observed_cv": 0.278528654827545,
+      "min_h": 5.499999999999999,
+      "max_h": 27.83333333333333,
+      "q25_h": 11.666666666666671,
+      "q75_h": 17.833333333333332,
+      "n_over_48h": 0,
+      "division_types": {
+        "PP": 415,
+        "PD": 39,
+        "DD": 11
+      },
+      "descriptive_fits": {
+        "normal": {
+          "parameters": [
+            14.868100358422938,
+            4.136736701449651
+          ],
+          "log_likelihood": -1320.0632848427838,
+          "aic": 2644.1265696855676
+        },
+        "lognormal": {
+          "parameters": [
+            0.28346080153365305,
+            0.0,
+            14.294578839734482
+          ],
+          "log_likelihood": -1310.433921181979,
+          "aic": 2624.867842363958
+        },
+        "gamma": {
+          "parameters": [
+            12.874912022413033,
+            0.0,
+            1.1548118024061138
+          ],
+          "log_likelihood": -1308.5650881910724,
+          "aic": 2621.130176382145
+        }
+      }
+    },
+    "Roshan2016: NFSK EGF0 balanced(Suppl Fig5c)": {
+      "n_positive_recorded_intervals": 296,
+      "n_complete_cycles": 296,
+      "n_clones_with_complete_cycles": 38,
+      "mean_h": 16.556869369369373,
+      "median_h": 14.999999999999996,
+      "sample_sd_h": 6.432896688748638,
+      "observed_cv": 0.38853339633455464,
+      "min_h": 6.166666666666669,
+      "max_h": 54.33333333333332,
+      "q25_h": 12.166666666666664,
+      "q75_h": 19.583333333333332,
+      "n_over_48h": 1,
+      "division_types": {
+        "PP": 81,
+        "DD": 127,
+        "PD": 88
+      },
+      "descriptive_fits": {
+        "normal": {
+          "parameters": [
+            16.556869369369373,
+            6.422021115985751
+          ],
+          "log_likelihood": -970.4867394132401,
+          "aic": 1944.9734788264802
+        },
+        "lognormal": {
+          "parameters": [
+            0.34862849785351435,
+            0.0,
+            15.534395195672376
+          ],
+          "log_likelihood": -920.0410361550219,
+          "aic": 1844.0820723100437
+        },
+        "gamma": {
+          "parameters": [
+            8.006837790547342,
+            0.0,
+            2.067841238012336
+          ],
+          "log_likelihood": -930.2218046170414,
+          "aic": 1864.4436092340827
+        }
+      }
+    },
+    "Roshan2016: NFSK EGF0 expanding(SupplFig5d)": {
+      "n_positive_recorded_intervals": 361,
+      "n_complete_cycles": 361,
+      "n_clones_with_complete_cycles": 6,
+      "mean_h": 15.532779316712833,
+      "median_h": 15.16666666666666,
+      "sample_sd_h": 3.9723682569414676,
+      "observed_cv": 0.2557409833710385,
+      "min_h": 5.833333333333343,
+      "max_h": 29.666666666666668,
+      "q25_h": 12.333333333333343,
+      "q75_h": 18.49999999999999,
+      "n_over_48h": 0,
+      "division_types": {
+        "PP": 225,
+        "PD": 82,
+        "DD": 54
+      },
+      "descriptive_fits": {
+        "normal": {
+          "parameters": [
+            15.532779316712833,
+            3.966862546385687
+          ],
+          "log_likelihood": -1009.6859629804501,
+          "aic": 2023.3719259609002
+        },
+        "lognormal": {
+          "parameters": [
+            0.26195725393671154,
+            0.0,
+            15.022765040263627
+          ],
+          "log_likelihood": -1006.804203529593,
+          "aic": 2017.608407059186
+        },
+        "gamma": {
+          "parameters": [
+            15.14117877055047,
+            0.0,
+            1.025863280005915
+          ],
+          "log_likelihood": -1003.8689862777737,
+          "aic": 2011.7379725555475
+        }
+      }
+    },
+    "Roshan2016: NFSK Healed colonies (Fig7i)": {
+      "n_positive_recorded_intervals": 307,
+      "n_complete_cycles": 307,
+      "n_clones_with_complete_cycles": 38,
+      "mean_h": 16.66612377850163,
+      "median_h": 15.666666666666668,
+      "sample_sd_h": 5.762493899563648,
+      "observed_cv": 0.34576089654373887,
+      "min_h": 4.333333333333337,
+      "max_h": 44.33333333333333,
+      "q25_h": 13.166666666666671,
+      "q75_h": 18.833333333333336,
+      "n_over_48h": 0,
+      "division_types": {
+        "PD": 93,
+        "PP": 90,
+        "DD": 124
+      },
+      "descriptive_fits": {
+        "normal": {
+          "parameters": [
+            16.66612377850163,
+            5.7531010752274705
+          ],
+          "log_likelihood": -972.7840109400836,
+          "aic": 1949.5680218801672
+        },
+        "lognormal": {
+          "parameters": [
+            0.3082795620045711,
+            0.0,
+            15.861325582743618
+          ],
+          "log_likelihood": -922.8647448080283,
+          "aic": 1849.7294896160565
+        },
+        "gamma": {
+          "parameters": [
+            10.266014828436422,
+            0.0,
+            1.6234268172238733
+          ],
+          "log_likelihood": -931.6306242925344,
+          "aic": 1867.2612485850689
+        }
+      }
+    },
+    "Roshan2016: NFSK Migrating Front (Fig7g)": {
+      "n_positive_recorded_intervals": 35,
+      "n_complete_cycles": 35,
+      "n_clones_with_complete_cycles": 14,
+      "mean_h": 17.59047619047619,
+      "median_h": 16.83333333333333,
+      "sample_sd_h": 7.040190744169202,
+      "observed_cv": 0.40022741101124326,
+      "min_h": 10.833333333333337,
+      "max_h": 54.33333333333333,
+      "q25_h": 14.75,
+      "q75_h": 18.666666666666664,
+      "n_over_48h": 1,
+      "division_types": {
+        "PP": 5,
+        "PD": 8,
+        "DD": 22
+      },
+      "descriptive_fits": {
+        "normal": {
+          "parameters": [
+            17.59047619047619,
+            6.938887754194192
+          ],
+          "log_likelihood": -117.46280101196089,
+          "aic": 238.92560202392178
+        },
+        "lognormal": {
+          "parameters": [
+            0.26723883572997814,
+            0.0,
+            16.820863950289198
+          ],
+          "log_likelihood": -102.26811162100758,
+          "aic": 208.53622324201515
+        },
+        "gamma": {
+          "parameters": [
+            11.34040544724653,
+            0.0,
+            1.5511329178047322
+          ],
+          "log_likelihood": -106.47215751595095,
+          "aic": 216.9443150319019
+        }
+      }
+    },
+    "Roshan2016: NFSK Proliferating Zone(Fig7h)": {
+      "n_positive_recorded_intervals": 310,
+      "n_complete_cycles": 310,
+      "n_clones_with_complete_cycles": 34,
+      "mean_h": 16.005913978494625,
+      "median_h": 15.416666666666668,
+      "sample_sd_h": 4.445104552624896,
+      "observed_cv": 0.2777163839938969,
+      "min_h": 5.833333333333335,
+      "max_h": 43.333333333333336,
+      "q25_h": 13.208333333333334,
+      "q75_h": 17.958333333333336,
+      "n_over_48h": 0,
+      "division_types": {
+        "PP": 219,
+        "PD": 63,
+        "DD": 28
+      },
+      "descriptive_fits": {
+        "normal": {
+          "parameters": [
+            16.005913978494625,
+            4.437929237934705
+          ],
+          "log_likelihood": -901.8291880311223,
+          "aic": 1807.6583760622445
+        },
+        "lognormal": {
+          "parameters": [
+            0.256049939067872,
+            0.0,
+            15.476138200915056
+          ],
+          "log_likelihood": -866.7150875022508,
+          "aic": 1737.4301750045015
+        },
+        "gamma": {
+          "parameters": [
+            15.01967273406116,
+            0.0,
+            1.0656632978558114
+          ],
+          "log_likelihood": -872.5417343757888,
+          "aic": 1749.0834687515776
+        }
+      }
+    },
+    "Roshan2016: NFSK Y27632 balanced(SuppFig6a)": {
+      "n_positive_recorded_intervals": 107,
+      "n_complete_cycles": 107,
+      "n_clones_with_complete_cycles": 10,
+      "mean_h": 18.16822429906542,
+      "median_h": 16.333333333333332,
+      "sample_sd_h": 7.299360104026308,
+      "observed_cv": 0.401765190910913,
+      "min_h": 8.333333333333336,
+      "max_h": 50.5,
+      "q25_h": 14.249999999999998,
+      "q75_h": 19.833333333333332,
+      "n_over_48h": 1,
+      "division_types": {
+        "PD": 36,
+        "DD": 44,
+        "PP": 27
+      },
+      "descriptive_fits": {
+        "normal": {
+          "parameters": [
+            18.16822429906542,
+            7.2651708757712745
+          ],
+          "log_likelihood": -364.01724748844543,
+          "aic": 732.0344949768909
+        },
+        "lognormal": {
+          "parameters": [
+            0.32545410794394863,
+            0.0,
+            17.11740541231698
+          ],
+          "log_likelihood": -335.6055559311591,
+          "aic": 675.2111118623181
+        },
+        "gamma": {
+          "parameters": [
+            8.555575375218515,
+            0.0,
+            2.1235537649157106
+          ],
+          "log_likelihood": -342.95699849544656,
+          "aic": 689.9139969908931
+        }
+      }
+    },
+    "Roshan2016: NFSK Y27632 expanding(SupFig6b)": {
+      "n_positive_recorded_intervals": 348,
+      "n_complete_cycles": 348,
+      "n_clones_with_complete_cycles": 11,
+      "mean_h": 16.24616858237548,
+      "median_h": 16.166666666666657,
+      "sample_sd_h": 3.0168012836358122,
+      "observed_cv": 0.18569309239524723,
+      "min_h": 5.666666666666676,
+      "max_h": 26.333333333333325,
+      "q25_h": 14.33333333333334,
+      "q75_h": 18.333333333333325,
+      "n_over_48h": 0,
+      "division_types": {
+        "PP": 321,
+        "PD": 24,
+        "DD": 3
+      },
+      "descriptive_fits": {
+        "normal": {
+          "parameters": [
+            16.24616858237548,
+            3.012463680697026
+          ],
+          "log_likelihood": -877.550477960517,
+          "aic": 1759.100955921034
+        },
+        "lognormal": {
+          "parameters": [
+            0.19345498232397484,
+            0.0,
+            15.956082540459414
+          ],
+          "log_likelihood": -886.0317326155205,
+          "aic": 1776.063465231041
+        },
+        "gamma": {
+          "parameters": [
+            27.91723304510425,
+            0.0,
+            0.5819405009130915
+          ],
+          "log_likelihood": -880.4838733952975,
+          "aic": 1764.967746790595
+        }
+      }
+    },
+    "Roshan2016: NFSK balanced (Fig2b)": {
+      "n_positive_recorded_intervals": 860,
+      "n_complete_cycles": 860,
+      "n_clones_with_complete_cycles": 64,
+      "mean_h": 17.018217054263566,
+      "median_h": 14.666666666666664,
+      "sample_sd_h": 8.11260299514223,
+      "observed_cv": 0.4767011120656605,
+      "min_h": 5.33333333333333,
+      "max_h": 77.16666666666666,
+      "q25_h": 12.333333333333337,
+      "q75_h": 18.83333333333333,
+      "n_over_48h": 9,
+      "division_types": {
+        "DD": 312,
+        "PD": 247,
+        "PP": 301
+      },
+      "descriptive_fits": {
+        "normal": {
+          "parameters": [
+            17.018217054263566,
+            8.107884993582884
+          ],
+          "log_likelihood": -3020.1269965467363,
+          "aic": 6044.253993093473
+        },
+        "lognormal": {
+          "parameters": [
+            0.3772151730955534,
+            0.0,
+            15.700078534335217
+          ],
+          "log_likelihood": -2749.991680097558,
+          "aic": 5503.983360195116
+        },
+        "gamma": {
+          "parameters": [
+            6.364066028713713,
+            0.0,
+            2.674110698644533
+          ],
+          "log_likelihood": -2815.138233512055,
+          "aic": 5634.27646702411
+        }
+      }
+    },
+    "Roshan2016: NFSK expanding (Fig2a)": null,
+    "Xiao2024: DIF": {
+      "n_positive_recorded_intervals": 174,
+      "n_complete_cycles": 174,
+      "n_clones_with_complete_cycles": 35,
+      "mean_h": 33.99425287356322,
+      "median_h": 30.5,
+      "sample_sd_h": 14.327102384410225,
+      "observed_cv": 0.4214566043765645,
+      "min_h": 15.0,
+      "max_h": 104.0,
+      "q25_h": 24.0,
+      "q75_h": 41.0,
+      "n_over_48h": 25,
+      "division_types": {
+        "PP": 66,
+        "PD": 54,
+        "DD": 54
+      },
+      "descriptive_fits": {
+        "normal": {
+          "parameters": [
+            33.99425287356322,
+            14.285873227321087
+          ],
+          "log_likelihood": -709.6084871019181,
+          "aic": 1423.2169742038361
+        },
+        "lognormal": {
+          "parameters": [
+            0.37904072327164395,
+            0.0,
+            31.52789042938089
+          ],
+          "log_likelihood": -678.5477073174661,
+          "aic": 1361.0954146349322
+        },
+        "gamma": {
+          "parameters": [
+            6.8007788941123515,
+            0.0,
+            4.998582280478654
+          ],
+          "log_likelihood": -684.8230257289517,
+          "aic": 1373.6460514579035
+        }
+      }
+    },
+    "Xiao2024: EXP": {
+      "n_positive_recorded_intervals": 1017,
+      "n_complete_cycles": 1017,
+      "n_clones_with_complete_cycles": 13,
+      "mean_h": 20.601769911504423,
+      "median_h": 19.0,
+      "sample_sd_h": 6.904274951967188,
+      "observed_cv": 0.33513018452418053,
+      "min_h": 9.0,
+      "max_h": 79.0,
+      "q25_h": 16.0,
+      "q75_h": 23.0,
+      "n_over_48h": 12,
+      "division_types": {
+        "PP": 903,
+        "PD": 67,
+        "DD": 38,
+        "DP": 9
+      },
+      "descriptive_fits": {
+        "normal": {
+          "parameters": [
+            20.601769911504423,
+            6.900879685004076
+          ],
+          "log_likelihood": -3407.5474135254076,
+          "aic": 6819.094827050815
+        },
+        "lognormal": {
+          "parameters": [
+            0.2743355470755685,
+            0.0,
+            19.75516781375117
+          ],
+          "log_likelihood": -3161.8025103319546,
+          "aic": 6327.605020663909
+        },
+        "gamma": {
+          "parameters": [
+            12.079866787213795,
+            0.0,
+            1.7054633361777487
+          ],
+          "log_likelihood": -3224.2707098964743,
+          "aic": 6452.541419792949
+        }
+      }
+    }
+  },
+  "mouse_intensity_inventory": [
+    {
+      "sheet": "H2BGFP_Esophagus",
+      "intensity_header": "D7",
+      "time_label": "0 days",
+      "n_intensities": 2728,
+      "n_mouse_ids": 3
+    },
+    {
+      "sheet": "H2BGFP_Esophagus",
+      "intensity_header": "H7",
+      "time_label": "7 days",
+      "n_intensities": 2653,
+      "n_mouse_ids": 3
+    },
+    {
+      "sheet": "H2BGFP_Esophagus",
+      "intensity_header": "L7",
+      "time_label": "12 days",
+      "n_intensities": 2787,
+      "n_mouse_ids": 3
+    },
+    {
+      "sheet": "H2BGFP_Esophagus",
+      "intensity_header": "P7",
+      "time_label": "18 days",
+      "n_intensities": 1676,
+      "n_mouse_ids": 2
+    },
+    {
+      "sheet": "H2BGFP_Paw",
+      "intensity_header": "D5",
+      "time_label": "0 days",
+      "n_intensities": 3807,
+      "n_mouse_ids": 3
+    },
+    {
+      "sheet": "H2BGFP_Paw",
+      "intensity_header": "H5",
+      "time_label": "7 days",
+      "n_intensities": 2704,
+      "n_mouse_ids": 3
+    },
+    {
+      "sheet": "H2BGFP_Paw",
+      "intensity_header": "L5",
+      "time_label": "12 days",
+      "n_intensities": 3276,
+      "n_mouse_ids": 3
+    },
+    {
+      "sheet": "H2BGFP_Paw",
+      "intensity_header": "P5",
+      "time_label": "18 days",
+      "n_intensities": 2498,
+      "n_mouse_ids": 3
+    },
+    {
+      "sheet": "H2BGFP_Ear",
+      "intensity_header": "D5",
+      "time_label": "0 days",
+      "n_intensities": 2048,
+      "n_mouse_ids": 3
+    },
+    {
+      "sheet": "H2BGFP_Ear",
+      "intensity_header": "H5",
+      "time_label": "7 days",
+      "n_intensities": 2141,
+      "n_mouse_ids": 3
+    },
+    {
+      "sheet": "H2BGFP_Ear",
+      "intensity_header": "L5",
+      "time_label": "12 days",
+      "n_intensities": 2220,
+      "n_mouse_ids": 3
+    },
+    {
+      "sheet": "H2BGFP_Ear",
+      "intensity_header": "P5",
+      "time_label": "18 days",
+      "n_intensities": 2095,
+      "n_mouse_ids": 3
+    },
+    {
+      "sheet": "H2BGFP_Back",
+      "intensity_header": "D7",
+      "time_label": "0 days",
+      "n_intensities": 640,
+      "n_mouse_ids": 4
+    },
+    {
+      "sheet": "H2BGFP_Back",
+      "intensity_header": "H7",
+      "time_label": "5 days",
+      "n_intensities": 640,
+      "n_mouse_ids": 4
+    },
+    {
+      "sheet": "H2BGFP_Back",
+      "intensity_header": "L7",
+      "time_label": "14 days",
+      "n_intensities": 640,
+      "n_mouse_ids": 4
+    },
+    {
+      "sheet": "H2BGFP_Back",
+      "intensity_header": "Q7",
+      "time_label": "0 days",
+      "n_intensities": 320,
+      "n_mouse_ids": 2
+    },
+    {
+      "sheet": "H2BGFP_Back",
+      "intensity_header": "U7",
+      "time_label": "11 days",
+      "n_intensities": 640,
+      "n_mouse_ids": 4
+    },
+    {
+      "sheet": "H2BGFP_Back",
+      "intensity_header": "Z7",
+      "time_label": "0 days",
+      "n_intensities": 640,
+      "n_mouse_ids": 4
+    },
+    {
+      "sheet": "H2BGFP_Back",
+      "intensity_header": "AD7",
+      "time_label": "21 days",
+      "n_intensities": 640,
+      "n_mouse_ids": 4
+    },
+    {
+      "sheet": "H2BGFP_Tail_Scale",
+      "intensity_header": "D5",
+      "time_label": "0 days",
+      "n_intensities": 1579,
+      "n_mouse_ids": 3
+    },
+    {
+      "sheet": "H2BGFP_Tail_Scale",
+      "intensity_header": "H5",
+      "time_label": "7 days",
+      "n_intensities": 1670,
+      "n_mouse_ids": 3
+    },
+    {
+      "sheet": "H2BGFP_Tail_Scale",
+      "intensity_header": "L5",
+      "time_label": "12 days",
+      "n_intensities": 1885,
+      "n_mouse_ids": 3
+    },
+    {
+      "sheet": "H2BGFP_Tail_Scale",
+      "intensity_header": "P5",
+      "time_label": "18 days",
+      "n_intensities": 1294,
+      "n_mouse_ids": 2
+    },
+    {
+      "sheet": "H2BGFP_Tail_Interscale",
+      "intensity_header": "D5",
+      "time_label": "0 days",
+      "n_intensities": 2643,
+      "n_mouse_ids": 3
+    },
+    {
+      "sheet": "H2BGFP_Tail_Interscale",
+      "intensity_header": "H5",
+      "time_label": "7 days",
+      "n_intensities": 2352,
+      "n_mouse_ids": 3
+    },
+    {
+      "sheet": "H2BGFP_Tail_Interscale",
+      "intensity_header": "L5",
+      "time_label": "12 days",
+      "n_intensities": 2584,
+      "n_mouse_ids": 3
+    },
+    {
+      "sheet": "H2BGFP_Tail_Interscale",
+      "intensity_header": "P5",
+      "time_label": "18 days",
+      "n_intensities": 1727,
+      "n_mouse_ids": 2
+    }
+  ]
+}

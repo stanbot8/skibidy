@@ -6,6 +6,7 @@
 
 // Module param structs
 #include "angiogenesis/params.h"
+#include "basement_membrane/params.h"
 #include "bioelectric/params.h"
 #include "biofilm/params.h"
 #include "blood/params.h"
@@ -50,6 +51,10 @@ struct SimParam : public ParamGroup {
   real_t s_duration = 6.0;
   real_t g2_duration = 3.0;
   real_t m_duration = 1.0;
+
+  // Optional persistent per-cell cycle propensity (sensitivity assumptions).
+  std::string cycle_variation_distribution = "fixed";
+  real_t cycle_variation_cv = 0.0;
 
   // Division mechanics
   real_t growth_rate = 5;
@@ -316,6 +321,7 @@ struct SimParam : public ParamGroup {
   // works with any BDM version (v1.04 cpptoml or v1.05+ toml++).
   // Module parameter structs
   AngiogenesisParams angiogenesis;
+  BasementMembraneParams basement_membrane;
   BioelectricParams bioelectric;
   BiofilmParams biofilm;
   BloodParams blood;

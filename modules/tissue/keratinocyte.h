@@ -53,6 +53,10 @@ class Keratinocyte : public Cell {
       phase_elapsed_ = 0;
       cell_age_ = 0;
       stratum_steps_ = 0;
+      // A daughter owns a new persistent propensity; the mother retains hers.
+      cycle_variation_initialized_ = false;
+      auto* sim = Simulation::GetActive();
+      EnsureCycleVariation(sim->GetParam()->Get<SimParam>(), sim->GetRandom());
     }
   }
 
@@ -82,6 +86,31 @@ class Keratinocyte : public Cell {
   void SetPhaseElapsed(real_t t) { phase_elapsed_ = t; }
   real_t GetPhaseElapsed() const { return phase_elapsed_; }
 
+  // Initialize once at field bootstrap or first cycling step. Default/zero
+  // spread draws nothing, preserving the existing seeded baseline exactly.
+  void EnsureCycleVariation(const SimParam* sp, Random* random) {
+    if (cycle_variation_initialized_) return;
+    cycle_variation_initialized_ = true;
+    cycle_duration_multiplier_ = 1.0;
+    if (sp->cycle_variation_distribution == "fixed" ||
+        sp->cycle_variation_cv == 0) return;
+    if (sp->cycle_variation_distribution == "normal") {
+      real_t z;
+      do { z = random->Gaus(); } while (std::abs(z) > 3.0);
+      cycle_duration_multiplier_ = 1.0 + sp->cycle_variation_cv * z;
+    } else {
+      // Arithmetic mean is one, not the median. CV parameterizes the
+      // multiplier; actual cycle times still include stochastic transitions.
+      real_t sigma2 = std::log1p(sp->cycle_variation_cv *
+                               sp->cycle_variation_cv);
+      cycle_duration_multiplier_ = std::exp(
+          std::sqrt(sigma2) * random->Gaus() - 0.5 * sigma2);
+    }
+  }
+  real_t GetCycleDurationMultiplier() const {
+    return cycle_duration_multiplier_;
+  }
+
   // Total cell age (hours)
   void SetCellAge(real_t a) { cell_age_ = a; }
   real_t GetCellAge() const { return cell_age_; }
@@ -95,6 +124,7 @@ class Keratinocyte : public Cell {
   // stem identity, TA division budget, and cell cycle readiness.
   // Called at spawn time so agents bootstrap from the continuum ground truth.
   void InitFromFields(Simulation* sim, const SimParam* sp) {
+    EnsureCycleVariation(sp, sim->GetRandom());
     auto* rm = sim->GetResourceManager();
     Real3 pos = ClampToBounds(GetPosition(), sim->GetParam());
 
@@ -125,7 +155,8 @@ class Keratinocyte : public Cell {
 
     // 3. Cell cycle pre-advance: KGF readiness (Michaelis-Menten)
     real_t kgf_response = kgf / (sp->kgf_half_maximal + kgf);
-    real_t g1_advance = kgf_response * sp->g1_duration * 0.5;
+    real_t g1_advance = kgf_response * sp->g1_duration *
+                        cycle_duration_multiplier_ * 0.5;
     SetPhaseElapsed(g1_advance);
   }
 
@@ -137,6 +168,8 @@ class Keratinocyte : public Cell {
   real_t phase_elapsed_ = 0;  // hours in current phase
   real_t cell_age_ = 0;       // total age in hours
   int stratum_steps_ = 0;     // steps in current stratum
+  bool cycle_variation_initialized_ = false;
+  real_t cycle_duration_multiplier_ = 1.0;
 };
 
 }  // namespace skibidy

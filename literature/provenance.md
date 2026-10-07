@@ -6,7 +6,24 @@ size when reported, extraction method, aggregation rule, normalization. Updated
 2026-04-26.
 
 The companion file `modules/<m>/SOURCES.yaml` carries fuller per-paper notes;
-this table is the audit-trail summary.
+this table records the existing reference curves. Labels such as "consensus",
+"multi-paper mean" and "tabular" below are inherited descriptions, not verified
+patient-level extractions. Where source tables, extraction records, cohorts or
+aggregation weights are absent, these are qualitative modeling targets;
+citations do not establish their numerical values or uncertainty. Passing an
+RMSE screen against such a curve is not empirical validation.
+
+Measured data added on 2026-10-07: [GSE209609 human wound RNA](../modules/wound/data/published/GSE209609/README.md),
+with 96 biopsies, 18 subjects, 17 genes, deposited processed values, sample IDs,
+group SDs, source hashes and a reproducible extractor. This supports RNA timing,
+not calibration of the current protein, cell-count, collagen or membrane fields.
+
+Other primary evidence added at the same time:
+[individual keratinocyte division records](../modules/tissue/data/README.md)
+and [basement-membrane component observations](../modules/basement_membrane/README.md).
+Cycle durations constrain observed division distributions, not the coefficient
+of variation of persistent simulated traits. Component staining in a graft
+does not identify a dimensionless membrane damage or repair rate.
 
 ## Core wound healing (normal)
 

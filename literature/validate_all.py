@@ -13,6 +13,10 @@ Override with explicit flags.
 
 import os
 import sys
+import argparse
+import json
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from batch.lib import parse_toml, validate_run_metrics
 
 QUICK = "--quick" in sys.argv
 if QUICK:
@@ -27,7 +31,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from lib import (load_csv, plots_dir, detect_condition, detect_modules,
                  validate_wound, validate_fibroblast, validate_tumor,
                  validate_microenvironment, validate_ph, validate_ra,
-                 print_summary)
+                 print_summary, evaluate_run, saved_config_path)
 if not QUICK:
     from lib import (plot_wound_panels, plot_fibroblast_panels,
                      plot_tumor_panels, plot_microenvironment_panels,
@@ -49,9 +53,23 @@ def main():
     print(f"  SOURCES check passed ({n} warning{'s' if n != 1 else ''})")
 
     # --- Parse CLI args ---
-    args = [a for a in sys.argv[1:] if not a.startswith("--")]
-    flags = [a for a in sys.argv[1:] if a.startswith("--")]
-    sim_path = args[0] if args else "output/skibidy/metrics.csv"
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("metrics", nargs="?", default="output/skibidy/metrics.csv")
+    parser.add_argument("--config", help="Exact saved configuration for this run")
+    parser.add_argument("--report", help="JSON coverage and observable results")
+    for name in ("normal", "diabetic", "burn", "pressure", "surgical", "rheumatoid"):
+        parser.add_argument("--" + name, action="store_true")
+    options = parser.parse_args()
+    sim_path = options.metrics
+    flags = ["--" + name for name in ("normal", "diabetic", "burn", "pressure", "surgical", "rheumatoid") if getattr(options, name)]
+    if len(flags) > 1:
+        parser.error("choose only one condition")
+    config_path = options.config
+    if config_path is None:
+        config_path = saved_config_path(sim_path)
+    if config_path is None:
+        raise ValueError("No saved run configuration. Supply --config to establish condition and enabled mechanisms.")
+    config = parse_toml(config_path)
 
     # Condition: CLI flag > auto-detect from bdm.toml
     condition = None
@@ -69,35 +87,39 @@ def main():
         elif f == "--normal":
             condition = "normal"
     if condition is None:
-        condition = detect_condition()
+        condition = detect_condition(config_path)
     print(f"  Condition: {condition}")
 
     if not os.path.exists(sim_path):
         print(f"Error: {sim_path} not found. Run the simulation first.")
         sys.exit(1)
 
+    if config is not None:
+        validate_run_metrics(sim_path, config)
     sim = load_csv(sim_path)
     sim_days = [h / 24.0 for h in sim["time_h"]]
-    has_wound, has_fibroblast, has_tumor, has_microenv, has_ph, has_ra = detect_modules(sim)
+    has_wound, has_fibroblast, has_tumor, has_microenv, has_ph, has_ra = detect_modules(sim, config)
 
     if not has_wound and not has_tumor and not has_ra:
-        print("No wound, tumor, or RA data found in metrics. Nothing to validate.")
-        sys.exit(0)
+        print("NOT TESTED: no supported validation target is enabled.")
 
     # --- Compute once ---
-    wound_r = validate_wound(sim, sim_days, condition) if has_wound else None
-    fibro_r = validate_fibroblast(sim, sim_days, condition) if has_fibroblast else None
-    micro_r = validate_microenvironment(sim, sim_days, condition) if has_microenv else None
-    # pH reference only exists for normal wounds (Schneider 2007).
-    # Diabetic/burn/pressure/surgical have different pH kinetics that are
-    # not represented in the project's reference data; skip pH for those.
-    ph_r = validate_ph(sim, sim_days) if (has_ph and condition == "normal") else None
-    tumor_r = validate_tumor(sim, sim_days) if has_tumor else None
-    ra_r = validate_ra(sim, sim_days) if has_ra else None
+    results, report = evaluate_run(sim, sim_days, config, condition)
+    wound_r, fibro_r, tumor_r, micro_r, ph_r, ra_r = [results[k] for k in
+        ("wound", "fibroblast", "tumor", "microenv", "ph", "ra")]
 
     # --- Print once ---
     passed = print_summary(wound=wound_r, fibroblast=fibro_r, tumor=tumor_r,
                            microenv=micro_r, ph=ph_r, ra=ra_r)
+    report.update(condition=condition, config=config_path, metrics=os.path.abspath(sim_path),
+                  source_warnings=src_warnings)
+    passed = report["status"] == "pass"
+    report_path = options.report or os.path.join(os.path.dirname(sim_path), "validation.json")
+    with open(report_path, "w") as f:
+        json.dump(report, f, indent=2, allow_nan=False)
+    for name, item in report["coverage"].items():
+        if item["status"] == "not_tested":
+            print(f"  NOT TESTED: {name}: {item['reason']}")
 
     if QUICK:
         return passed

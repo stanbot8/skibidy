@@ -14,9 +14,7 @@ Usage:
 
 import argparse
 import csv
-import math
 import os
-import shutil
 import sys
 import time
 
@@ -33,15 +31,13 @@ from batch.lib import (
     get_metrics_path,
     load_csv,
     aggregate_csvs,
-    extract_outcome,
-    write_csv,
+    resolve_study,
+    study_profile,
 )
-
-sys.path.insert(0, os.path.join(REPO, "literature"))
-from cure_criteria import evaluate_cure, print_cure_assessment
 
 from batch.lib import get_tomllib
 tomllib = get_tomllib()
+from scripts.study.gen_treatment_schedule import resolve_treatment, encode_runtime_schedule
 # ---------------------------------------------------------------------------
 # Experiment loading
 # ---------------------------------------------------------------------------
@@ -61,8 +57,12 @@ def load_experiment(path):
             raise ValueError(f"{path}: missing experiment.{key}")
 
     # Defaults
-    experiment.setdefault("profile", "diabetic")
-    experiment.setdefault("study", "diabetic-wound")
+    if "study" not in experiment:
+        from pathlib import Path
+        owner = next((parent for parent in Path(path).resolve().parents
+                      if (parent / "preset.toml").is_file()), None)
+        experiment["study"] = owner.name if owner else "diabetic-wound"
+    experiment.setdefault("profile", study_profile(experiment["study"]) or None)
     experiment.setdefault("runs_per_config", 5)
     experiment.setdefault("description", "")
 
@@ -75,6 +75,7 @@ def load_experiment(path):
         cfg.setdefault("study", None)
         cfg.setdefault("treatments", [])
         cfg.setdefault("extra_overlays", [])
+        cfg.setdefault("schedule", [])
 
     return experiment
 
@@ -98,32 +99,18 @@ def prepare_experiment_config(cfg, experiment):
     merge_config()
 
     # Profile: per-config overrides experiment-level
-    profile = cfg.get("profile") or experiment.get("profile")
+    study = cfg.get("study") or experiment.get("study")
+    profile = cfg.get("profile") or experiment.get("profile") or (study_profile(study) if study else None)
     if profile:
         apply_profile(profile)
 
     # Study config: per-config overrides experiment-level
-    study = cfg.get("study") or experiment.get("study")
     if study:
         apply_study(study)
 
-    # Treatments (search study-scoped treatments first, then all studies)
+    # Day-zero overlays retain declared order; shared treatments are explicit.
     for tname in cfg.get("treatments", []):
-        tpath = None
-        if study:
-            candidate = os.path.join(REPO, "studies", study, "treatments", f"{tname}.toml")
-            if os.path.isfile(candidate):
-                tpath = candidate
-        if not tpath:
-            import glob as _glob
-            matches = sorted(_glob.glob(os.path.join(
-                REPO, "studies", "*", "treatments", f"{tname}.toml")))
-            if matches:
-                tpath = matches[0]
-        if tpath:
-            apply_overlay(tpath)
-        else:
-            print(f"  WARNING: treatment '{tname}' not found", flush=True)
+        apply_overlay(resolve_treatment(tname, study))
 
     # Extra overlays (arbitrary TOML files)
     for overlay in cfg.get("extra_overlays", []):
@@ -131,14 +118,20 @@ def prepare_experiment_config(cfg, experiment):
         if os.path.isfile(opath):
             apply_overlay(opath)
         else:
-            print(f"  WARNING: overlay '{overlay}' not found", flush=True)
+            raise ValueError(f"missing overlay: {overlay}")
 
     # Parameter overrides
-    for param_path, value in cfg.get("overrides", {}).items():
+    for param_path, value in {**experiment.get("overrides", {}), **cfg.get("overrides", {})}.items():
         override_param(param_path, value)
 
     # Strip visualization for headless batch
     _strip_viz(bdm_path)
+    from scripts.study.experiment_evidence import save_analysis_identity
+    save_analysis_identity(bdm_path, cfg, experiment, profile, study)
+    schedule = encode_runtime_schedule(cfg.get("schedule", []), study)
+    if schedule:
+        with open(bdm_path, "a", encoding="utf-8") as f:
+            f.write(schedule)
 
 
 def _strip_viz(bdm_path):
@@ -173,66 +166,45 @@ def run_consensus(label, cfg, experiment, n_runs, output_dir):
 
     Returns (mean_data, std_data, csv_paths, outcomes).
     """
+    if isinstance(n_runs, bool) or not isinstance(n_runs, int) or n_runs < 1:
+        raise ValueError("runs_per_config must be a positive integer")
+    from scripts.study.experiment_evidence import save_json, scalar_outcomes, summarize_replicates
     csv_paths = []
+    records = [{"seed": experiment.get("seed", 42) + i, "status": "pending"}
+               for i in range(n_runs)]
     raw_dir = os.path.join(output_dir, "raw")
     os.makedirs(raw_dir, exist_ok=True)
+    safe_label = label.replace(" ", "_").replace("+", "_").replace("(", "").replace(")", "")
+    receipt = os.path.join(raw_dir, safe_label + "_cohort.json")
+    save_json(receipt, {"label": label, "status": "running", "runs": records})
 
     for i in range(n_runs):
         prepare_experiment_config(cfg, experiment)
-        safe_label = label.replace(" ", "_").replace("+", "_").replace("(", "").replace(")", "")
+        override_param("simulation.random_seed", records[i]["seed"])
         run_dir = os.path.join(raw_dir, f"{safe_label}_run{i:03d}")
         success, elapsed = run_simulation(output_path=run_dir)
 
         if not success:
-            print(f"    Run {i+1}/{n_runs} failed, skipping", flush=True)
-            continue
+            records[i]["status"] = "failed"
+            save_json(receipt, {"label": label, "status": "failed", "runs": records})
+            raise RuntimeError(f"{label}: run {i+1}/{n_runs} failed; cohort is incomplete")
 
         csv_path = get_metrics_path()
         if not os.path.isfile(csv_path):
-            print(f"    Run {i+1}/{n_runs} failed (no metrics)", flush=True)
-            continue
+            records[i]["status"] = "failed"
+            save_json(receipt, {"label": label, "status": "failed", "runs": records})
+            raise RuntimeError(f"{label}: run {i+1}/{n_runs} has no metrics")
         csv_paths.append(csv_path)
+        records[i].update(status="complete", metrics=csv_path,
+                          outcomes=scalar_outcomes(load_csv(csv_path)))
+        save_json(receipt, {"label": label, "status": "running", "runs": records})
         print(f"    Run {i+1}/{n_runs} done ({elapsed:.0f}s)", flush=True)
 
-    if not csv_paths:
-        return {}, {}, [], {}
-
-    # Aggregate
     mean_data, std_data = aggregate_csvs(csv_paths)
-
-    # Extract scalar outcomes
-    outcomes = {}
-    if mean_data:
-        outcomes["wound_closure_pct"] = extract_outcome(mean_data, "wound_closure_pct", "final")
-        outcomes["peak_inflammation"] = extract_outcome(mean_data, "mean_infl_wound", "peak")
-        outcomes["scar_magnitude"] = extract_outcome(mean_data, "scar_magnitude", "final")
-        outcomes["peak_neutrophils"] = extract_outcome(mean_data, "n_neutrophils", "peak")
-        outcomes["peak_macrophages"] = extract_outcome(mean_data, "n_macrophages", "peak")
-        outcomes["peak_collagen"] = extract_outcome(mean_data, "mean_collagen_wound", "peak")
-        outcomes["time_to_50pct_h"] = extract_outcome(mean_data, "wound_closure_pct", "time_to_50")
-        outcomes["time_to_90pct_h"] = extract_outcome(mean_data, "wound_closure_pct", "time_to_90")
-        # Convert hours to days
-        for key in ["time_to_50pct_h", "time_to_90pct_h"]:
-            v = outcomes.get(key)
-            day_key = key.replace("_h", "_days")
-            outcomes[day_key] = round(v / 24, 1) if v and not math.isnan(v) else None
-
+    outcomes = summarize_replicates(records)
+    save_json(receipt, {"label": label, "status": "complete", "runs": records,
+                        "outcomes": outcomes})
     return mean_data, std_data, csv_paths, outcomes
-
-
-def _detect_cure_condition(experiment):
-    """Map experiment profile/study to a cure criteria condition."""
-    profile = experiment.get("profile", "")
-    study = experiment.get("study", "")
-    if profile == "rheumatoid" or "rheumatoid" in study:
-        return "rheumatoid"
-    if profile == "pressure" or "pressure" in study:
-        return "pressure"
-    if profile == "burn" or "burn" in study:
-        return "burn"
-    if profile == "diabetic" or "diabetic" in study:
-        return "diabetic"
-    return None
 
 
 # ---------------------------------------------------------------------------
@@ -302,7 +274,7 @@ def write_summary(experiment, results, output_dir, elapsed):
                 o = r.get("outcomes", {})
                 closure = o.get("wound_closure_pct", 0)
                 delta = closure - base_closure
-                f.write(f"  {r['label']:<30} closure: {delta:+.1f}%\n")
+                f.write(f"  {r['label']:<30} closure: {delta:+.1f} percentage points\n")
 
     print(f"  Summary: {path}", flush=True)
 
@@ -330,82 +302,17 @@ def print_results_table(results):
 # Main orchestration
 # ---------------------------------------------------------------------------
 
-def run_experiment_file(experiment_path, runs_override=None):
+def run_experiment_file(experiment_path, runs_override=None, output_override=None, binary=None):
     """Load and run a single experiment file."""
     experiment = load_experiment(experiment_path)
-    name = experiment["name"]
-    n_runs = runs_override or experiment["runs_per_config"]
-
-    # Output into the study's results directory
-    study_name = experiment.get("study", "diabetic-wound")
-    safe_name = name.lower().replace(" ", "_").replace("(", "").replace(")", "")
-    output_dir = os.path.join(REPO, "studies", study_name, "results", "experiments", safe_name)
-    os.makedirs(output_dir, exist_ok=True)
-
-    n_configs = len(experiment["configs"])
-    total_runs = n_configs * n_runs
-
-    print(f"\n{'='*60}")
-    print(f"  Experiment: {name}")
-    if experiment.get("description"):
-        print(f"  {experiment['description']}")
-    print(f"  {n_configs} configs x {n_runs} runs = {total_runs} total")
-    print(f"{'='*60}\n")
-
-    results = []
-    t0 = time.time()
-
-    for idx, cfg in enumerate(experiment["configs"]):
-        label = cfg["label"]
-        print(f"[{idx+1}/{n_configs}] {label}", flush=True)
-
-        mean_data, std_data, csv_paths, outcomes = run_consensus(
-            label, cfg, experiment, n_runs, output_dir)
-
-        # Save consensus CSV
-        if mean_data:
-            safe_label = label.replace(" ", "_").replace("+", "_").replace("(", "").replace(")", "")
-            consensus_path = os.path.join(output_dir, f"consensus_{safe_label}.csv")
-            cols = sorted(mean_data.keys())
-            write_csv(mean_data, consensus_path, cols)
-
-        result = {
-            "label": label,
-            "n_runs": len(csv_paths),
-            "outcomes": outcomes,
-            "mean_data": mean_data,
-        }
-        results.append(result)
-
-        closure = outcomes.get("wound_closure_pct", 0)
-        print(f"  >> Closure: {closure:.1f}% ({len(csv_paths)} runs)\n", flush=True)
-
-    elapsed = time.time() - t0
-
-    # Write outputs
-    write_comparison(results, output_dir)
-    write_summary(experiment, results, output_dir, elapsed)
-    print_results_table(results)
-
-    # Cure assessment (if applicable to this condition)
-    cure_cond = _detect_cure_condition(experiment)
-    if cure_cond:
-        print(f"\n  Cure Assessment ({cure_cond}):")
-        for r in results:
-            if r.get("mean_data"):
-                cure_r = evaluate_cure(r["mean_data"], cure_cond)
-                r["cure"] = cure_r
-                print(f"    {r['label']}: {cure_r['verdict']} ({cure_r['score']:.0%})")
-                for c in cure_r["criteria"]:
-                    mark = "+" if c["met"] else "-"
-                    print(f"      [{mark}] {c['name']}: {c['detail']}")
-
-    mins = int(elapsed) // 60
-    secs = int(elapsed) % 60
-    print(f"\n  Completed in {mins}m {secs}s")
-    print(f"  Output: {output_dir}/\n")
-
-    return results
+    from scripts.study.experiment_evidence import run_complete_experiment
+    if runs_override is not None:
+        experiment["runs_per_config"] = runs_override
+    study = experiment.get("study", "diabetic-wound")
+    destination = output_override or os.path.join(
+        resolve_study(study), "results", "experiments",
+        experiment["name"].lower().replace(" ", "_") + "_" + time.strftime("%Y%m%d-%H%M%S"))
+    return run_complete_experiment(experiment, destination, binary or os.path.join(REPO, "build", "skibidy"))
 
 
 def main():
@@ -415,7 +322,11 @@ def main():
                         help="Path(s) to experiment TOML file(s)")
     parser.add_argument("--runs", type=int, default=None,
                         help="Override runs per config")
+    parser.add_argument("--output", help="Fresh output directory (one experiment only)")
+    parser.add_argument("--binary", help="Production binary to freeze (defaults to build/skibidy)")
     args = parser.parse_args()
+    if args.output and len(args.experiments) != 1:
+        parser.error("--output requires exactly one experiment")
 
     for path in args.experiments:
         if not os.path.isfile(path):
@@ -423,7 +334,7 @@ def main():
             sys.exit(1)
 
     for path in args.experiments:
-        run_experiment_file(path, runs_override=args.runs)
+        run_experiment_file(path, runs_override=args.runs, output_override=args.output, binary=args.binary)
 
 
 if __name__ == "__main__":

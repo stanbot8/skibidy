@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Validate reference CSV data quality.
 
-For every modules/*/data/*.csv used by the validation pipeline:
-  1. Parses as well-formed CSV (header + numeric body)
-  2. All cells finite (no NaN, no inf)
+For reference curves, extracted cell records, membrane observations, measured
+GEO expression tables and study treatment constraints:
+  1. Parses as well-formed CSV (quoted fields supported)
+  2. Required numeric measurements are finite (no NaN, no inf); categorical
+     identities and explicitly missing observations follow their source schema
   3. X-axis column (day, week, month, year, age) starts at >= 0 and is
      strictly increasing; CSVs with no recognized x-axis (categorical) skip
      this check
@@ -23,9 +25,12 @@ Usage:
 """
 
 import argparse
+import csv
 import glob
+from itertools import chain
 import math
 import os
+import re
 import sys
 
 _PROJECT_ROOT = os.path.realpath(os.path.join(os.path.dirname(__file__), os.pardir))
@@ -45,13 +50,27 @@ _X_COLUMN_NAMES = ("day", "week", "month", "year", "age", "age_years")
 # Categorical-key first-column names (categorical CSVs, not timecourses).
 _CATEGORICAL_KEY_COLUMNS = ("tumor_type",)
 
+# These schemas are evidence tables, not globally ordered numeric curves.
+_SCHEMAS = {
+    "study": "study sheet clone generation source_generation duration_cell "
+             "duration_h division_type positive_recorded_interval complete_cycle "
+             "first_generation fit_eligible",
+    "component": "component first_sample_day last_sample_day observation "
+                 "measurement n_reported",
+    "sample": "gene probe sample subject tissue day rma_log2_expression",
+    "mean_log2": "gene probe tissue day n mean_log2 sample_sd_log2 "
+                 "log2_difference_from_group_baseline",
+    "source_id": "source_id treatment population observable time measurement "
+                 "value unit n model_connection calibration_status",
+}
+
 
 def _read_csv_with_comments(path):
     """Return (comment_lines, header, rows). Comment lines start with '#'."""
     comments = []
     rows = []
     header = None
-    with open(path, newline="") as f:
+    with open(path, newline="", encoding="utf-8-sig") as f:
         for raw in f:
             line = raw.rstrip("\n").rstrip("\r")
             if not line.strip():
@@ -59,10 +78,14 @@ def _read_csv_with_comments(path):
             if line.lstrip().startswith("#"):
                 comments.append(line.lstrip("#").strip())
                 continue
+            # One reader record may consume multiple lines from f. Comments are
+            # recognized only between records, never inside a quoted field.
+            record = next(csv.reader(chain([raw], f), strict=True))
+            record = [c.strip() for c in record]
             if header is None:
-                header = [c.strip() for c in line.split(",")]
-                continue
-            rows.append([c.strip() for c in line.split(",")])
+                header = record
+            else:
+                rows.append(record)
     return comments, header, rows
 
 
@@ -121,7 +144,7 @@ def _check_value_ranges(header, rows, path):
     errors = []
     cat_idx = _categorical_key_idx(header)
     for col_idx, col_name in enumerate(header):
-        if col_idx == cat_idx or col_name in _X_COLUMN_NAMES:
+        if col_idx == cat_idx:
             continue
         vals = [r[col_idx] for r in rows]
         for v in vals:
@@ -141,6 +164,144 @@ def _check_value_ranges(header, rows, path):
                         f"{path}: peak-normalized column '{col_name}' value {v} "
                         f"out of [0, 1.05]")
                     break
+    return errors
+
+
+def _check_evidence_rows(schema, header, rows, path):
+    """Validate source identities, finite measurements and extraction flags.
+
+    Blank durations are unobserved intervals, not zero cycles. Missing sample
+    counts and treatment effect sizes remain explicitly missing. Daughter-fate
+    and generation labels follow analyze_cycles.py's extraction contract.
+    """
+    errors = []
+    seen = set()
+    sample_metadata = {}
+    expected = _SCHEMAS[schema].split()
+    if set(header) != set(expected):
+        return [f"{path}: {schema} schema requires columns {', '.join(expected)}"]
+
+    for row_number, cells in enumerate(rows, 2):
+        label = f"{path}: row {row_number}"
+        if len(cells) != len(header):
+            errors.append(f"{label} has {len(cells)} cells, expected {len(header)}")
+            continue
+        row = dict(zip(header, cells))
+
+        def fail(message):
+            errors.append(f"{label}: {message}")
+
+        def required(*columns):
+            for col in columns:
+                if not row[col]:
+                    fail(f"'{col}' must contain a categorical identity or observation")
+
+        def number(col, minimum=None, integer=False, optional=False):
+            value = row[col]
+            if optional and value == "":
+                return None
+            try:
+                value = float(value)
+            except ValueError:
+                fail(f"'{col}' must be numeric" + (" or explicitly blank" if optional else ""))
+                return None
+            if not math.isfinite(value):
+                fail(f"'{col}' contains a non-finite value")
+                return None
+            if minimum is not None and value < minimum:
+                fail(f"'{col}' must be >= {minimum}")
+            if integer and not value.is_integer():
+                fail(f"'{col}' must be an integer")
+            return value
+
+        def unique(*columns):
+            key = tuple(row[col] for col in columns)
+            if key in seen:
+                fail(f"duplicate source identity in {', '.join(columns)}: {key}")
+            seen.add(key)
+
+        if schema == "study":
+            required("study", "sheet", "clone", "generation", "source_generation", "duration_cell")
+            if row["study"] not in {"Xiao2024", "Roshan2016"}:
+                fail("unrecognized cell-cycle study")
+            if not re.fullmatch(r"(?:Clone|Colony) [1-9]\d*", row["clone"]):
+                fail("invalid source clone identity")
+            if not re.fullmatch(r"[A-Z]+[1-9]\d*", row["duration_cell"]):
+                fail("invalid source worksheet cell")
+            generation = row["generation"]
+            if not re.fullmatch(r"(?:[1-9]\d*|D[1-9]\d*|Outer[1-9]\d*)", generation):
+                fail("invalid generation label")
+            if row["source_generation"].removeprefix("G") != generation:
+                fail("source_generation disagrees with normalized generation")
+            duration = number("duration_h", minimum=0, optional=True)
+            fate = row["division_type"]
+            if fate not in {"", "P", "D", "U", "PP", "PD", "DP", "DD", "PU", "UP",
+                            "DU", "UD", "UU", "Bd", "BD", "DB", "Div"}:
+                fail("unrecognized source daughter-fate label")
+            positive = duration is not None and duration > 0
+            flags = {
+                "positive_recorded_interval": positive,
+                "complete_cycle": positive and bool(re.fullmatch(r"[PDU]{2}", fate)),
+                "first_generation": generation == "1",
+                "fit_eligible": generation.isdigit() and int(generation) > 1
+                                and row["sheet"] != "NFSK expanding (Fig2a)",
+            }
+            for col, expected_flag in flags.items():
+                if row[col] not in {"True", "False"}:
+                    fail(f"'{col}' must be True or False")
+                elif (row[col] == "True") != expected_flag:
+                    fail(f"'{col}' disagrees with recorded interval, fate or generation")
+            unique("study", "sheet", "duration_cell")
+        elif schema == "component":
+            required("component", "observation", "measurement")
+            first = number("first_sample_day", minimum=0)
+            last = number("last_sample_day", minimum=0)
+            if first is not None and last is not None and last < first:
+                fail("last_sample_day precedes first_sample_day")
+            number("n_reported", minimum=1, integer=True, optional=True)
+        elif schema in {"sample", "mean_log2"}:
+            required("gene", "probe", "tissue")
+            if row["tissue"] not in {"skin", "palate"}:
+                fail("unrecognized GSE209609 tissue")
+            number("day", minimum=0)
+            if schema == "sample":
+                required("sample", "subject")
+                if not re.fullmatch(r"GSM[1-9]\d*", row["sample"]):
+                    fail("invalid GEO sample accession")
+                number("rma_log2_expression")
+                unique("gene", "probe", "sample")
+                metadata = tuple(row[c] for c in ("subject", "tissue", "day"))
+                previous = sample_metadata.setdefault(row["sample"], metadata)
+                if previous != metadata:
+                    fail("GEO sample has inconsistent subject, tissue or day")
+            else:
+                number("n", minimum=1, integer=True)
+                number("mean_log2")
+                number("sample_sd_log2", minimum=0)
+                number("log2_difference_from_group_baseline")
+                unique("gene", "probe", "tissue", "day")
+        elif schema == "source_id":
+            required(*(col for col in expected if col not in {"value", "n"}))
+            value = number("value", minimum=0, optional=True)
+            if value is None and row["unit"] not in {
+                    "direction", "direction and P<0.05", "not extracted", "assumed"}:
+                fail("missing effect size requires an explicit qualitative/missing unit")
+            # Relative increases can exceed 100%; healed proportions and marker
+            # reductions cannot. Preserve the source's measurement distinction.
+            relative_increase = "increase" in row["measurement"].lower()
+            if (value is not None and row["unit"] == "percent" and value > 100
+                    and not relative_increase):
+                fail("percent value out of [0, 100]")
+            # Source counts include ranges, healed/total counts and named groups.
+            count = row["n"]
+            if count not in {"", "not extracted"}:
+                match = re.fullmatch(r"([1-9]\d*)(?:([-\/])([1-9]\d*)| [A-Za-z].*)?", count)
+                if not match:
+                    fail("invalid reported sample count")
+                elif match[2] and int(match[1]) > int(match[3]):
+                    fail("reported sample count range/fraction is reversed")
+                if re.search(r"(?:^|;)\s*0(?:\s|$)", count):
+                    fail("reported group sample counts must be positive")
     return errors
 
 
@@ -186,18 +347,33 @@ def _build_sources_index():
 
 
 def discover_csvs():
-    return sorted(glob.glob(os.path.join(_MODULES_DIR, "*", "data", "*.csv")))
+    curves = glob.glob(os.path.join(_MODULES_DIR, "*", "data", "*.csv"))
+    measured = glob.glob(os.path.join(_MODULES_DIR, "*", "data", "published", "**", "*.csv"),
+                         recursive=True)
+    treatments = glob.glob(os.path.join(_PROJECT_ROOT, "studies", "*", "data",
+                                       "treatment_constraints.csv"))
+    return sorted(set(curves + measured + treatments))
 
 
 def check_csv(path, sources_index, strict):
     errors = []
     warnings = []
-    comments, header, rows = _read_csv_with_comments(path)
+    try:
+        comments, header, rows = _read_csv_with_comments(path)
+    except (csv.Error, UnicodeError, OSError) as e:
+        return [f"{path}: cannot parse CSV: {e}"], warnings
     if header is None:
         errors.append(f"{path}: missing header row")
         return errors, warnings
     if not rows:
         errors.append(f"{path}: no data rows")
+        return errors, warnings
+    if any(not col for col in header) or len(header) != len(set(header)):
+        return [f"{path}: header columns must be nonempty and unique"], warnings
+    schema = next((key for key in _SCHEMAS if key in header), None)
+    if schema is not None:
+        errors.extend(_check_evidence_rows(schema, header, rows, path))
+        _check_provenance(path, comments, sources_index, warnings)
         return errors, warnings
     numeric_rows, parse_errors = _parse_numeric(rows, header, path)
     errors.extend(parse_errors)

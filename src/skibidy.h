@@ -24,7 +24,11 @@
 namespace bdm {
 namespace skibidy {
 
-inline int Simulate(int argc, const char** argv) {
+inline int Simulate(int argc, const char** argv) try {
+  // Keep the original input, before scheduled treatments mutate parameters.
+  const auto ckpt = checkpoint::GetCheckpointConfig();
+  const auto input_config = checkpoint::ReadFile("bdm.toml", checkpoint::kMaxConfigBytes);
+  g_step_offset = 0;
   Param::RegisterParamGroup(new SimParam());
 
   auto set_param = [](Param* param) {
@@ -140,27 +144,42 @@ inline int Simulate(int argc, const char** argv) {
                      wound_microenv.get());
 
   // --- Checkpoint support ---
-  auto ckpt = checkpoint::GetCheckpointConfig();
-
-  if (ckpt.load) {
-    // Load grid state from checkpoint, get saved step number
-    uint64_t saved_step = checkpoint::LoadCheckpoint(&simulation, ckpt.load_dir);
-    g_step_offset = saved_step;
-    uint64_t remaining = (sp->num_steps > saved_step)
-                             ? sp->num_steps - saved_step
-                             : 0;
-    std::cout << "Checkpoint: resuming from step " << saved_step
-              << ", running " << remaining << " more steps" << std::endl;
-    simulation.GetScheduler()->Simulate(remaining);
-  } else if (ckpt.save && ckpt.save_step > 0 &&
-             ckpt.save_step < static_cast<uint64_t>(sp->num_steps)) {
-    // Run to checkpoint step, save, then finish
-    simulation.GetScheduler()->Simulate(ckpt.save_step);
-    checkpoint::SaveCheckpoint(&simulation, ckpt.save_step, ckpt.save_dir);
-    uint64_t remaining = sp->num_steps - ckpt.save_step;
-    simulation.GetScheduler()->Simulate(remaining);
-  } else {
-    simulation.GetScheduler()->Simulate(sp->num_steps);
+  const std::vector<DerivedField*> derived = {
+      ecm_quality.get(), tissue_viability.get(), wound_microenv.get()};
+  try {
+    if (ckpt.save || ckpt.load) checkpoint::ValidateMode(&simulation, argc);
+    if (ckpt.load) {
+      const auto record = checkpoint::ReadCheckpoint(ckpt.load_dir);
+      checkpoint::ValidateReplay(&simulation, record, toml::parse(input_config));
+      std::cout << "Checkpoint: replaying " << record.step
+                << " steps to restore every state owner" << std::endl;
+      scheduler->Simulate(record.step);
+      if (checkpoint::StateSignature(&simulation, derived) != record.state) {
+        throw std::runtime_error("checkpoint replay boundary state mismatch");
+      }
+      std::cout << "Checkpoint: boundary verified at step " << record.step << std::endl;
+      // BioDynaMo still executes scheduler setup/finalization for Simulate(0).
+      // A checkpoint at the final boundary must leave that state untouched.
+      if (record.step < static_cast<uint64_t>(sp->num_steps)) {
+        scheduler->Simulate(sp->num_steps - record.step);
+      }
+    } else if (ckpt.save) {
+      if (ckpt.save_step > static_cast<uint64_t>(sp->num_steps)) {
+        throw std::runtime_error("checkpoint step exceeds configured run length");
+      }
+      scheduler->Simulate(ckpt.save_step);
+      checkpoint::SaveCheckpoint(&simulation, ckpt.save_dir, input_config, derived);
+      auto* metrics_impl = scheduler->GetOps("MetricsExporter")[0]
+          ->GetImplementation<MetricsExporter>();
+      if (metrics_impl) metrics_impl->Close();
+      // Final tumor cleanup is not part of the saved boundary.
+      return 0;
+    } else {
+      scheduler->Simulate(sp->num_steps);
+    }
+  } catch (const std::exception& error) {
+    std::cerr << "Checkpoint failure: " << error.what() << std::endl;
+    return 1;
   }
 
   // --- Final tumor cleanup: convert remaining agents to field ---
@@ -205,7 +224,15 @@ inline int Simulate(int argc, const char** argv) {
     std::system(cmd.c_str());
   }
 
+  if (const char* signature_path = std::getenv("SKIBIDY_STATE_SIGNATURE_FILE")) {
+    std::ofstream signature(signature_path);
+    signature << checkpoint::StateSignature(&simulation, derived) << '\n';
+    if (!signature) throw std::runtime_error("state signature write failed");
+  }
   return 0;
+} catch (const std::exception& error) {
+  std::cerr << "Simulation failure: " << error.what() << std::endl;
+  return 1;
 }
 
 }  // namespace skibidy

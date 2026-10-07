@@ -25,12 +25,16 @@ Output: studies/diabetic-wound/experiments/
 import argparse
 import csv
 import itertools
+import json
+import math
 import os
+import re
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, REPO)
 
-from batch.lib import get_tomllib
+from batch.lib import get_tomllib, resolve_study
 tomllib = get_tomllib()
 ALL_TREATMENTS = [
     "npwt", "hbo", "growth_factor", "doxycycline",
@@ -41,23 +45,59 @@ ALL_TREATMENTS = [
 def load_treatment(name, study="diabetic-wound"):
     """Load a treatment TOML and return its parameter overrides as flat dict.
 
-    Searches study-scoped treatments first, then shared, then all studies.
+    Searches the selected study first, then shared treatments.
     """
-    import glob as _glob
-    candidates = [
-        os.path.join(REPO, "studies", study, "treatments", f"{name}.toml"),
-        os.path.join(REPO, "studies", "shared", "treatments", f"{name}.toml"),
-    ]
+    path = resolve_treatment(name, study)
+    with open(path, "rb") as f:
+        return flatten_toml(tomllib.load(f))
+
+
+def resolve_treatment(name, study="diabetic-wound"):
+    """Resolve the named study/shared treatment without guessing another study."""
+    if not re.fullmatch(r"[A-Za-z0-9_-]+", name):
+        raise ValueError(f"invalid treatment name: {name!r}")
+    candidates = []
+    if study:
+        candidates.append(os.path.join(resolve_study(study), "treatments", f"{name}.toml"))
+    candidates.append(os.path.join(REPO, "studies", "shared", "treatments", f"{name}.toml"))
     for c in candidates:
         if os.path.isfile(c):
-            with open(c, "rb") as f:
-                return flatten_toml(tomllib.load(f))
-    for c in sorted(_glob.glob(os.path.join(
-            REPO, "studies", "*", "treatments", f"{name}.toml"))):
-        with open(c, "rb") as f:
-            return flatten_toml(tomllib.load(f))
-    print(f"ERROR: treatment not found: {name}")
-    sys.exit(1)
+            return c
+    raise ValueError(f"treatment not found in {study!r} or shared: {name}")
+
+
+def validate_runtime_parameters(parameters):
+    """Use the runtime owner's allowlist rather than accepting arbitrary overlays."""
+    with open(os.path.join(REPO, "src", "core", "runtime_treatment_keys.inc")) as f:
+        allowed = set(re.findall(r'SKIBIDY_RUNTIME_PARAMETER\("([^"]+)"\)', f.read()))
+    flat = flatten_toml(parameters)
+    if not flat:
+        raise ValueError("empty scheduled treatment")
+    for key, value in flat.items():
+        if (key not in allowed or isinstance(value, bool)
+                or not isinstance(value, (float, int))
+                or not math.isfinite(value) or value < 0
+                or (key == "skin.wound.inward_bias" and value > 1)):
+            raise ValueError(f"unsafe or invalid scheduled parameter: {key}")
+
+
+def encode_runtime_schedule(events, study):
+    """Embed immutable treatment TOML in bdm.toml; preserve event-list order."""
+    lines = []
+    for event in events:
+        if set(event) - {"treatment", "start_day"}:
+            raise ValueError(f"unknown treatment event keys: {set(event)}")
+        day = event.get("start_day")
+        if (isinstance(day, bool) or not isinstance(day, (int, float))
+                or not math.isfinite(day) or day < 0):
+            raise ValueError("treatment start_day must be finite and nonnegative")
+        name = event["treatment"]
+        with open(resolve_treatment(name, study), encoding="utf-8") as f:
+            text = f.read()
+        validate_runtime_parameters(tomllib.loads(text))
+        lines.extend(["", "[[treatment_schedule]]", f"name = {json.dumps(name)}",
+                      f"start_day = {day}", f"parameters = {json.dumps(text)}"])
+    return "\n".join(lines) + "\n" if lines else ""
 
 
 def load_profile(name):
@@ -80,65 +120,6 @@ def flatten_toml(d, prefix=""):
         else:
             flat[key] = v
     return flat
-
-
-def interpolate(baseline, treatment, fraction):
-    """Interpolate between baseline and treatment values.
-
-    fraction=1.0 means full treatment, 0.0 means no treatment.
-    Only interpolates numeric params that differ.
-    """
-    result = {}
-    for key, treat_val in treatment.items():
-        base_val = baseline.get(key)
-        if base_val is None:
-            if fraction > 0:
-                result[key] = treat_val
-            continue
-        if isinstance(treat_val, (int, float)) and isinstance(base_val, (int, float)):
-            interp = base_val + fraction * (treat_val - base_val)
-            if abs(interp - base_val) > 1e-10:
-                result[key] = round(interp, 6)
-        elif isinstance(treat_val, bool) and isinstance(base_val, bool):
-            result[key] = treat_val if fraction >= 0.5 else base_val
-        elif isinstance(treat_val, str):
-            result[key] = treat_val if fraction > 0 else base_val
-    return result
-
-
-def treatment_fraction(start_day, sim_days=42):
-    """Fraction of treatment effect based on start day."""
-    if start_day >= sim_days:
-        return 0.0
-    return (sim_days - start_day) / sim_days
-
-
-def _merge_overrides(override_list, baseline):
-    """Merge multiple override dicts. For overlapping keys, take value furthest from baseline."""
-    merged = {}
-    for overrides in override_list:
-        for key, val in overrides.items():
-            if key in merged:
-                base_val = baseline.get(key, 0)
-                if isinstance(val, (int, float)) and isinstance(base_val, (int, float)):
-                    if abs(val - base_val) > abs(merged[key] - base_val):
-                        merged[key] = val
-            else:
-                merged[key] = val
-    return merged
-
-
-def _format_override(key, val):
-    """Format a single override line for TOML output."""
-    if isinstance(val, str):
-        return f'"{key}" = "{val}"'
-    elif isinstance(val, bool):
-        return f'"{key}" = {"true" if val else "false"}'
-    elif isinstance(val, float):
-        return f'"{key}" = {val}'
-    elif isinstance(val, int):
-        return f'"{key}" = {val}'
-    return None
 
 
 # ---------------------------------------------------------------------------
@@ -168,12 +149,13 @@ def generate_screen_experiment(treatments, baseline, runs_per_config=3):
     for k in range(1, len(treatments) + 1):
         for group in itertools.combinations(treatments, k):
             group = list(group)
-            tlist = ", ".join(f'"{t}"' for t in group)
             label = " + ".join(t.upper() for t in group)
 
             lines.append("[[experiment.configs]]")
             lines.append(f'label = "{label}"')
-            lines.append(f"treatments = [{tlist}]")
+            for treatment in group:
+                lines.extend(["[[experiment.configs.schedule]]",
+                              f"treatment = {json.dumps(treatment)}", "start_day = 0"])
             lines.append("")
 
     return "\n".join(lines)
@@ -184,7 +166,7 @@ def generate_screen_experiment(treatments, baseline, runs_per_config=3):
 # ---------------------------------------------------------------------------
 
 def generate_timing_experiment(treatments, days_matrix, baseline, runs_per_config=3):
-    """Generate timing experiment for a specific treatment combo."""
+    """Generate actual start events; baseline retained for API compatibility."""
     combo_name = "+".join(treatments)
 
     lines = []
@@ -203,55 +185,15 @@ def generate_timing_experiment(treatments, days_matrix, baseline, runs_per_confi
     lines.append('label = "Untreated"')
     lines.append("")
 
-    if len(treatments) == 1:
-        # Single treatment: simple day sweep
-        t = treatments[0]
-        treatment = load_treatment(t)
-        for day in days_matrix:
-            frac = treatment_fraction(day)
-            label = f"{t.upper()} Day {day} ({frac*100:.0f}%)"
-            overrides = interpolate(baseline, treatment, frac)
-
-            lines.append("[[experiment.configs]]")
-            lines.append(f'label = "{label}"')
-            if day == 0:
-                lines.append(f'treatments = ["{t}"]')
-            elif overrides:
-                lines.append("[experiment.configs.overrides]")
-                for key, val in sorted(overrides.items()):
-                    fmt = _format_override(key, val)
-                    if fmt:
-                        lines.append(fmt)
-            lines.append("")
-    else:
-        # Multi-treatment: cross-product of start days
-        for day_combo in itertools.product(days_matrix, repeat=len(treatments)):
-            override_list = []
-            label_parts = []
-            all_day0 = True
-            for t, d in zip(treatments, day_combo):
-                frac = treatment_fraction(d)
-                treat = load_treatment(t)
-                override_list.append(interpolate(baseline, treat, frac))
-                label_parts.append(f"{t.upper()} D{d}")
-                if d != 0:
-                    all_day0 = False
-
-            merged = _merge_overrides(override_list, baseline)
-            label = " + ".join(label_parts)
-
-            lines.append("[[experiment.configs]]")
-            lines.append(f'label = "{label}"')
-            if all_day0:
-                tlist = ", ".join(f'"{t}"' for t in treatments)
-                lines.append(f"treatments = [{tlist}]")
-            elif merged:
-                lines.append("[experiment.configs.overrides]")
-                for key, val in sorted(merged.items()):
-                    fmt = _format_override(key, val)
-                    if fmt:
-                        lines.append(fmt)
-            lines.append("")
+    for day_combo in itertools.product(days_matrix, repeat=len(treatments)):
+        if any(not math.isfinite(day) or day < 0 for day in day_combo):
+            raise ValueError("start days must be finite and nonnegative")
+        label = " + ".join(f"{t.upper()} D{day}" for t, day in zip(treatments, day_combo))
+        lines.extend(["[[experiment.configs]]", f"label = {json.dumps(label)}"])
+        for treatment, day in zip(treatments, day_combo):
+            lines.extend(["[[experiment.configs.schedule]]",
+                          f"treatment = {json.dumps(treatment)}", f"start_day = {day}"])
+        lines.append("")
 
     return "\n".join(lines)
 

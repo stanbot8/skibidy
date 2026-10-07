@@ -1,0 +1,63 @@
+{
+  "retrieved_on": "2026-10-07",
+  "original_files_unchanged": true,
+  "sources": [
+    {
+      "file": "xiao2024_supplement3.xlsx",
+      "storage": "tracked",
+      "attribution": "Tong Xiao, Ugomma C Eze, Alex Charruyer-Reinwald et al. (2024), Short cell cycle duration is a phenotype of human epidermal stem cells, Stem Cell Research & Therapy 15:76.",
+      "doi": "10.1186/s13287-024-03670-y",
+      "article": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10935907/",
+      "supplement": "Additional file 3, Spreadsheet S1",
+      "download_url": "https://static-content.springer.com/esm/art%3A10.1186%2Fs13287-024-03670-y/MediaObjects/13287_2024_3670_MOESM3_ESM.xlsx",
+      "bytes": 188014,
+      "sha256": "63e57c8a1561de25dd1717ca978c4bb5c1d435b798625c90e3a56b77e69c11b1",
+      "license": "Article CC BY 4.0; article states CC0 applies to data unless otherwise credited.",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "data_license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "license_evidence": "https://link.springer.com/article/10.1186/s13287-024-03670-y#rightslink",
+      "changes": "Original XLSX unchanged; numerical derivatives extracted and summarized by analyze_cycles.py.",
+      "setting": "Adult primary human keratinocytes in culture, three donors, 20-minute imaging, 11-16 days.",
+      "extraction": "EXP and DIF sheets; five-column colony blocks, generation, T1, T2, recorded delta-T(hrs), division type. Generation 1 is excluded from fits. Preserve every generation-bearing row with source duration cell. Positive recorded durations count as completed divisions only when the mother has two daughter fate labels drawn from P/D/U. Classified subset restricts fate to PP/PD/DP/DD, reproducing published N=1017 EXP and 174 DIF. No donor-to-colony mapping inferred."
+    },
+    {
+      "file": "roshan2016_supplement_table1.xlsx",
+      "storage": "local_cache",
+      "attribution": "Amit Roshan, Kasumi Murai, Joanna Fowler et al. (2016), Human Keratinocytes have two interconvertible modes of proliferation, Nature Cell Biology 18:145-156.",
+      "doi": "10.1038/ncb3282",
+      "article": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4872834/",
+      "supplement": "Supplementary Table 1, complete division dataset",
+      "download_url": "https://media.springernature.com/original/springer-static/esm/art%3A10.1038%2Fncb3282/MediaObjects/41556_2016_BFncb3282_MOESM2_ESM.xlsx",
+      "bytes": 1441743,
+      "sha256": "9b79ad3f2d6a5fb3d37841912bd65bd82fb9739630780f6b4495efa84e77769b",
+      "license": "PMC author manuscript permits viewing, printing, copying, downloading and data mining for academic research subject to Nature conditions; it does not state CC BY 4.0. Supplement reuse remains subject to publisher credits and terms.",
+      "license_evidence": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4872834/",
+      "storage_reason": "Full publisher workbook retained in the local Git research cache; not redistributed in the public checkout. Tracked outputs contain the minimal numerical extraction and derived analysis, with source addresses and attribution.",
+      "setting": "Human neonatal foreskin and adult keratinocyte cultures, homeostatic/confluence/scratch conditions are separate sheets.",
+      "extraction": "Find actual Clone headers in row 1 rather than infer a regular stride; cached numeric delta-T(hrs) at block+5, generation at block start. Numeric local generation >1 and a positive duration with two P/D/U daughter fate labels are eligible. Keep Outer/D generation labels and missing durations in CSV. NFSK expanding Fig2a excluded from fits because reset subclone generations and biological cell identity are unresolved; naive counts do not reproduce published 2127 neonatal cycles. Keep sheet identity and cell address; do not pool contexts or deduplicate identical times without cell identity."
+    },
+    {
+      "file": "piedrafita2020_supplement_data2.xlsx",
+      "storage": "tracked",
+      "attribution": "Gabriel Piedrafita, Vasiliki Kostiou, Agnieszka Wabik et al. (2020), A single-progenitor model as the unifying paradigm of epidermal and esophageal epithelial maintenance in mice, Nature Communications 11:1429.",
+      "doi": "10.1038/s41467-020-15258-0",
+      "article": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7080751/",
+      "supplement": "Supplementary Data 2, H2B-GFP fluorescence observations",
+      "download_url": "https://static-content.springer.com/esm/art%3A10.1038%2Fs41467-020-15258-0/MediaObjects/41467_2020_15258_MOESM10_ESM.xlsx",
+      "bytes": 971817,
+      "sha256": "78b57b6f45e8850b51f96c641147d2e9a6f80cba5aca6a00c37f8b9a707e54df",
+      "license": "Primary article CC BY 4.0; preserve attribution and original supplement credits.",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "license_evidence": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7080751/",
+      "changes": "Original XLSX unchanged; derived inventory of numerical observations created by analyze_cycles.py.",
+      "setting": "Mouse homeostatic epithelial nuclei; fluorescence dilution across chase times.",
+      "extraction": "Inventory actual Cell Intensity columns by sheet, source header cell, chase-time label and unique Mouse ID count. Fluorescence values are not direct cell-cycle durations and are not fitted as such."
+    }
+  ],
+  "derivatives": {
+    "script": "analyze_cycles.py",
+    "records": "human_complete_cycle_records.csv",
+    "summary": "cycle_summary.json",
+    "parameter_transfer": "None. Descriptive observed-cycle CV is not the persistent phase-propensity CV used in the simulation."
+  }
+}

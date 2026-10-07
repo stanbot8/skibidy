@@ -1,4 +1,36 @@
 # Literature sources for perfusion module
+venous_profile_background:
+  description: Venous ulcer mechanisms cited by profiles/venous.toml.
+  notes: Mechanistic references only; profile perfusion, inflammation and fibroblast multipliers remain heuristic.
+  sources:
+  - id: raffetto2016
+    authors: Raffetto JD
+    year: 2016
+    title: Pathophysiology of wound healing and alterations in venous leg ulcers-review
+    journal: Phlebology
+    doi: 10.1177/0268355516632998
+    notes: Published online in 2016; corrects the unresolvable VHRM.S128695 locator.
+  - id: herrick1992
+    authors: Herrick SE, Sloan P, McGurk M, Freak L, McCollum CN, Ferguson MW
+    year: 1992
+    title: Sequential changes in histologic pattern and extracellular matrix deposition during the healing of chronic venous ulcers
+    journal: Am J Pathol 141(5):1085-1095
+    pmc: PMC1886678
+    notes: Describes organized pericapillary fibrin cuffs; the inherited J Invest Dermatol DOI did not resolve.
+  - id: mendez1998
+    authors: Mendez MV, Stanley A, Park HY, Shon K, Phillips T, Menzoian JO
+    year: 1998
+    title: Fibroblasts cultured from venous ulcers display cellular characteristics of senescence
+    journal: J Vasc Surg 28(5):876-883
+    doi: 10.1016/S0741-5214(98)70064-3
+    notes: Corrects the inherited unresolvable 70252-X suffix.
+  - id: trengove1999
+    authors: Trengove NJ, Stacey MC, Macauley S, Bennett N, Gibson J, Burslem F, Murphy G, Schultz G
+    year: 1999
+    title: "Analysis of the acute and chronic wound environments: the role of proteases and their inhibitors"
+    journal: Wound Repair Regen
+    doi: 10.1046/j.1524-475X.1999.00442.x
+    notes: Chronic wound protease and inhibitor measurements, not a fit for profile multipliers.
 perfusion_parameters:
   description: 'Literature sources validating perfusion and angiogenesis module parameters.
 

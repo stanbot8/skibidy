@@ -13,6 +13,9 @@
 | [Module Development](architecture.md#how-to-add-a-module) | Step-by-step guide to adding new modules |
 | [Batch and Sweeps](../batch/README.md) | Multi-run consensus, parameter sensitivity analysis |
 | [Studies](../studies/README.md) | Packaged studies, experiments, example outputs |
+| [Checkpoints](checkpoints.md) | Compatible replay, state witnesses and fork restrictions |
+| [Cell variation](heterogeneity.md) | Persistent seeded traits, distribution choices and measured division data |
+| [Completion evidence](completion-plan.md) | Current verification and scientific limits |
 
 ## Module index
 
@@ -38,6 +41,7 @@ Each module is self-contained in `modules/` with its own `config.toml`, source f
 | [perfusion](../modules/perfusion/README.md) | Vascular perfusion, angiogenesis recovery | Vascular |
 | [angiogenesis](../modules/angiogenesis/README.md) | VEGF-driven vessel sprouting | VEGF |
 | [dermis](../modules/dermis/README.md) | Dermal tissue integrity, sub-layer profile | Dermis |
+| [basement membrane](../modules/basement_membrane/README.md) | Optional surface integrity and keratinocyte attachment | BasementMembrane |
 
 ### Cellular aging and innervation
 
@@ -96,9 +100,15 @@ Each module is self-contained in `modules/` with its own `config.toml`, source f
 
 The validation framework lives in [`literature/`](../literature/) with its own [README](../literature/README.md). Reference data is collocated with each module under `modules/<module>/data/`, with citations in each module's `SOURCES.yaml`.
 
+The [provenance audit](../literature/provenance.md) separates inherited reference
+curves from deposited measurements. New primary data cover
+[human wound RNA](../modules/wound/data/published/GSE209609/README.md),
+[individual cell divisions](../modules/tissue/data/README.md), and
+[membrane component observations](../modules/basement_membrane/README.md).
+
 ### Metrics columns
 
-The CSV written to `output/skibidy/metrics.csv` has 52 columns:
+The CSV written to `output/skibidy/metrics.csv` has 59 columns:
 
 | Column | Units | Description | Non-zero when |
 |--------|-------|-------------|---------------|
@@ -155,5 +165,11 @@ The CSV written to `output/skibidy/metrics.csv` has 52 columns:
 | `mean_tnf_alpha_wound` | a.u. | Mean TNF-alpha in wound | `ra_enabled` (study-scoped) |
 | `mean_il6_wound` | a.u. | Mean IL-6 in wound | `ra_enabled` (study-scoped) |
 | `mean_cartilage_wound` | normalized | Mean cartilage integrity in wound | `ra_enabled` (study-scoped) |
+| `mean_synovial_wound` | a.u. | Mean synovial inflammatory burden | `ra_enabled` (study-scoped) |
+| `mean_tcell_wound` | a.u. | Mean T-cell burden | `ra_enabled` (study-scoped) |
+| `mean_bone_wound` | normalized | Mean bone integrity | `ra_enabled` (study-scoped) |
+| `mean_scab_wound` | normalized | Mean scab coverage | `[skin.scab] enabled` |
+| `mean_scar_maturity_wound` | normalized | Mean scar maturity | `[skin.scar] enabled` |
+| `mean_basement_membrane_wound` | normalized | Mean wound-surface membrane integrity | `[skin.basement_membrane] enabled` |
 
 `scripts/analysis/plot_metrics.py` generates figures from this CSV in `output/plots/`.

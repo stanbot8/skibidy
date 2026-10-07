@@ -1,4 +1,38 @@
 # Literature sources for immune module
+psoriasis_profile_background:
+  description: Mechanistic reviews cited by profiles/psoriasis.toml.
+  notes: Qualitative background only; profile rates and multipliers are heuristic and not fitted clinical measurements.
+  sources:
+  - id: boehncke2015
+    authors: Boehncke WH, Schon MP
+    year: 2015
+    title: Psoriasis
+    journal: Lancet
+    doi: 10.1016/S0140-6736(14)61909-7
+    notes: Psoriasis pathogenesis review.
+  - id: lowes2014
+    authors: Lowes MA, Suarez-Farinas M, Krueger JG
+    year: 2014
+    title: Immunology of Psoriasis
+    journal: Annu Rev Immunol
+    doi: 10.1146/annurev-immunol-032713-120225
+    notes: Review of immune mechanisms including the Th17 pathway.
+  - id: nestle2009
+    authors: Nestle FO, Kaplan DH, Barker J
+    year: 2009
+    title: Psoriasis
+    journal: N Engl J Med
+    doi: 10.1056/NEJMra0804595
+    notes: Clinical features and immunology.
+  - id: griffiths2017_unresolved
+    authors: Griffiths CEM (intended citation unresolved)
+    year: 2017
+    title: Unresolved inherited BMJ psoriasis epidemiology and treatment citation
+    status: unresolved
+    notes: >
+      profiles/psoriasis.toml previously cited 10.1136/bmj.j4347, which identifies
+      Godlee F, Unrelieved uncertainty, not a Griffiths psoriasis article.
+      No unique intended 2017 BMJ paper was established; no substitute was inserted.
 immune_cell_kinetics:
   description: Neutrophil and macrophage counts, each peak-normalized independently
   consensus: data/immune_cell_kinetics.csv

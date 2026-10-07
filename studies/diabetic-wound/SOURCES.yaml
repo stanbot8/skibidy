@@ -1,0 +1,49 @@
+treatment_constraints:
+  description: Primary measurements and explicit evidence gaps for exploratory treatment presets; no default parameter fitting.
+  data: data/treatment_constraints.csv
+  provenance: data/treatment_provenance.json
+  sources:
+    - id: tang2013
+      doi: 10.2337/db12-0684
+      pmid: '23043160'
+      pmc: PMC3554373
+      notes: Daily local RvD1 in splinted db/db wounds; protocol and qualitative outcome comparisons extracted from full-text XML. No numeric bar digitization or raw subject data.
+    - id: lobmann2002
+      doi: 10.1007/s00125-002-0868-8
+      pmid: '12136400'
+      notes: Human disease comparison, not a doxycycline intervention; MMP-specific concentrations cannot identify an aggregate MMP production factor.
+    - id: londahl2010
+      doi: 10.2337/dc09-1754
+      pmid: '20427683'
+      pmc: PMC2858204
+      notes: Randomized HBOT cohort; one-year complete healing, distinct from 42-day mean wound area closure.
+    - id: armstrong2005
+      doi: 10.1016/s0140-6736(05)67695-7
+      pmid: '16291063'
+      notes: Randomized partial foot amputation cohort; complete healing over 112 days.
+    - id: morykwas1997
+      doi: 10.1097/00000637-199706000-00001
+      pmid: '9188970'
+      notes: Pig mechanistic NPWT measurements, distinct from clinical treatment factors.
+    - id: smiell1999
+      doi: 10.1046/j.1524-475x.1999.00335.x
+      pmid: '10564562'
+      notes: Original pooled analysis of randomized trials; clinical probability and time to complete healing, not fibroblast density measurements.
+    - id: hickson2019
+      doi: 10.1016/j.ebiom.2019.08.069
+      pmid: '31542391'
+      pmc: PMC6796530
+      notes: Open-label diabetic kidney disease pilot N=9. Primary epidermal raw marker decreases are 20% and 31%; no diabetic wound outcome or continuous clearance-rate fit.
+    - id: xu2017
+      doi: 10.1152/physiolgenomics.00090.2016
+      pmid: '28842435'
+      notes: Original murine MSC study; MMP9 and collagenI effects support mechanism direction. Cao2017 cited by the preset is a review, not a primary measurement.
+    - id: mirza2013
+      doi: 10.2337/db12-1450
+      pmid: '23493576'
+      pmc: PMC3712034
+      notes: Local IL1beta blockade in db/db wounds, not antiTNF calibration. Mirza2011 is disease-phenotype evidence.
+    - id: winter1962
+      doi: 10.1038/193293a0
+      pmid: '14007593'
+      notes: Primary record identified; numeric epithelialization dataset and TEWL measurements not extracted here.

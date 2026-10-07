@@ -1,4 +1,38 @@
 # Literature sources for scar module
+scar_profile_background:
+  description: Mechanistic references cited by hypertrophic and keloid profiles.
+  notes: Profile multipliers are heuristic scenario choices, not quantitative fits to these papers.
+  sources:
+  - id: marshall2018
+    authors: Marshall CD, Hu MS, Leavitt T, Barnes LA, Lorenz HP, Longaker MT
+    year: 2018
+    title: "Cutaneous Scarring: Basic Science, Current Treatments, and Future Directions"
+    journal: Adv Wound Care
+    doi: 10.1089/wound.2016.0696
+    notes: Background on scar formation and therapies for profiles/hypertrophic.toml.
+  - id: limandjaja2020
+    authors: Limandjaja GC, Niessen FB, Scheper RJ, Gibbs S
+    year: 2020
+    title: "The Keloid Disorder: Heterogeneity, Histopathology, Mechanisms and Models"
+    journal: Front Cell Dev Biol 8:360
+    doi: 10.3389/fcell.2020.00360
+    notes: The original exd.14116 DOI identifies a corrigendum, not this keloid review.
+  - id: ulrich2010
+    authors: Ulrich D, Ulrich F, Unglaub F, Piatkowski A, Pallua N
+    year: 2010
+    title: Matrix metalloproteinases and tissue inhibitors of metalloproteinases in patients with different types of scars and keloids
+    journal: J Plast Reconstr Aesthet Surg 63(6):1015-1021
+    doi: 10.1016/j.bjps.2009.04.021
+    notes: Scar MMP/TIMP measurements; does not establish the profile's numerical multipliers.
+  - id: liu2018_unresolved
+    authors: Liu (identity unresolved)
+    year: 2018
+    title: Unresolved inherited keloid TGF-beta taper citation
+    status: unresolved
+    notes: >
+      profiles/keloid.toml previously cited Liu 2018 with 10.1016/j.intimp.2018.05.020.
+      Crossref identifies Li Z et al., Low-dose naltrexone (LDN), an unrelated paper.
+      No unique intended Liu paper was established. The taper remains a heuristic.
 scar_formation_parameters:
   description: 'Literature sources validating fibroblast module and scar formation parameters. Complements myofibroblast_kinetics
     (timecourse) and collagen_deposition (accumulation curve) with sources for specific parameter choices.

@@ -271,12 +271,13 @@ TEST(MetricsExporterTest, WritesHeaderOnFirstCall) {
   EXPECT_NE(header.find("mean_scab_wound"), std::string::npos);
   EXPECT_NE(header.find("mean_scar_maturity_wound"), std::string::npos);
 
-  // Count commas to verify column count (57 commas for 58 columns).
+  EXPECT_NE(header.find("mean_basement_membrane_wound"), std::string::npos);
+  // Count commas to verify column count (58 commas for 59 columns).
   int commas = 0;
   for (char c : header) {
     if (c == ',') commas++;
   }
-  EXPECT_EQ(commas, 57);
+  EXPECT_EQ(commas, 58);
 
   metrics.Close();
   delete sim;

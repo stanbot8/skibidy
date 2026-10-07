@@ -30,6 +30,10 @@ Core tissue parameters live in `bdm.core.toml` under `[skin]`. The `modules/tiss
 
 ### Cell cycle
 
+Optional persistent cell-cycle variation is documented in
+[Biological variation](../../docs/heterogeneity.md). It defaults to zero spread
+and retains the current calibrated durations and random stream.
+
 | Parameter | Default | Units | Description | Source |
 |-----------|---------|-------|-------------|--------|
 | `g1_duration` | 7.0 | hours | G1 phase duration | Grabe & Bhatt-Neuber 2005 |

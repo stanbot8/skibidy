@@ -11,6 +11,7 @@
 #include "immune/immune_cell.h"
 #include "fibroblast/fibroblast.h"
 #include "tumor/tumor_cell.h"
+#include "basement_membrane/basement_membrane_pde.h"
 #include "core/field_names.h"
 #include "core/pde.h"
 #include "infra/sim_param.h"
@@ -24,7 +25,7 @@ namespace skibidy {
 // MetricsExporter -- standalone operation that writes a CSV row of simulation
 // metrics every metrics_interval steps.
 //
-// 53 columns -- see header string below for full list
+// See header string below for the current columns.
 // Note: blood, burn, and pressure modules modify existing fields (perfusion,
 // inflammation, ROS) rather than creating new grids. Their effects show in
 // existing columns (mean_perfusion_wound, mean_infl_wound, mean_ros_wound).
@@ -66,7 +67,7 @@ struct MetricsExporter : public StandaloneOperationImpl {
             << "mean_tnf_alpha_wound,mean_il6_wound,mean_cartilage_wound,mean_synovial_wound,"
             << "mean_tcell_wound,mean_bone_wound,"
             << "mean_scab_wound,"
-            << "mean_scar_maturity_wound"
+            << "mean_scar_maturity_wound,mean_basement_membrane_wound"
             << std::endl;
     }
 
@@ -470,6 +471,25 @@ struct MetricsExporter : public StandaloneOperationImpl {
       }
     }
 
+    // Attachment is a surface state; averaging the entire volume would
+    // dilute it with intentionally empty slices. Disabled output is zero.
+    real_t mean_basement_membrane = 0;
+    if (sp->basement_membrane.enabled) {
+      auto* grid = rm->GetDiffusionGrid(fields::kBasementMembraneId);
+      GridContext ctx(grid, sp);
+      const size_t start = BasementMembranePDE::SurfaceStart(grid);
+      size_t count = 0;
+      for (size_t i = start; i < start + ctx.res * ctx.res; ++i) {
+        const real_t x = ctx.X(i), y = ctx.Y(i);
+        if (x >= sp->tissue_min && x <= sp->tissue_max &&
+            y >= sp->tissue_min && y <= sp->tissue_max && ctx.InWound(x, y)) {
+          mean_basement_membrane += grid->GetConcentration(i);
+          ++count;
+        }
+      }
+      if (count) mean_basement_membrane /= count;
+    }
+
     // --- Tumor field cells (binary field: 1 filled voxel ≈ 1 handoff) ---
     int tumor_field_cells = 0;
     if (sp->tumor.enabled) {
@@ -541,7 +561,8 @@ struct MetricsExporter : public StandaloneOperationImpl {
           << mean_tcell << ","
           << mean_bone << ","
           << mean_scab << ","
-          << mean_smat
+          << mean_smat << ","
+          << mean_basement_membrane
           << std::endl;
     timer.Print("metrics");
   }

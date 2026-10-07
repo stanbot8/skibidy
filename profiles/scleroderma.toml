@@ -7,14 +7,14 @@
 # Unlike keloid, fibrosis is systemic and not confined to a wound margin.
 #
 # Primary literature:
-#   Varga J 2007 (Ann Rheum Dis, doi:10.1136/ard.2006.066068): SSc
+#   Varga J 2007 (J Clin Invest, doi:10.1172/JCI31139): SSc
 #     fibrosis pathogenesis, apoptosis-resistant myofibroblast
 #   Kissin EY 2002 (Curr Opin Rheumatol): dermal fibroblast hyperactivity
 #   Distler JHW 2019 (Nat Rev Rheumatol, doi:10.1038/s41584-019-0322-7):
 #     SSc pathogenesis review, TGF-beta central role
 #   Trojanowska M 2010 (Curr Opin Rheumatol): endothelial dysfunction and
 #     vascular rarefaction in SSc
-#   Asano Y 2015 (J Dermatol, doi:10.1111/1346-8138.12958): vascular
+#   Asano Y 2015 (Semin Immunopathol, doi:10.1007/s00281-015-0505-5): vascular
 #     pathology in SSc
 
 [skin]

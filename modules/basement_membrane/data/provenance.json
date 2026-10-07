@@ -1,0 +1,18 @@
+{
+  "retrieved_on": "2026-10-07",
+  "source": {
+    "authors": "Germain L, Guignard R, Rouabhia M, Auger FA",
+    "doi": "10.1016/0305-4179(95)80004-8",
+    "pmid": "7794497",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/7794497/",
+    "location": "Primary study abstract, postgrafting immunohistochemistry and ultrastructural results",
+    "population": "Cultured human epidermal sheets grafted onto muscular beds in athymic mice; sheets detached with thermolysin or Dispase",
+    "sample_times_days": [2, 4, 21],
+    "sample_size": null,
+    "sample_size_reason": "Not stated in accessible abstract"
+  },
+  "derivative": "germain1995_timing.csv",
+  "extraction": "Manual paraphrase of explicitly stated days and component observations; interval 2-21 retained as an interval, not invented intermediate visits. Empty n_reported means unavailable, not zero.",
+  "measurement": "Qualitative staining continuity/detection and ultrastructural assembly; no normalized integrity B or quantitative coverage",
+  "fit": "None; milestones cannot identify repair_rate, wound_damage or the linear attachment coefficient. No parameter changes."
+}

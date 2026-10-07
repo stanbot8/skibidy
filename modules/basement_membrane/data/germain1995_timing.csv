@@ -1,0 +1,7 @@
+component,first_sample_day,last_sample_day,observation,measurement,n_reported
+laminin_and_BP_antigens,2,2,nearly continuous junctional staining,qualitative immunohistochemistry,
+collagen_IV,2,2,generally not detected,qualitative immunohistochemistry,
+collagen_IV,4,4,detected,qualitative immunohistochemistry,
+collagen_VII,2,21,discontinuous labeling becomes stronger,qualitative immunohistochemistry,
+lamina_densa,2,2,discontinuous; hemidesmosomes present,qualitative ultrastructure,
+basement_membrane_assembly,21,21,continuous lamina densa with hemidesmosomes and anchoring fibrils,qualitative ultrastructure,

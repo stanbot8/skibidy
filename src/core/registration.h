@@ -22,6 +22,7 @@
 #include "inflammation/inflammation_pde.h"
 #include "scar/scar_pde.h"
 #include "scar/scar_maturity_pde.h"
+#include "basement_membrane/basement_membrane_pde.h"
 #include "fibroblast/tgfbeta_pde.h"
 #include "fibroblast/collagen_pde.h"
 #include "biofilm/biofilm_pde.h"
@@ -72,6 +73,7 @@
 #include "core/fused_post.h"
 #include "core/fused_source.h"
 #include "core/hot_reload.h"
+#include "core/treatment_schedule.h"
 #include "core/metrics.h"
 #include "core/voxel_env.h"
 
@@ -89,6 +91,9 @@ inline void RegisterFields(Simulation* sim, const SimParam* sp,
   fields.Add(std::make_unique<VascularPDE>());
   fields.Add(std::make_unique<OxygenPDE>());
   fields.Add(std::make_unique<StratumPDE>());
+  if (sp->basement_membrane.enabled) {
+    fields.Add(std::make_unique<BasementMembranePDE>());
+  }
   // Wound-related fields only when wound is enabled
   if (sp->wound.enabled) {
     fields.Add(std::make_unique<CalciumPDE>());
@@ -237,6 +242,7 @@ inline void RegisterFields(Simulation* sim, const SimParam* sp,
             fields::kElastinId);
   skip_ftcs(sp->hemostasis.enabled, fields::kFibrinId);
   skip_ftcs(sp->scab.enabled, fields::kScabId);
+  skip_ftcs(sp->basement_membrane.enabled, fields::kBasementMembraneId);
   skip_ftcs(sp->basal_density_enabled && sp->wound.enabled,
             fields::kBasalDensityId);
   skip_ftcs(sp->glucose_mod.enabled && sp->diabetic.mode, fields::kAGEId);
@@ -335,6 +341,14 @@ inline void RegisterOperations(Simulation* sim, const SimParam* sp,
     scheduler->ScheduleOp(NewOperation(name), type);
   };
 
+  // Apply day-zero events before the first wound/immune/source operation.
+  const auto schedule_config = toml::parse_file("bdm.toml");
+  if (sp->hot_reload) {
+    schedule_op("HotReloadOp", new HotReloadOp(schedule_config));
+    std::cout << "[hot-reload] enabled" << std::endl;
+  }
+  schedule_op("TreatmentSchedule", new TreatmentScheduleOp(
+      schedule_config, sim->GetParam()->simulation_time_step));
   schedule_op("WoundEvent", new WoundEvent(fields));
   schedule_op("WoundResolution", new WoundResolution(), OpType::kPostSchedule);
   schedule_op("ImmuneResponse", new ImmuneResponse());
@@ -373,11 +387,6 @@ inline void RegisterOperations(Simulation* sim, const SimParam* sp,
   }
 
   schedule_op("MetricsExporter", new MetricsExporter(), OpType::kPostSchedule);
-
-  if (sp->hot_reload) {
-    schedule_op("HotReloadOp", new HotReloadOp());
-    std::cout << "[hot-reload] enabled" << std::endl;
-  }
 
   // Must be registered AFTER sub-cycling SetTimeStep calls so that
   // CategorizeGrids() reads the configured time steps.

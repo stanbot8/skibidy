@@ -3,6 +3,7 @@
 
 #include <cmath>
 
+#include "basement_membrane/attachment.h"
 #include "tissue/keratinocyte.h"
 #include "core/field_names.h"
 #include "core/voxel_env.h"
@@ -34,25 +35,16 @@ struct Differentiation : public Behavior {
 
     auto pos = cell->GetPosition();
 
-    // Basement membrane: clamp cells above z=0
+    // Geometric epidermal floor; attachment strength is handled below.
     if (pos[2] < 0) {
       cell->SetPosition({pos[0], pos[1], 0});
       pos = cell->GetPosition();
     }
 
-    // Stem cell anchoring: basal stem cells express integrins (alpha6-beta4)
-    // that maintain adhesion to the basement membrane, preventing mechanical
-    // displacement from the basal niche.
-    if (cell->IsStem()) {
-      real_t max_z = cell->GetDiameter() * 0.5;
-      if (pos[2] > max_z) {
-        cell->SetPosition({pos[0], pos[1], max_z});
-        pos = cell->GetPosition();
-      }
-    }
-
     auto* sim = Simulation::GetActive();
     auto* sp = sim->GetParam()->Get<SimParam>();
+    ApplyBasementMembraneAnchoring(cell, sim);
+    pos = cell->GetPosition();
 
     // Demotion: agents that have drifted outside the active wound front
     // fold back into the basal density continuum. This is the co-existence

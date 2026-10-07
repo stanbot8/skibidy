@@ -1,189 +1,229 @@
 #ifndef CHECKPOINT_H_
 #define CHECKPOINT_H_
 
-// Lightweight checkpoint: save/load DiffusionGrid data and agent state
-// to a directory of binary files. Used for fork-based batch runs where
-// configs share a common untreated prefix up to some day.
-//
-// Env vars:
-//   SKIBIDY_CKPT_SAVE_DIR  - directory to save checkpoint into
-//   SKIBIDY_CKPT_LOAD_DIR  - directory to load checkpoint from
-//   SKIBIDY_CKPT_STEP      - step number for save (run to this step, save, exit)
-//                             For load: the step is read from the checkpoint.
-
-#include <cstdio>
+// Verified replay restores all owners (including private scheduler and operation
+// state) by rerunning the exact prefix. This provides no computation speedup.
+#include <charconv>
 #include <cstdlib>
 #include <cstring>
+#include <filesystem>
 #include <fstream>
+#include <set>
+#include <sstream>
+#include <stdexcept>
 #include <string>
-#include <sys/stat.h>
-
+#include <vector>
+#include <omp.h>
+#include <TBufferFile.h>
 #include "biodynamo.h"
-#include "core/field_names.h"
+#include "core/derived_field.h"
+#include "core/treatment_schedule.h"
 
 namespace bdm {
 namespace skibidy {
 namespace checkpoint {
 
-// Header written to each grid file for validation
-struct GridFileHeader {
-  char magic[8] = {'S', 'K', 'C', 'K', 'P', 'T', '0', '1'};
-  uint64_t num_boxes = 0;
-  uint64_t resolution = 0;
-  int32_t dims[6] = {};
-};
+constexpr uint64_t kHashBasis = 14695981039346656037ULL;
+constexpr uint64_t kMaxConfigBytes = 16 * 1024 * 1024;
 
-// Header for agent state file
-struct AgentFileHeader {
-  char magic[8] = {'S', 'K', 'A', 'G', 'N', 'T', '0', '1'};
-  uint64_t num_agents = 0;
-};
-
-// Per-agent record (position + key state)
-struct AgentRecord {
-  double x, y, z;
-  double diameter;
-  int32_t type;      // 0=keratinocyte, 1=immune, 2=tumor, 3=fibroblast
-  int32_t subtype;   // stratum for kerato, immune_type for immune, etc.
-  double age;
-};
-
-inline bool MkdirP(const std::string& path) {
-  return mkdir(path.c_str(), 0755) == 0 || errno == EEXIST;
+inline void HashBytes(uint64_t& hash, const void* data, size_t size) {
+  const auto* bytes = static_cast<const unsigned char*>(data);
+  for (size_t i = 0; i < size; ++i) {
+    hash ^= bytes[i];
+    hash *= 1099511628211ULL;
+  }
+}
+template <typename T>
+inline void HashObject(uint64_t& hash, const T& object) {
+  HashBytes(hash, &object, sizeof(object));
+}
+inline std::string ReadFile(const std::string& path, uint64_t limit) {
+  std::ifstream file(path, std::ios::binary | std::ios::ate);
+  if (!file) throw std::runtime_error("cannot read checkpoint input: " + path);
+  const auto size = file.tellg();
+  if (size < 0 || static_cast<uint64_t>(size) > limit) {
+    throw std::runtime_error("invalid checkpoint input length: " + path);
+  }
+  std::string result(static_cast<size_t>(size), '\0');
+  file.seekg(0);
+  if (!file.read(result.data(), result.size())) {
+    throw std::runtime_error("truncated checkpoint input: " + path);
+  }
+  return result;
 }
 
-/// Save all DiffusionGrid data to binary files in the given directory.
-/// Also saves step count and agent state.
-inline bool SaveCheckpoint(Simulation* sim, uint64_t step,
-                           const std::string& dir) {
-  if (!MkdirP(dir)) {
-    Log::Error("Checkpoint", "Cannot create directory: ", dir);
-    return false;
+// Fingerprint the executable and every loaded file-backed executable mapping,
+// including Skibidy, BDM, ROOT, math and OpenMP. Installation paths participate.
+inline uint64_t RuntimeSignature() {
+  std::ifstream maps("/proc/self/maps");
+  if (!maps) throw std::runtime_error("replay checkpoints require Linux /proc");
+  std::set<std::string> paths;
+  std::string line;
+  while (std::getline(maps, line)) {
+    std::istringstream row(line);
+    std::string address, permissions, offset, device, inode, path;
+    row >> address >> permissions >> offset >> device >> inode;
+    std::getline(row >> std::ws, path);
+    if (permissions.find('x') != std::string::npos && !path.empty() &&
+        path.front() == '/') paths.insert(path);
   }
+  if (paths.empty()) throw std::runtime_error("no checkpoint runtime mappings");
+  uint64_t hash = kHashBasis;
+  for (const auto& path : paths) {
+    HashBytes(hash, path.data(), path.size());
+    std::ifstream file(path, std::ios::binary);
+    if (!file) throw std::runtime_error("cannot fingerprint runtime: " + path);
+    char buffer[65536];
+    while (file.read(buffer, sizeof(buffer)) || file.gcount()) {
+      HashBytes(hash, buffer, file.gcount());
+    }
+    if (!file.eof()) throw std::runtime_error("runtime fingerprint read failed");
+  }
+  return hash;
+}
+template <typename T>
+inline void HashRootObject(uint64_t& hash, const T* object) {
+  TBufferFile buffer(TBuffer::kWrite);
+  buffer.WriteObjectAny(object, object->IsA());
+  HashBytes(hash, buffer.Buffer(), buffer.Length());
+}
 
+// Boundary witness, never a restoration payload. ROOT streamers cover private
+// agent/behavior and RNG state. BDM's ParallelResizeVector ROOT streamer drops
+// its data, so hash observable grid values explicitly. The inactive solver
+// buffer and operation caches are reconstructed by replay, not witnessed here.
+inline uint64_t StateSignature(Simulation* sim,
+                               const std::vector<DerivedField*>& derived) {
+  uint64_t hash = kHashBasis;
+  HashObject(hash, sim->GetScheduler()->GetSimulatedSteps());
   auto* rm = sim->GetResourceManager();
-
-  // Save step number
-  {
-    std::string path = dir + "/step.bin";
-    std::ofstream f(path, std::ios::binary);
-    f.write(reinterpret_cast<const char*>(&step), sizeof(step));
-  }
-
-  // Save each DiffusionGrid
+  HashObject(hash, rm->GetNumAgents());
+  rm->ForEachAgent([&](Agent* agent) { HashRootObject(hash, agent); });
   rm->ForEachDiffusionGrid([&](DiffusionGrid* grid) {
-    std::string name = grid->GetContinuumName();
-    std::string path = dir + "/grid_" + name + ".bin";
-    std::ofstream f(path, std::ios::binary);
-
-    GridFileHeader hdr;
-    hdr.num_boxes = grid->GetNumBoxes();
-    hdr.resolution = grid->GetResolution();
-    auto dims = grid->GetDimensions();
-    for (int i = 0; i < 6; i++) hdr.dims[i] = dims[i];
-
-    f.write(reinterpret_cast<const char*>(&hdr), sizeof(hdr));
-
-    const real_t* data = grid->GetAllConcentrations();
-    f.write(reinterpret_cast<const char*>(data),
-            hdr.num_boxes * sizeof(real_t));
+    HashObject(hash, grid->GetContinuumId());
+    const auto& name = grid->GetContinuumName();
+    HashBytes(hash, name.data(), name.size());
+    const auto count = grid->GetNumBoxes();
+    HashObject(hash, count);
+    HashObject(hash, grid->GetLastTimestep());
+    HashBytes(hash, grid->GetAllConcentrations(), count * sizeof(real_t));
+    if (count) HashBytes(hash, grid->GetAllGradients(), count * 3 * sizeof(real_t));
   });
-
-  // Save agent count and basic state
-  {
-    std::string path = dir + "/agents.bin";
-    std::ofstream f(path, std::ios::binary);
-
-    // Count agents first
-    uint64_t count = 0;
-    rm->ForEachAgent([&](Agent*) { count++; });
-
-    AgentFileHeader hdr;
-    hdr.num_agents = count;
-    f.write(reinterpret_cast<const char*>(&hdr), sizeof(hdr));
-
-    // Write each agent's position and diameter (enough for re-creation)
-    rm->ForEachAgent([&](Agent* agent) {
-      AgentRecord rec;
-      auto pos = agent->GetPosition();
-      rec.x = pos[0];
-      rec.y = pos[1];
-      rec.z = pos[2];
-      rec.diameter = agent->GetDiameter();
-      rec.type = 0;
-      rec.subtype = 0;
-      rec.age = 0;
-      f.write(reinterpret_cast<const char*>(&rec), sizeof(rec));
-    });
+  for (auto* random : sim->GetAllRandom()) HashRootObject(hash, random);
+  for (auto* field : derived) {
+    HashBytes(hash, field->GetName().data(), field->GetName().size());
+    HashObject(hash, field->GetNumBoxes());
+    for (size_t i = 0; i < field->GetNumBoxes(); ++i) {
+      HashObject(hash, field->GetConcentration(i));
+    }
   }
-
-  Log::Info("Checkpoint", "Saved checkpoint at step ", step, " to ", dir,
-            " (", rm->GetNumAgents(), " agents)");
-  return true;
+  return hash;
 }
-
-/// Load DiffusionGrid data from checkpoint directory.
-/// Overwrites current grid concentrations. Returns the saved step number.
-inline uint64_t LoadCheckpoint(Simulation* sim, const std::string& dir) {
-  auto* rm = sim->GetResourceManager();
-
-  // Load step number
+inline std::string CanonicalConfig(toml::table config) {
+  config.erase("treatment_schedule");
+  if (auto* simulation = config["simulation"].as_table()) {
+    simulation->erase("output_dir");
+    if (simulation->empty()) config.erase("simulation");
+  }
+  std::ostringstream out;
+  out << config;
+  return out.str();
+}
+inline std::string PrefixSchedule(const toml::table& config, double dt,
+                                  uint64_t boundary) {
+  TreatmentSchedule schedule(config, dt);
+  std::ostringstream out;
+  for (const auto& event : schedule.Events()) {
+    if (event.start_step >= boundary) break;
+    out << event.start_step << '\n' << event.name.size() << ':' << event.name
+        << '\n' << event.parameters << '\n';
+  }
+  return out.str();
+}
+struct Record {
   uint64_t step = 0;
-  {
-    std::string path = dir + "/step.bin";
-    std::ifstream f(path, std::ios::binary);
-    if (!f.is_open()) {
-      Log::Fatal("Checkpoint", "Cannot open step file: ", path);
-    }
-    f.read(reinterpret_cast<char*>(&step), sizeof(step));
-  }
-
-  // Load each DiffusionGrid
-  rm->ForEachDiffusionGrid([&](DiffusionGrid* grid) {
-    std::string name = grid->GetContinuumName();
-    std::string path = dir + "/grid_" + name + ".bin";
-    std::ifstream f(path, std::ios::binary);
-    if (!f.is_open()) {
-      Log::Warning("Checkpoint", "Grid file not found: ", path,
-                   " (skipping, grid stays at initial state)");
-      return;
-    }
-
-    GridFileHeader hdr;
-    f.read(reinterpret_cast<char*>(&hdr), sizeof(hdr));
-
-    // Validate magic
-    if (std::memcmp(hdr.magic, "SKCKPT01", 8) != 0) {
-      Log::Fatal("Checkpoint", "Bad magic in ", path);
-    }
-
-    // Validate grid size matches
-    if (hdr.num_boxes != grid->GetNumBoxes()) {
-      Log::Warning("Checkpoint", "Grid size mismatch for ", name,
-                   ": checkpoint has ", hdr.num_boxes, " boxes, current has ",
-                   grid->GetNumBoxes(), " (skipping)");
-      return;
-    }
-
-    // Read concentrations into the grid.
-    // We zero out first, then add saved values via ChangeConcentrationBy.
-    // This respects lower/upper thresholds set during field registration.
-    const real_t* current = grid->GetAllConcentrations();
-    for (size_t i = 0; i < hdr.num_boxes; i++) {
-      real_t saved_val;
-      f.read(reinterpret_cast<char*>(&saved_val), sizeof(saved_val));
-      real_t delta = saved_val - current[i];
-      if (std::abs(delta) > 1e-15) {
-        grid->ChangeConcentrationBy(i, delta);
-      }
-    }
-  });
-
-  Log::Info("Checkpoint", "Loaded checkpoint from ", dir, " at step ", step);
-  return step;
+  uint64_t runtime = 0;
+  uint64_t state = 0;
+  std::string config;
+};
+inline void AppendInteger(std::string& bytes, uint64_t value) {
+  for (int i = 0; i < 8; ++i) bytes.push_back((value >> (i * 8)) & 255);
 }
-
-/// Check env vars and return checkpoint config.
+inline uint64_t ReadInteger(const std::string& bytes, size_t& cursor) {
+  if (bytes.size() - cursor < 8) throw std::runtime_error("truncated checkpoint");
+  uint64_t value = 0;
+  for (int i = 0; i < 8; ++i) {
+    value |= static_cast<uint64_t>(static_cast<unsigned char>(bytes[cursor++]))
+             << (i * 8);
+  }
+  return value;
+}
+inline Record ReadCheckpoint(const std::string& directory) {
+  const auto bytes = ReadFile(directory + "/checkpoint.bin", kMaxConfigBytes + 48);
+  if (bytes.size() < 48 || bytes.compare(0, 8, "SKRPLY02") != 0) {
+    throw std::runtime_error("unsupported or corrupt checkpoint (field-only v1 is invalid)");
+  }
+  size_t cursor = 8;
+  Record record;
+  record.step = ReadInteger(bytes, cursor);
+  record.runtime = ReadInteger(bytes, cursor);
+  record.state = ReadInteger(bytes, cursor);
+  const auto config_size = ReadInteger(bytes, cursor);
+  if (config_size > kMaxConfigBytes || bytes.size() != config_size + 48) {
+    throw std::runtime_error("checkpoint length mismatch");
+  }
+  record.config = bytes.substr(cursor, config_size);
+  cursor += config_size;
+  uint64_t hash = kHashBasis;
+  HashBytes(hash, bytes.data(), cursor);
+  if (ReadInteger(bytes, cursor) != hash) {
+    throw std::runtime_error("checkpoint integrity checksum mismatch");
+  }
+  return record;
+}
+inline void ValidateReplay(Simulation* sim, const Record& record,
+                           const toml::table& current) {
+  const auto saved = toml::parse(record.config);
+  if (CanonicalConfig(saved) != CanonicalConfig(current)) {
+    throw std::runtime_error("checkpoint configuration mismatch; change only future treatment_schedule events or simulation.output_dir");
+  }
+  const double dt = sim->GetParam()->simulation_time_step;
+  if (PrefixSchedule(saved, dt, record.step) != PrefixSchedule(current, dt, record.step)) {
+    throw std::runtime_error("checkpoint fork changes treatment history before saved boundary");
+  }
+  if (record.step > static_cast<uint64_t>(sim->GetParam()->Get<SimParam>()->num_steps)) {
+    throw std::runtime_error("checkpoint boundary exceeds configured run length");
+  }
+  if (record.runtime != RuntimeSignature()) {
+    throw std::runtime_error("checkpoint binary or loaded runtime mismatch; recreate checkpoint with this installation");
+  }
+}
+inline void SaveCheckpoint(Simulation* sim, const std::string& directory,
+                           const std::string& config,
+                           const std::vector<DerivedField*>& derived) {
+  if (config.size() > kMaxConfigBytes) throw std::runtime_error("checkpoint config too large");
+  std::filesystem::create_directories(directory);
+  const auto target = directory + "/checkpoint.bin";
+  if (std::filesystem::exists(target)) throw std::runtime_error("checkpoint already exists: " + target);
+  const auto state = StateSignature(sim, derived);
+  std::string bytes("SKRPLY02", 8);
+  AppendInteger(bytes, sim->GetScheduler()->GetSimulatedSteps());
+  AppendInteger(bytes, RuntimeSignature());
+  AppendInteger(bytes, state);
+  AppendInteger(bytes, config.size());
+  bytes += config;
+  uint64_t hash = kHashBasis;
+  HashBytes(hash, bytes.data(), bytes.size());
+  AppendInteger(bytes, hash);
+  const auto temporary = target + ".tmp";
+  std::ofstream file(temporary, std::ios::binary | std::ios::trunc);
+  if (!file.write(bytes.data(), bytes.size())) throw std::runtime_error("checkpoint write failed: " + temporary);
+  file.close();
+  if (!file) throw std::runtime_error("checkpoint close failed: " + temporary);
+  std::filesystem::rename(temporary, target);
+  Log::Info("Checkpoint", "Saved verified replay boundary at step ",
+            sim->GetScheduler()->GetSimulatedSteps(), " (", sim->GetResourceManager()->GetNumAgents(), " agents)");
+}
 struct CheckpointConfig {
   bool save = false;
   bool load = false;
@@ -191,29 +231,36 @@ struct CheckpointConfig {
   std::string load_dir;
   uint64_t save_step = 0;
 };
-
 inline CheckpointConfig GetCheckpointConfig() {
-  CheckpointConfig cfg;
-
-  const char* save_dir = std::getenv("SKIBIDY_CKPT_SAVE_DIR");
-  const char* load_dir = std::getenv("SKIBIDY_CKPT_LOAD_DIR");
-  const char* step_str = std::getenv("SKIBIDY_CKPT_STEP");
-
-  if (save_dir && save_dir[0]) {
-    cfg.save = true;
-    cfg.save_dir = save_dir;
-    cfg.save_step = step_str ? std::atoi(step_str) : 0;
+  CheckpointConfig result;
+  const char* save = std::getenv("SKIBIDY_CKPT_SAVE_DIR");
+  const char* load = std::getenv("SKIBIDY_CKPT_LOAD_DIR");
+  const char* step = std::getenv("SKIBIDY_CKPT_STEP");
+  if (save && save[0]) {
+    result.save = true;
+    result.save_dir = save;
+    if (!step || !step[0]) throw std::runtime_error("checkpoint save requires SKIBIDY_CKPT_STEP");
+    const char* end = step + std::strlen(step);
+    const auto parsed = std::from_chars(step, end, result.save_step);
+    if (parsed.ec != std::errc() || parsed.ptr != end) throw std::runtime_error("invalid unsigned checkpoint step");
   }
-  if (load_dir && load_dir[0]) {
-    cfg.load = true;
-    cfg.load_dir = load_dir;
+  if (load && load[0]) {
+    result.load = true;
+    result.load_dir = load;
   }
-
-  return cfg;
+  if (result.save && result.load) throw std::runtime_error("save and load are mutually exclusive");
+  return result;
 }
-
+inline void ValidateMode(Simulation* sim, int argc) {
+  if (omp_get_max_threads() != 1 || omp_get_dynamic() || sim->GetAllRandom().size() != 1) {
+    throw std::runtime_error("verified replay requires OMP_NUM_THREADS=1 and OMP_DYNAMIC=FALSE");
+  }
+  if (argc != 1 || sim->GetParam()->Get<SimParam>()->hot_reload ||
+      !sim->GetParam()->restore_file.empty() || !sim->GetParam()->backup_file.empty()) {
+    throw std::runtime_error("replay requires bdm.toml configuration, hot_reload=false and no native backup/restore");
+  }
+}
 }  // namespace checkpoint
 }  // namespace skibidy
 }  // namespace bdm
-
-#endif  // CHECKPOINT_H_
+#endif

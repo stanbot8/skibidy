@@ -18,6 +18,7 @@ pressure:
     year: 1959
     title: Etiology and Pathology of Ischemic Ulcers
     journal: Arch Phys Med Rehabil 40:62-69
+    url: https://pubmed.ncbi.nlm.nih.gov/13618101/
     notes: >
       Landmark experimental study establishing the inverse pressure-time
       relationship for tissue necrosis. Demonstrated that high pressures
@@ -52,6 +53,8 @@ pressure:
     year: 2019
     title: "Prevention and Treatment of Pressure Ulcers/Injuries: Clinical Practice Guideline"
     journal: EPUAP/NPIAP/PPPIA (3rd ed.)
+    url: https://internationalguideline.com/s/Quick_Reference_Guide-10Mar2019.pdf
+    locator_note: Official 2019 abridged Quick Reference Guide accompanying the full Clinical Practice Guideline.
     notes: >
       International evidence-based clinical practice guideline for pressure
       injury prevention and treatment. Defines the staging system (Stage I

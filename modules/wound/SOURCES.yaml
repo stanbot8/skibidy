@@ -1,4 +1,21 @@
 # Literature sources for wound module
+measured_human_wound_rna:
+  description: Deposited skin and palate wound RNA measurements from 96 biopsies in 18 healthy adults
+  raw_files:
+  - data/published/GSE209609/sample_expression.csv
+  - data/published/GSE209609/timecourse_summary.csv
+  provenance: data/published/GSE209609/provenance.json
+  normalization: Deposited RMA log2 expression; summary means and sample SD without imputation or interpolation
+  sources:
+  - id: leonardo2023_gse209609
+    authors: Leonardo TR, Chen L, Schrementi ME, Shi J, Marucha PT, Glass K, DiPietro LA
+    year: 2023
+    title: Transcriptional changes in human palate and skin healing
+    journal: Wound Repair Regen 31(2):156-170
+    doi: 10.1111/wrr.13068
+    pmc: PMC10006330
+    url: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE209609
+    notes: Bulk RNA constrains temporal gene expression, not protein concentration, cell count, collagen mass, cycle variance or membrane repair rates. See the dataset README for sampling limits.
 closure_kinetics_punch_biopsy:
   description: Re-epithelialization trajectory (% wound closure over 28 days)
   consensus: data/closure_kinetics_punch_biopsy.csv

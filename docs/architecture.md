@@ -4,11 +4,44 @@
 
 Technical architecture of Skibidy, a hybrid agent-continuum skin tissue simulation. See also: [Guide](guide.md) | [Parameters](parameters.md) | [Treatments](treatments.md)
 
+## Reproducible experiment state
+
+Study resolution is shared by the dashboard and command-line consumers in
+`batch/lib.py`: saved user studies precede packaged studies. Saved run configs
+include profile and condition identity; active pathology modes determine the
+condition, and conflicting metadata fails explicitly. Batch receipts retain
+seeds, configuration and metrics hashes, process status and finite complete
+output checks before aggregation. A failed run cannot become a partial consensus.
+
+Treatment schedules apply allowlisted parameter changes at actual simulation
+step boundaries, before biology advances. The allowlist is shared with hot
+reload; unchanged files do not replay past values over active interventions.
+See [treatments](treatments.md) for ordering and supported changes.
+
+Checkpoints combine ROOT agent/RNG serialization with public concentration
+arrays and a boundary witness. Compatible single-thread runs reconstruct
+scheduler and caches by deterministic replay before checking that witness;
+this is a verified continuation route, not a fast restore or speedup claim.
+Past events and runtime/config identities must agree, while future fork events
+may differ. [Checkpoint documentation](checkpoints.md) defines its limits.
+
+Optional cell traits are sampled at initialization and division, retained by
+the cell and included in checkpoint state. Zero variation preserves the fixed
+baseline without drawing RNG values. The optional BasementMembrane channel
+adds surface damage/repair and attachment; its default is disabled. Measured
+data and assumed distribution widths/rates are distinguished in their owners.
+
+CI pins BioDynaMo and analysis dependencies, runs source/data checks and the
+C++ suite, then exercises checkpoint, treatment and dashboard/batch consumers.
+Scientific validation uses only overlapping reference dates and reports
+disabled or unsupported observables as untested. Normalized curve RMSE is an
+engineering screen; simulated time points are not biological replicates.
+
 ## UWYN (Use What You Need)
 
 Skibidy uses a hybrid agent-continuum architecture:
 
-- **Continuum at rest**: healthy skin is represented by 41 diffusion fields (see `src/core/field_names.h` for the full list). No agents exist during homeostasis.
+- **Continuum at rest**: the field registry contains 41 established channels plus the optional BasementMembrane channel (see `src/core/field_names.h`). Enabled modules determine which grids exist. No agents exist during homeostasis.
 - **Event-driven agents**: when something happens (wound, infection, tumor), agents spawn to model the cellular response. Keratinocytes bootstrap from local field state at spawn time; immune cells arrive at configured post-wound delays and drive the inflammation field.
 - **Per-cell handoff**: stable cornified cells dissolve back into the continuum field individually.
 - **LOD toggles** per volume via `agents_enabled`: event modules escalate resolution at points of interest.
@@ -36,7 +69,7 @@ Each diffusion field is a `PDE` subclass that owns its initialization, per-step 
 | Water | Exponential decay from dermis | Dermal pinning (reads Vascular) + TEWL evaporation | Zero in cylinder |
 | Inflammation | Zero (healthy) | Immune agents write directly (age-tapered) | None (starts at zero) |
 | Scar | Empty | Collagen-driven (emergent) or inflammation integral | None (starts at zero) |
-| TGF-beta | Zero | M2 macrophages + myofibroblasts write; mechanistic clearance: receptor endocytosis (fibroblasts, macrophages), tissue density dependent clearance, decorin-collagen sequestration | None (starts at zero) |
+| TGF-beta | Zero | M2 macrophages + myofibroblasts write; coarse-grained receptor uptake, tissue-density and collagen-dependent sequestration proxies | None (starts at zero) |
 | Collagen | Zero | Myofibroblasts deposit (proportional to local TGF-beta) | None (starts at zero) |
 | MMP | Zero | M1 macrophages + fibroblasts produce | None (starts at zero) |
 | TIMP | Zero | Fibroblasts (primary), M2 macrophages, wound-edge keratinocytes; second-order MMP*TIMP neutralization (1:1 stoichiometry) | None (starts at zero) |

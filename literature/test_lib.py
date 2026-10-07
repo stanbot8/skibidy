@@ -18,7 +18,7 @@ import unittest
 sys.path.insert(0, os.path.dirname(__file__))
 from lib import (
     interpolate, peak_normalize, end_normalize, compute_rmse,
-    compute_rmse_ci, phase_rmse, surface_fraction,
+    phase_rmse, surface_fraction,
     load_csv, _ref_path,
 )
 
@@ -76,14 +76,7 @@ class TestRMSE(unittest.TestCase):
         self.assertAlmostEqual(compute_rmse([1, 2, 6], [1, 2, 3]), math.sqrt(3))
 
     def test_empty(self):
-        self.assertEqual(compute_rmse([], []), 0.0)
-
-    def test_rmse_ci_bounds(self):
-        ci = compute_rmse_ci([1, 2, 4, 5], [1, 2, 3, 5])
-        self.assertGreater(ci["rmse"], 0)
-        self.assertLessEqual(ci["ci_lo"], ci["rmse"])
-        self.assertLessEqual(ci["rmse"], ci["ci_hi"])
-        self.assertGreaterEqual(ci["ci_lo"], 0)
+        self.assertTrue(math.isnan(compute_rmse([], [])))
 
 
 class TestPhaseRMSE(unittest.TestCase):
@@ -99,8 +92,8 @@ class TestPhaseRMSE(unittest.TestCase):
         self.assertAlmostEqual(rmse, math.sqrt(2.0 / 3.0))
 
     def test_empty_phase(self):
-        self.assertEqual(
-            phase_rmse([0, 1, 2], [0, 0, 0], [0, 0, 0], 100, 200), 0.0)
+        self.assertTrue(math.isnan(
+            phase_rmse([0, 1, 2], [0, 0, 0], [0, 0, 0], 100, 200)))
 
 
 class TestSurfaceFraction(unittest.TestCase):

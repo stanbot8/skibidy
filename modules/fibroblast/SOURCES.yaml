@@ -1,4 +1,29 @@
 # Literature sources for fibroblast module
+scleroderma_profile_background:
+  description: Fibrosis and vasculopathy reviews cited by profiles/scleroderma.toml.
+  notes: Mechanistic background; numerical scenario multipliers are heuristic, not fitted to these reviews.
+  sources:
+  - id: varga2007
+    authors: Varga J, Abraham D
+    year: 2007
+    title: "Systemic sclerosis: a prototypic multisystem fibrotic disorder"
+    journal: J Clin Invest 117(3):557-567
+    doi: 10.1172/JCI31139
+    notes: The original ard.2006.066068 DOI identifies Steen and Medsger's mortality study.
+  - id: distler2019
+    authors: Distler JHW, Gyorfi AH, Ramanujam M, Whitfield ML, Konigshoff M, Lafyatis R
+    year: 2019
+    title: Shared and distinct mechanisms of fibrosis
+    journal: Nat Rev Rheumatol
+    doi: 10.1038/s41584-019-0322-7
+    notes: Review of shared fibrosis mechanisms including TGF-beta signaling.
+  - id: asano2015
+    authors: Asano Y, Sato S
+    year: 2015
+    title: Vasculopathy in scleroderma
+    journal: Semin Immunopathol 37(5):489-500
+    doi: 10.1007/s00281-015-0505-5
+    notes: The original 1346-8138.12958 DOI identifies an unrelated epidermolysis bullosa case report.
 myofibroblast_kinetics:
   description: Alpha-SMA+ myofibroblast density, peak-normalized
   consensus: data/myofibroblast_kinetics.csv

@@ -8,10 +8,10 @@
 # Primary literature:
 #   Ogawa R 2017 (Int J Mol Sci, doi:10.3390/ijms18030606): keloid and
 #     hypertrophic scars are chronic inflammatory disorders
-#   Limandjaja GC 2020 (Exp Dermatol, doi:10.1111/exd.14116): keloid
+#   Limandjaja GC 2020 (Front Cell Dev Biol, doi:10.3389/fcell.2020.00360): keloid
 #     heterogeneity, histopathology, mechanisms
 #   Ehrlich HP 1994 (Am J Pathol): excess collagen deposition profile
-#   Ulrich D 2010 (Wound Repair Regen, doi:10.1111/j.1524-475X.2009.00565.x):
+#   Ulrich D 2010 (J Plast Reconstr Aesthet Surg, doi:10.1016/j.bjps.2009.04.021):
 #     reduced MMP/TIMP ratio in keloid fibroblasts
 #   Bettinger DA 1994 (Plast Reconstr Surg): elevated TGF-beta1 in keloid
 
@@ -25,7 +25,7 @@ apoptosis_onset = 3360              # 336h (14d) vs normal 168h; keloid myofib p
 apoptosis_threshold = 0.0003        # lower TGF-b floor for apoptosis (sustained signaling)
 # Elevated TGF-beta production
 tgfb_rate = 0.002                   # 2x normal 0.001 (Bettinger 1994)
-tgfb_taper = 0.0004                 # 3x slower taper (Liu 2018, doi:10.1016/j.intimp.2018.05.020)
+tgfb_taper = 0.0004                 # heuristic 3x slower taper; Liu 2018 citation unresolved (scar/SOURCES.yaml)
 # Fibroblast hyperactivity
 collagen_deposition_rate = 0.001    # 2x normal 0.0005 (Ehrlich 1994)
 

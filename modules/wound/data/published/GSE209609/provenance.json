@@ -1,0 +1,131 @@
+{
+  "accession": "GSE209609",
+  "publication": "https://pubmed.ncbi.nlm.nih.gov/36571451/",
+  "retrieved": "2026-10-07",
+  "inputs": [
+    {
+      "file": "GSE209609_series_matrix.txt.gz",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE209nnn/GSE209609/matrix/GSE209609_series_matrix.txt.gz",
+      "sha256": "c8958aaafead3b565b4186ab7ca67ea67e74ea1e805f2e182a3edd7ac737280d",
+      "bytes": 10632710
+    },
+    {
+      "file": "GPL29499_family.soft.gz",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/platforms/GPL29nnn/GPL29499/soft/GPL29499_family.soft.gz",
+      "sha256": "3a4cebd6dd50df106147fefcdb7292ad32f57dc53437c9cbc7adccb4b6500e2f",
+      "bytes": 28079519
+    },
+    {
+      "file": "ensembl_COL1A1.json",
+      "url": "https://rest.ensembl.org/lookup/symbol/homo_sapiens/COL1A1?content-type=application/json",
+      "sha256": "7fdebaf4dc837f10c5a31c17c260904f65bca9d61eecefee67c643c00ba33f51"
+    },
+    {
+      "file": "ensembl_COL3A1.json",
+      "url": "https://rest.ensembl.org/lookup/symbol/homo_sapiens/COL3A1?content-type=application/json",
+      "sha256": "c79db486c0e37e16e51be78637eb3ea420d6b3943799392f65d5c34600eea199"
+    },
+    {
+      "file": "ensembl_COL4A1.json",
+      "url": "https://rest.ensembl.org/lookup/symbol/homo_sapiens/COL4A1?content-type=application/json",
+      "sha256": "3cdd7928ab2d550bdf1956f81bef0011e8e034892e5dde6754a82ec39e2dc459"
+    },
+    {
+      "file": "ensembl_COL7A1.json",
+      "url": "https://rest.ensembl.org/lookup/symbol/homo_sapiens/COL7A1?content-type=application/json",
+      "sha256": "21581dad9bd785f95dd0818379f849a2188c24ded98195a1d83bef0cd1d2c0da"
+    },
+    {
+      "file": "ensembl_DCN.json",
+      "url": "https://rest.ensembl.org/lookup/symbol/homo_sapiens/DCN?content-type=application/json",
+      "sha256": "2e0093dcf8fdcb53f2df7c0c9f0a83dd0a079a60b27c83fae29c8ea55b921b84"
+    },
+    {
+      "file": "ensembl_FMOD.json",
+      "url": "https://rest.ensembl.org/lookup/symbol/homo_sapiens/FMOD?content-type=application/json",
+      "sha256": "f1bf5a1235e6b908c4f0251ebd3aad9e57c1e2f4d3b8641680c3990b378f6f64"
+    },
+    {
+      "file": "ensembl_FN1.json",
+      "url": "https://rest.ensembl.org/lookup/symbol/homo_sapiens/FN1?content-type=application/json",
+      "sha256": "f021c1d9bbc41732a107b8a045722df7dfec01cad79f75f1141f4512c0497359"
+    },
+    {
+      "file": "ensembl_IDO1.json",
+      "url": "https://rest.ensembl.org/lookup/symbol/homo_sapiens/IDO1?content-type=application/json",
+      "sha256": "b676510b9cf8907ed40d307b38a05595c30ac83815ab1fcd10135791d75fa447"
+    },
+    {
+      "file": "ensembl_IL1B.json",
+      "url": "https://rest.ensembl.org/lookup/symbol/homo_sapiens/IL1B?content-type=application/json",
+      "sha256": "f41b0db87c0481c32c19ecfd72c3ac1dead31fac041f3358da1522fc583acc8b"
+    },
+    {
+      "file": "ensembl_IL6.json",
+      "url": "https://rest.ensembl.org/lookup/symbol/homo_sapiens/IL6?content-type=application/json",
+      "sha256": "f2a7ffbaab5671613064829e10a8e26a603cad2b1bbb38ed392500da9d802057"
+    },
+    {
+      "file": "ensembl_LAMA3.json",
+      "url": "https://rest.ensembl.org/lookup/symbol/homo_sapiens/LAMA3?content-type=application/json",
+      "sha256": "137b72ec5ceeb0620b8583f8b58089f4626d46629cca083170789f4b8f2d4695"
+    },
+    {
+      "file": "ensembl_MKI67.json",
+      "url": "https://rest.ensembl.org/lookup/symbol/homo_sapiens/MKI67?content-type=application/json",
+      "sha256": "512bd0cd634aa157ef8240eb41ed71d4d16d6c2a02c678f486e45bc145003f22"
+    },
+    {
+      "file": "ensembl_MMP1.json",
+      "url": "https://rest.ensembl.org/lookup/symbol/homo_sapiens/MMP1?content-type=application/json",
+      "sha256": "c953cd8ed301853b1c2bf0c63acea6476ba45ae6785d8a757656a3e984f41e07"
+    },
+    {
+      "file": "ensembl_MMP9.json",
+      "url": "https://rest.ensembl.org/lookup/symbol/homo_sapiens/MMP9?content-type=application/json",
+      "sha256": "17b335dec37d23fd84dac936ffb6019f309b9cd3c7634b7f2f8d839a23efa303"
+    },
+    {
+      "file": "ensembl_TGFB1.json",
+      "url": "https://rest.ensembl.org/lookup/symbol/homo_sapiens/TGFB1?content-type=application/json",
+      "sha256": "0374691a102cc154605e828bee5c7fca50560c7d25d9eb806a1ddc244b42ddac"
+    },
+    {
+      "file": "ensembl_TNF.json",
+      "url": "https://rest.ensembl.org/lookup/symbol/homo_sapiens/TNF?content-type=application/json",
+      "sha256": "55218accf1d56706849e91d71b58277ea98d098a69afea62ba9e77c54a21cfbb"
+    },
+    {
+      "file": "ensembl_VEGFA.json",
+      "url": "https://rest.ensembl.org/lookup/symbol/homo_sapiens/VEGFA?content-type=application/json",
+      "sha256": "0357d55873a84311a1f111de213754c2290626935fcb72cc13975ec43f3567c3"
+    }
+  ],
+  "platform": "GPL29499 / BrainArray HGU133Plus2_Hs_ENSG_V22",
+  "processing": "R/bioconductor, affy package, RMA normalization, Custom CDF hgu133plus2hsensgcdf_22.0.0 from BrainArray",
+  "sample_count": 96,
+  "subjects": 18,
+  "genes_found": [
+    "COL1A1",
+    "COL3A1",
+    "COL4A1",
+    "COL7A1",
+    "DCN",
+    "FMOD",
+    "FN1",
+    "IDO1",
+    "IL1B",
+    "IL6",
+    "LAMA3",
+    "MKI67",
+    "MMP1",
+    "MMP9",
+    "TGFB1",
+    "TNF",
+    "VEGFA"
+  ],
+  "genes_missing": [],
+  "extraction": "Exact deposited RMA log2 values for all mapped selected genes and all samples. Tissue/time group arithmetic mean and sample SD; difference of group means from same-tissue day 0. No probe averaging, interpolation, imputation, hypothesis tests or model fit.",
+  "limitations": "Bulk RNA, healthy adults age 18-35, incomplete repeated-subject sampling. Group differences are not paired patient estimates. RNA changes do not identify protein concentration, fibroblast count, collagen mass, cell-cycle duration or membrane integrity. Does not calibrate any current parameter.",
+  "extracted_utc": "2026-10-07T17:06:44.979358+00:00"
+}

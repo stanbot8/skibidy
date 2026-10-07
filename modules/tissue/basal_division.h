@@ -41,6 +41,8 @@ struct BasalDivision : public Behavior {
       return;
     }
 
+    cell->EnsureCycleVariation(sp, sim->GetRandom());
+    const real_t cycle_scale = cell->GetCycleDurationMultiplier();
     cell->SetPhaseElapsed(cell->GetPhaseElapsed() + dt);
 
     // Homeostatic sub-cycling: cells far from the wound are in steady
@@ -65,7 +67,7 @@ struct BasalDivision : public Behavior {
 
     switch (cell->GetCyclePhase()) {
       case kG1: {
-        real_t p = cell->GetPhaseElapsed() / sp->g1_duration;
+        real_t p = cell->GetPhaseElapsed() / (sp->g1_duration * cycle_scale);
 
         // Fused voxel read: one index, all fields.
         Real3 qpos = ClampToBounds(cell->GetPosition(), sim->GetParam());
@@ -161,7 +163,7 @@ struct BasalDivision : public Behavior {
         if (cell->GetDiameter() < sp->division_diameter) {
           cell->ChangeVolume(sp->growth_rate);
         }
-        real_t p = cell->GetPhaseElapsed() / sp->s_duration;
+        real_t p = cell->GetPhaseElapsed() / (sp->s_duration * cycle_scale);
         if (p > ran) {
           cell->SetCyclePhase(kG2);
           cell->SetPhaseElapsed(0);
@@ -169,7 +171,7 @@ struct BasalDivision : public Behavior {
         break;
       }
       case kG2: {
-        real_t p = cell->GetPhaseElapsed() / sp->g2_duration;
+        real_t p = cell->GetPhaseElapsed() / (sp->g2_duration * cycle_scale);
         if (p > ran) {
           cell->SetCyclePhase(kM);
           cell->SetPhaseElapsed(0);
@@ -177,7 +179,7 @@ struct BasalDivision : public Behavior {
         break;
       }
       case kM: {
-        real_t p = cell->GetPhaseElapsed() / sp->m_duration;
+        real_t p = cell->GetPhaseElapsed() / (sp->m_duration * cycle_scale);
         if (p > ran) {
           // Mitosis complete — attempt division
           bool divided = false;
