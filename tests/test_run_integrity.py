@@ -2,7 +2,6 @@
 import tempfile
 import unittest
 import os
-import shutil
 from pathlib import Path
 from unittest.mock import patch
 
@@ -23,11 +22,13 @@ class RunIntegrityTest(unittest.TestCase):
     @unittest.skipUnless(os.environ.get("SKIBIDY_RUNTIME_TEST") == "1", "requires BioDynaMo")
     def test_batch_and_replicate_loader_ignore_inherited_checkpoint_controls(self):
         from scripts.run_replicates import runtime_identity
+        from scripts.config.merge_config import merge
         root = Path(lib.ROOT)
         with tempfile.TemporaryDirectory(prefix="skibidy-checkpoint-isolation-") as directory:
             private = Path(directory)
             (private / "build").symlink_to(root / "build", target_is_directory=True)
-            shutil.copyfile(root / "bdm.toml", private / "bdm.toml")
+            merge(str(root / "bdm.core.toml"), str(root / "modules"),
+                  str(private / "bdm.toml"))
             save_dir, witness = private / "checkpoint", private / "witness.json"
             controls = {"SKIBIDY_CKPT_SAVE_DIR": str(save_dir),
                         "SKIBIDY_CKPT_LOAD_DIR": str(private / "missing-checkpoint"),
