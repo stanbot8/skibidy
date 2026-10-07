@@ -36,6 +36,9 @@ C++ suite, then exercises checkpoint, treatment and dashboard/batch consumers.
 CMake owns study-hook generation before ROOT dictionary configuration and tracks
 the generator and study declarations, including added or removed declarations.
 Fresh builds and deleted generated headers do not require a prior config merge.
+GoogleTest is discovered from a test-enabled BioDynaMo installation or the system
+development package; CI installs `libgtest-dev` explicitly because BioDynaMo's
+standalone installer disables its own tests.
 Scientific validation uses only overlapping reference dates and reports
 disabled or unsupported observables as untested. Normalized curve RMSE is an
 engineering screen; simulated time points are not biological replicates.

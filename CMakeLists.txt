@@ -21,7 +21,8 @@ set(CMAKE_CXX_STANDARD 17)
 find_package(BioDynaMo REQUIRED)
 
 # See UseBioDynaMo.cmake in your BioDynaMo build folder for details.
-# Note that BioDynaMo provides gtest header/libraries in its include/lib dir.
+# GoogleTest may come from a test-enabled BioDynaMo installation or the
+# system development package (the standalone BioDynaMo installer disables tests).
 include(${BDM_USE_FILE})
 
 # Consider all files in src/ and modules/ for BioDynaMo simulation.
@@ -94,9 +95,14 @@ foreach(STUDY_DIR ${STUDY_MODULE_DIRS})
     list(APPEND TEST_SOURCES ${STUDY_TEST_SOURCES})
 endforeach()
 
+find_path(SKIBIDY_GTEST_INCLUDE_DIR gtest/gtest.h
+          HINTS "$ENV{BDMSYS}/include" REQUIRED)
+find_library(SKIBIDY_GTEST_LIBRARY NAMES gtest
+             HINTS "$ENV{BDMSYS}/lib" REQUIRED)
 add_library(libgtest IMPORTED STATIC GLOBAL)
 set_target_properties(libgtest PROPERTIES
-    IMPORTED_LOCATION "$ENV{BDMSYS}/lib/libgtest.a"
+    IMPORTED_LOCATION "${SKIBIDY_GTEST_LIBRARY}"
+    INTERFACE_INCLUDE_DIRECTORIES "${SKIBIDY_GTEST_INCLUDE_DIR}"
     IMPORTED_LINK_INTERFACE_LIBRARIES "${CMAKE_THREAD_LIBS_INIT}")
 
 add_executable(${CMAKE_PROJECT_NAME}-test ${TEST_SOURCES})
