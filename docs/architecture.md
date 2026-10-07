@@ -45,6 +45,26 @@ Scientific validation uses only overlapping reference dates and reports
 disabled or unsupported observables as untested. Normalized curve RMSE is an
 engineering screen. Simulated time points are not biological replicates.
 
+Name project analysis tools for their scientific operation rather than the
+agent or automation that created them. Preserve this naming in filenames,
+imports, commands, runtime output paths and documentation. Check all current
+project surfaces when renaming a workflow.
+`scripts/run_replicates.py` runs cohorts. `scripts/compare_replicates.py`
+summarizes one saved cohort through the shared validation library, using each
+run's configuration. `scripts/compare_cohorts.py` pairs candidate and control
+by seed and rejects mixed conditions or mismatched comparison windows.
+Their reports preserve individual failures and untested observables.
+
+For a saved cohort, run `python scripts/compare_replicates.py COHORT_DIR
+--report summary.json`. For a seed-paired experiment, run
+`python scripts/compare_cohorts.py CONTROL_DIR CANDIDATE_DIR --report
+comparison.json`. Each cohort contains `seedN/bdm.toml` and
+`seedN/skibidy/metrics.csv`. Cohort configuration may differ only in the
+random seed and output directory. The candidate may change model settings,
+which remain inspectable in the report alongside the control configurations.
+Both commands return a failing exit status when the candidate or summarized
+cohort fails the screen or has no tested observables.
+
 ## UWYN (Use What You Need)
 
 Skibidy uses a hybrid agent-continuum architecture:

@@ -117,3 +117,16 @@ through their consumers and remain disabled/fixed by default. Source metadata
 repairs changed no parsed config values. Two inherited profile citations remain
 explicitly unresolved (keloid Liu 2018 and psoriasis Griffiths 2017). Unrelated
 DOIs were not accepted as support.
+
+The subsequent saved-cohort review replaced the two obsolete comparison
+implementations with shared-library summaries and seed-paired comparisons.
+It verifies exact sample dates, saved conditions, configuration consistency
+and individual failures. The replicate runner, tests, documentation and local
+runtime evidence use descriptive scientific names. The naming rule is saved
+in [architecture](architecture.md). The evidence review and the frozen-versus-
+current diabetic configuration difference are recorded in
+[provenance](../literature/provenance.md#saved-cohort-review-2026-10-07).
+No simulation parameter means or frozen evidence bytes changed.
+Verification covered all 48 Python cases, including both optional runtime checks,
+both 22-test literature suites and 37 CSVs without errors or warnings. All nine
+frozen runs still fail their existing biological consistency screens.

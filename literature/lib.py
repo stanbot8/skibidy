@@ -976,6 +976,7 @@ def evaluate_run(sim, sim_days, config, condition):
                 start_day=min(dates) if dates else None,
                 end_day=max(dates) if dates else None,
                 simulation_samples=len(dates),
+                sample_days=dates,
                 uncertainty="Interpolated simulation samples are not biological replicates.")
     return results, report
 

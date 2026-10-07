@@ -32,7 +32,16 @@ psoriasis_profile_background:
     notes: >
       profiles/psoriasis.toml previously cited 10.1136/bmj.j4347, which identifies
       Godlee F, Unrelieved uncertainty, not a Griffiths psoriasis article.
-      No unique intended 2017 BMJ paper was established; no substitute was inserted.
+      No unique intended 2017 BMJ paper was established. The verified workshop
+      report below is a separately identified source, not a recovered identity.
+  - id: griffiths2017_workshop
+    authors: Griffiths CEM, van der Walt JM, Ashcroft DM, Flohr C, Naldi L, Nijsten T, Augustin M
+    year: 2017
+    title: "The global state of psoriasis disease epidemiology: a workshop report"
+    journal: Br J Dermatol 177(1):e4-e7
+    doi: 10.1111/bjd.15610
+    pmc: PMC5600082
+    notes: Epidemiology and Global Psoriasis Atlas background. Does not estimate the profile's cell-cycle durations, recruitment rates or multipliers.
 immune_cell_kinetics:
   description: Neutrophil and macrophage counts, each peak-normalized independently
   consensus: data/immune_cell_kinetics.csv

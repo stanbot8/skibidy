@@ -1,10 +1,9 @@
 """Run N simulation replicates with distinct seeds and save each CSV.
 
-Used by the wiggum loop to get multi-replicate signal for mechanistic
-validation. Runs sequentially; full-config sim takes ~4 min each in WSL.
+Runs sequential cohorts with distinct seeds for mechanistic validation.
 
 Usage:
-    python3 scripts/wiggum_replicate.py [--n N] [--skin S] [--study ST] [--out-dir DIR]
+    python3 scripts/run_replicates.py [--n N] [--skin S] [--study ST] [--out-dir DIR]
 """
 import argparse
 import csv

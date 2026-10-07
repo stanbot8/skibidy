@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from unittest import mock
 
-from scripts import wiggum_replicate as runner
+from scripts import run_replicates as runner
 
 
 class ReplicateRuntimeTest(unittest.TestCase):
@@ -59,7 +59,7 @@ class ReplicateRuntimeTest(unittest.TestCase):
     def test_actual_alternate_binary_and_unsupported_condition(self):
         from scripts.study.experiment_evidence import set_parameter
         root = Path(runner.lib.ROOT)
-        output = Path(tempfile.mkdtemp(prefix="wiggum-runtime-proof-", dir=root / "output"))
+        output = Path(tempfile.mkdtemp(prefix="replicate-runtime-proof-", dir=root / "output"))
         config_path = root / "bdm.toml"
         original = config_path.read_bytes() if config_path.exists() else None
         template = root / "batch/results/baseline-20261007-run2/normal-wound/seed42/bdm.toml"
@@ -72,7 +72,7 @@ class ReplicateRuntimeTest(unittest.TestCase):
                                "analysis.condition": "aging", "analysis.profile": "aged"}.items():
                 set_parameter(target, key, value)
 
-        argv = ["wiggum_replicate.py", "--n", "2", "--skin", "aging", "--out-dir", str(output),
+        argv = ["run_replicates.py", "--n", "2", "--skin", "aging", "--out-dir", str(output),
                 "--build-dir", str(selected)]
         with mock.patch.object(runner.lib, "setup_run", side_effect=setup), \
              mock.patch.object(runner.sys, "argv", argv), \

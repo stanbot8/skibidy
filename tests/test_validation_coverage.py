@@ -38,6 +38,14 @@ class ValidationCoverageTest(unittest.TestCase):
         self.assertEqual(report["coverage"]["TGF-b"]["status"], "not_tested")
         self.assertEqual(report["coverage"]["MMP"]["status"], "fail")
 
+    def test_report_retains_actual_overlap_sample_days(self):
+        config = {"skin": {"wound": {"enabled": True}}}
+        with patch("literature.lib.validate_wound", return_value={
+                "closure_rmse": 2, "ref_closure_at_sim": [0, float("nan"), 1]}):
+            _, report = evaluate_run({}, [0, .5, 2], config, "normal")
+        dates = report["coverage"]["Wound closure"]["comparison_dates"]
+        self.assertEqual(dates["sample_days"], [0, 2])
+
     def test_enabled_zero_is_not_omitted(self):
         config = {"skin": {"wound": {"enabled": True}, "fibroblast": {"enabled": True}}}
         self.assertEqual(detect_modules({}, config)[:2], (True, True))

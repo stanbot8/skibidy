@@ -144,6 +144,46 @@ abstract reports only directional changes, not per-timepoint values. The
 hypertrophic profile currently validates against the normal-scar POSAS
 baseline; the deviation upward from that baseline is the proxy observable.
 
+### Saved-cohort review, 2026-10-07
+
+The nine saved runs in `baseline-20261007/replicate_evidence.zip` were
+re-evaluated through the shared overlap-only validator without rerunning the
+simulation or changing that archive. `scripts/compare_replicates.py` now reads
+each run's saved configuration, rejects mixed settings within a cohort and
+retains failures at individual seeds. `scripts/compare_cohorts.py` pairs seeds
+and requires identical comparison sample dates. Sample SD describes simulation
+seed variability, not patients or a significance test.
+
+All three cohorts still fail the engineering screen. The diabetic cohort's
+mean RMSE is 21.42% for neutrophils, 23.68% for macrophages, 22.90% for
+TGF-beta and 23.34% for MMP. These four targets are constructed curves,
+including scaled normal consensus and parameter-derived trajectories, as
+recorded above and in `modules/diabetic/SOURCES.yaml`. Peak normalization
+tests shape and discards absolute fold differences. The failure labels are
+retained as model consistency results. They do not identify clinical error,
+a missing mechanism or a replacement rate.
+
+The saved diabetic seed 42 configuration uses wound radius 12 and immune
+diameter 3. The current recruitment operation computes 25 perimeter slots
+and suppresses recruitment when the total tissue macrophage count reaches
+25. The saved output reaches that ceiling. Total tissue census is a modeling
+proxy for margin adhesion occupancy, not measured venule occupancy.
+This identifies a constraint on the simulated trajectory without estimating
+a new capacity or attributing the entire curve mismatch to that constraint.
+
+The saved diabetic configurations omit `macrophage_apoptosis_factor`.
+The struct default in `modules/diabetic/params.h` is 0.5, whereas today's
+`profiles/diabetic.toml` specifies 0.3 and the preset application appends that
+key. A rerun using today's profile therefore changes an input relative to
+the frozen cohort. Comparisons must report this configuration difference.
+Neither value was changed in this review.
+
+A separately verified Griffiths et al. 2017 epidemiology workshop report
+([primary source](https://pmc.ncbi.nlm.nih.gov/articles/PMC5600082/),
+DOI 10.1111/bjd.15610) is recorded in `modules/immune/SOURCES.yaml`.
+It supports epidemiological background. It supplies no numerical calibration
+for the psoriasis profile and does not resolve the inherited BMJ citation.
+
 ### Quality checks
 
 `literature/check_data_quality.py` enforces well-formedness, monotonic time
