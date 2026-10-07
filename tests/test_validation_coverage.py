@@ -4,9 +4,51 @@ import math
 from unittest.mock import patch
 from literature.lib import condition_from_config, detect_condition, evaluate_run, interpolate, compute_rmse
 from literature.lib import detect_modules, validation_report, validate_microenvironment, validate_wound
+from literature.lib import wound_comparison_days, plot_wound_panels
 
 
 class ValidationCoverageTest(unittest.TestCase):
+    def test_delayed_wound_uses_injury_time_and_excludes_preinjury_peak(self):
+        sim = {"wound_closure_pct": [0, 45, 80], "mean_infl_wound": [1, .6, .1],
+               "n_neutrophils": [1, .5, 0], "n_macrophages": [0, 1, .5]}
+        config = {"skin": {"wound": {"enabled": True}}}
+        baseline, before = evaluate_run(sim, [0, 7, 14], config, "normal")
+        config["skin"]["wound"]["trigger_h"] = 48
+        delayed = {key: [1000] + values for key, values in sim.items()}
+        results, report = evaluate_run(delayed, [0, 2, 9, 16], config, "normal")
+        for name in ("Wound closure", "Inflammation", "Neutrophils", "Macrophages"):
+            self.assertEqual(before["coverage"][name], report["coverage"][name])
+        self.assertEqual(results["wound"]["simulation_days"], [-2, 0, 7, 14])
+        import matplotlib.pyplot as plt
+        fig, axes = plt.subplots(2, 2)
+        try:
+            plot_wound_panels(results["wound"], [0, 2, 9, 16], axes)
+            self.assertEqual(list(axes[0, 0].lines[0].get_xdata()), [-2, 0, 7, 14])
+            self.assertEqual(axes[1, 0].get_xlabel(), "Days since wound")
+        finally:
+            plt.close(fig)
+
+    def test_wound_clock_matches_scheduled_step(self):
+        config = {"skin": {"wound": {"trigger_h": 12.37}}}
+        self.assertAlmostEqual(wound_comparison_days([1], config)[0], 1 - 12.3 / 24)
+        config["skin"]["wound"]["trigger_h"] = 12.9
+        self.assertEqual(wound_comparison_days([12.9 / 24], config), [0.0])
+        for invalid in (-1, float("nan"), True, "12"):
+            config["skin"]["wound"]["trigger_h"] = invalid
+            with self.assertRaises(ValueError):
+                wound_comparison_days([1], config)
+
+    def test_independent_ra_and_tumor_clocks_are_not_shifted(self):
+        config = {"skin": {"wound": {"trigger_h": 48},
+                           "ra": {"enabled": True}, "tumor": {"enabled": True}}}
+        with patch("literature.lib.validate_ra", return_value={
+                "tnf_rmse": .1, "ref_tnf_at_sim": [1, 0]}) as ra, patch(
+                "literature.lib.validate_tumor", return_value={"description": "available"}) as tumor:
+            results, report = evaluate_run({}, [2, 9], config, condition_from_config(config))
+        self.assertEqual(ra.call_args.args[1], [2, 9])
+        self.assertEqual(tumor.call_args.args[1], [2, 9])
+        self.assertEqual(report["coverage"]["TNF-alpha"]["comparison_dates"]["time_origin"], "simulation")
+
     def test_reference_is_not_extrapolated(self):
         reference = interpolate([1, 3], [0, 1], [0, 1, 2, 3, 4], extrapolate=False)
         self.assertTrue(math.isnan(reference[0]))

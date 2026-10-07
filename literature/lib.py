@@ -599,6 +599,7 @@ def validate_ra(sim, sim_days):
 
 def plot_wound_panels(r, sim_days, axes):
     """Draw 4 wound panels into a 2x2 axes array."""
+    sim_days = r.get("simulation_days", sim_days)
     cond = r.get("condition", "normal")
     ref_label = f"Lit. ({cond})" if cond != "normal" else "Literature"
     ref_kw = dict(REF_KW, label=ref_label)
@@ -657,11 +658,12 @@ def plot_wound_panels(r, sim_days, axes):
             fontsize=8, color="gray")
 
     for a in axes[-1]:
-        a.set_xlabel("Time (days)")
+        a.set_xlabel("Days since wound")
 
 
 def plot_fibroblast_panels(r, sim_days, axes):
     """Draw 3 fibroblast panels into axes array."""
+    sim_days = r.get("simulation_days", sim_days)
     ax = axes[0]
     ax.plot(sim_days, r["sim_fibro"], **SIM_KW)
     ax.plot(r["ref_fibro"]["day"], r["ref_fibro"]["fibroblasts_normalized"], **REF_KW)
@@ -701,7 +703,7 @@ def plot_fibroblast_panels(r, sim_days, axes):
             transform=ax.transAxes, ha="right", va="top",
             fontsize=8, color="gray")
 
-    axes[-1].set_xlabel("Time (days)")
+    axes[-1].set_xlabel("Days since wound")
 
 
 def plot_tumor_panels(r, sim_days, axes):
@@ -756,6 +758,7 @@ def plot_tumor_panels(r, sim_days, axes):
 
 def plot_microenvironment_panels(r, sim_days, axes):
     """Plot supported comparisons and explicitly label absent scores."""
+    sim_days = r.get("simulation_days", sim_days)
     specs = [("tgfb", "TGF-b1 Kinetics", "tgfb_normalized"),
              ("vegf", "VEGF Kinetics", "vegf_normalized"),
              ("fn", "Fibronectin Kinetics", "fibronectin_normalized"),
@@ -772,11 +775,12 @@ def plot_microenvironment_panels(r, sim_days, axes):
         ax.grid(True, alpha=.3)
         ax.text(.98, .85, label, transform=ax.transAxes, ha="right", fontsize=8, color="gray")
     for ax in axes[-1]:
-        ax.set_xlabel("Time (days)")
+        ax.set_xlabel("Days since wound")
 
 
 def plot_ph_panel(r, sim_days, ax):
     """Draw wound pH (alkalinity) panel into a single axes."""
+    sim_days = r.get("simulation_days", sim_days)
     ax.plot(sim_days, r["sim_ph"], **SIM_KW)
     ax.plot(r["ref_ph"]["day"], r["ref_ph"]["ph_alkalinity_normalized"], **REF_KW)
     ax.set_ylabel("Wound alkalinity (normalized)")
@@ -788,7 +792,7 @@ def plot_ph_panel(r, sim_days, ax):
     ax.text(0.98, 0.85, f"RMSE = {r['ph_rmse'] * 100:.1f}%",
             transform=ax.transAxes, ha="right", va="top",
             fontsize=8, color="gray")
-    ax.set_xlabel("Time (days)")
+    ax.set_xlabel("Days since wound")
 
 
 def plot_ra_panels(r, sim_days, axes):
@@ -939,15 +943,38 @@ def validation_report(wound=None, fibroblast=None, tumor=None, microenv=None,
                 criterion="15% RMSE engineering screen; passing tested observables does not validate untested mechanisms")
 
 
+def wound_comparison_days(sim_days, config):
+    """Match wound reference day zero to the simulation's scheduled injury.
+
+    BDM_ASSIGN_HOURS truncates trigger_h * 10 to an integer step. The
+    simulation timestep is fixed at 0.1 hours, so use the actual event time.
+    """
+    trigger = config.get("skin", {}).get("wound", {}).get("trigger_h", 0)
+    if (isinstance(trigger, bool) or not isinstance(trigger, (int, float))
+            or not math.isfinite(trigger) or trigger < 0):
+        raise ValueError("skin.wound.trigger_h must be a finite nonnegative number")
+    origin_days = int(trigger * 10.0) * 0.1 / 24.0
+    return [0.0 if math.isclose(day, origin_days, rel_tol=0, abs_tol=1e-12)
+            else day - origin_days for day in sim_days]
+
+
 def evaluate_run(sim, sim_days, config, condition):
     """Shared computation for command-line validation and the dashboard."""
+    saved_condition = condition_from_config(config)
+    if condition != saved_condition:
+        raise ValueError(f"Requested condition {condition!r} differs from saved run condition {saved_condition!r}")
     hw, hf, ht, hm, hp, hr = detect_modules(sim, config)
-    results = dict(wound=validate_wound(sim, sim_days, condition) if hw else None,
-                   fibroblast=validate_fibroblast(sim, sim_days, condition) if hf else None,
+    wound_days = wound_comparison_days(sim_days, config)
+    results = dict(wound=validate_wound(sim, wound_days, condition) if hw else None,
+                   fibroblast=validate_fibroblast(sim, wound_days, condition) if hf else None,
                    tumor=validate_tumor(sim, sim_days) if ht else None,
-                   microenv=validate_microenvironment(sim, sim_days, condition) if hm else None,
-                   ph=validate_ph(sim, sim_days) if hp and condition == "normal" else None,
+                   microenv=validate_microenvironment(sim, wound_days, condition) if hm else None,
+                   ph=validate_ph(sim, wound_days) if hp and condition == "normal" else None,
                    ra=validate_ra(sim, sim_days) if hr else None)
+    for group, result in results.items():
+        if result is not None:
+            result["simulation_days"] = (sim_days if group in ("ra", "tumor")
+                                         else wound_days)
     microenv = results["microenv"]
     if microenv is not None:
         for key, owner in [("tgfb", "fibroblast"), ("vegf", "angiogenesis"),
@@ -963,7 +990,7 @@ def evaluate_run(sim, sim_days, config, condition):
              "vegf": "VEGF", "fn": "Fibronectin", "mmp": "MMP", "ph": "pH",
              "tnf": "TNF-alpha", "il6": "IL-6", "cart": "Cartilage",
              "bone": "Bone", "tcell": "T cells", "syn": "Synovium"}
-    for result in results.values():
+    for group, result in results.items():
         if result is None:
             continue
         for key, name in names.items():
@@ -971,8 +998,10 @@ def evaluate_run(sim, sim_days, config, condition):
             reference = result.get("ref_" + prefix + "_at_sim")
             if reference is None:
                 continue
-            dates = [day for day, value in zip(sim_days, reference) if math.isfinite(value)]
+            dates = [day for day, value in zip(result["simulation_days"], reference)
+                     if math.isfinite(value)]
             report["coverage"][name]["comparison_dates"] = dict(
+                time_origin="simulation" if group in ("ra", "tumor") else "wound",
                 start_day=min(dates) if dates else None,
                 end_day=max(dates) if dates else None,
                 simulation_samples=len(dates),

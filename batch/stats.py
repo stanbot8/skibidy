@@ -75,8 +75,9 @@ def confidence_interval(values, alpha=0.05):
     """
     n = len(values)
     if n < 2:
-        m = values[0] if values else float("nan")
-        return dict(mean=m, std=0, se=0, ci_lo=m, ci_hi=m, n=n, alpha=alpha)
+        raise ValueError("A confidence interval requires at least two independent replicates")
+    if not all(math.isfinite(value) for value in values):
+        raise ValueError("Confidence interval values must be finite")
 
     m = sum(values) / n
     var = sum((x - m) ** 2 for x in values) / (n - 1)  # sample variance
@@ -104,8 +105,9 @@ def welch_t_test(group_a, group_b):
     """
     n_a, n_b = len(group_a), len(group_b)
     if n_a < 2 or n_b < 2:
-        return dict(t_stat=float("nan"), df=0, p_value=1.0,
-                    mean_a=0, mean_b=0, cohens_d=0, significant=False)
+        raise ValueError("Welch's test requires at least two independent replicates per group")
+    if not all(math.isfinite(value) for value in (*group_a, *group_b)):
+        raise ValueError("Welch's test values must be finite")
 
     m_a = sum(group_a) / n_a
     m_b = sum(group_b) / n_b
@@ -113,9 +115,8 @@ def welch_t_test(group_a, group_b):
     var_b = sum((x - m_b) ** 2 for x in group_b) / (n_b - 1)
 
     se = math.sqrt(var_a / n_a + var_b / n_b)
-    if se < 1e-15:
-        return dict(t_stat=0, df=max(n_a, n_b) - 1, p_value=1.0,
-                    mean_a=m_a, mean_b=m_b, cohens_d=0, significant=False)
+    if se == 0:
+        raise ValueError(f"Welch's test is undefined with zero standard error (means {m_a}, {m_b})")
 
     t_stat = (m_a - m_b) / se
 

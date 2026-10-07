@@ -8,6 +8,9 @@ Compares simulation output against digitized literature data and checks source i
 # Full pipeline (source check + sim validation + plots)
 python3 literature/validate_all.py output/skibidy/metrics.csv
 
+# One module, using the same saved-run validation rules
+python3 literature/validators/compare.py wound output/skibidy/metrics.csv
+
 # Source integrity only (no sim data needed)
 python3 literature/check_sources.py
 
@@ -15,7 +18,17 @@ python3 literature/check_sources.py
 python3 batch/batch.py -n 10 --study wound --validate
 ```
 
-`validate_all.py` runs the source check first, then loads simulation metrics and validates whichever modules are present (wound, fibroblast, microenvironment, pH, tumor).
+`validate_all.py` runs the source check first, then loads complete simulation metrics
+and validates enabled modules, including enabled outputs that remain zero.
+Both validation commands read `run-config.toml` or `bdm.toml` beside the metrics
+or in its parent directory. Supply `--config PATH` when saved evidence lives
+elsewhere. Explicit condition flags must agree with that saved configuration.
+Wound curves use days since injury. RA and tumor use days since simulation start.
+Failed or entirely untested screens return a failing exit status.
+The module command supports `wound`, `immune`, `fibroblast`, `microenvironment`
+(`microenv`), `tumor` and `ra`. Use `--quick` to skip plots and `--report PATH`
+to select the JSON destination. Its default is `validation_MODULE.json` beside
+the metrics. The full validator writes `validation.json` there.
 
 ## Scripts
 
@@ -41,7 +54,7 @@ python3 batch/batch.py -n 10 --study wound --validate
 
 ## Output
 
-Plots are saved to `output/plots/`:
+Plots are saved in `plots/` beside the selected metrics CSV:
 
 | File | Contents |
 |------|----------|

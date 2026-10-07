@@ -250,9 +250,8 @@ def run_complete_experiment(experiment, output, binary):
         raise ValueError("runs_per_config must be a positive integer")
     frozen, receipt, env = freeze_binary(output, binary)
     env["OMP_NUM_THREADS"] = "1"
-    for key in list(env):
-        if key.startswith("SKIBIDY_CKPT_"):
-            del env[key]
+    from batch.lib import simulation_environment
+    env = simulation_environment(env)
     manifest = {"status": "preparing", "experiment": experiment, "binary_receipt": receipt,
                 "requested_runs": len(experiment["configs"]) * n_runs, "runs": []}
     manifest_path = output / "manifest.json"

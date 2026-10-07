@@ -130,3 +130,31 @@ No simulation parameter means or frozen evidence bytes changed.
 Verification covered all 48 Python cases, including both optional runtime checks,
 both 22-test literature suites and 37 CSVs without errors or warnings. All nine
 frozen runs still fail their existing biological consistency screens.
+
+The additional workflow review corrected delayed-wound validation to use days
+since the injury's actual 0.1-hour simulation step. Independent RA and tumor
+curves retain simulation time. A real 72-sample, three-day run triggered injury
+at hour 24; full and standalone wound validation produced identical coverage
+over the 48 post-injury samples. The rendered plot used the same injury clock.
+Standalone module commands now use saved conditions and enabled mechanisms,
+retain enabled zero outputs, reject incomplete metrics and condition mismatches,
+save JSON coverage, and gate the selected module's screens.
+
+Sweep and Morris runners use distinct paired replicate seeds, retain individual
+configs and logs, and stop before publishing a summary when a run or outcome is
+missing. Morris trajectory sampling is reproducible from the configured seed
+without changing global random state. Ordinary simulation and replicate paths
+strip inherited checkpoint controls; a production binary run verified that
+invalid inherited load/save controls neither interrupted it nor created a
+checkpoint or state witness. Treatment lookup no longer borrows an overlay from
+an unrelated study. Statistical tests reject insufficient replication and
+undefined zero-standard-error comparisons instead of reporting no difference.
+
+Verification executed 69 Python cases: 68 passed and the optional alternate-loader
+case was skipped. Both literature suites passed 22 tests, and 37 reference/evidence
+CSVs had no errors or warnings. Seven batch regressions failed on the original
+code and passed after repair. Exact before/after scoring of all nine frozen runs
+preserved their RMSE values, statuses and sample dates. All nine still fail their
+existing biological screens. No biological parameter means, reference curves or
+frozen cohort files changed in this review. This verification covers validation
+and experiment workflows; it does not establish improved biological fit.

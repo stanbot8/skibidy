@@ -34,6 +34,7 @@ python3 batch/sweep.py batch/configs/diabetic_factors.toml --analyze
 Output: `batch/results/<name>_<timestamp>/`
 - `config.toml`: copy of sweep config
 - `raw/ptNNN_val*_runNNN.csv`: individual run metrics
+- `raw/ptNNN_runNNN/`: each run's saved configuration and process logs
 - `summary.csv`: param values + outcome mean/std at each point
 - `sweep.png`: auto-generated plot (single-param with error bars)
 - `heatmap.png`: auto-generated plot (two-param colored grid)
@@ -57,6 +58,7 @@ name = "cytokine_rate"
 param = "skin.immune.cytokine_rate"
 values = [0.0005, 0.001, 0.0015, 0.002, 0.003]
 runs_per_value = 5
+base_seed = 42           # replicate seeds; same seed set at each point
 study = "wound"           # optional: apply studies/wound/preset.toml
 
 [outcomes]

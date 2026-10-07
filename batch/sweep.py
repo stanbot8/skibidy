@@ -12,6 +12,7 @@ Usage:
 
 import argparse
 import itertools
+import math
 import os
 import subprocess
 import sys
@@ -117,6 +118,7 @@ def load_sweep_config(path):
 
     return dict(
         name=name, study=study, skin=skin, runs_per_value=runs,
+        base_seed=sweep.get("base_seed", 42),
         params=params, primary=primary, secondary=secondary,
         measure=measure, source_path=path,
     )
@@ -137,7 +139,12 @@ def generate_sweep_points(params):
 
 def run_sweep(cfg, override_runs=None):
     """Execute a full parameter sweep."""
-    runs_per = override_runs or cfg["runs_per_value"]
+    runs_per = cfg["runs_per_value"] if override_runs is None else override_runs
+    base_seed = cfg.get("base_seed", 42)
+    if isinstance(runs_per, bool) or not isinstance(runs_per, int) or runs_per < 1:
+        raise ValueError("runs_per_value must be a positive integer")
+    if isinstance(base_seed, bool) or not isinstance(base_seed, int) or base_seed < 0:
+        raise ValueError("base_seed must be a nonnegative integer")
     points = generate_sweep_points(cfg["params"])
     all_outcomes = cfg["secondary"] + [cfg["primary"]]
 
@@ -178,29 +185,27 @@ def run_sweep(cfg, override_runs=None):
             label = f"[{sim_count}/{total_sims}]"
 
             # Fresh config each run
-            lib.merge_config()
-            if cfg["skin"]:
-                lib.apply_profile(cfg["skin"])
-            if cfg["study"]:
-                lib.apply_study(cfg["study"])
+            lib.setup_run(skin=cfg["skin"], study=cfg["study"])
 
             # Apply sweep parameter overrides
             for param_path, value in point.items():
                 lib.override_param(param_path, value)
+            lib.override_param("simulation.random_seed", base_seed + run_idx)
 
             # Run
             print(f"  {label} run {run_idx + 1}/{runs_per}...", end=" ", flush=True)
-            ok, elapsed = lib.run_simulation()
+            run_dir = os.path.join(raw_dir, f"pt{pt_idx:03d}_run{run_idx:03d}")
+            ok, elapsed = lib.run_simulation(output_path=run_dir)
 
             if not ok:
                 print(f"FAILED ({elapsed:.0f}s)")
-                continue
+                raise RuntimeError(f"Sweep cohort is incomplete at point {pt_idx}, replicate {run_idx}")
 
             # Save CSV
             src = lib.get_metrics_path()
             if not os.path.isfile(src):
                 print(f"FAILED (no metrics)")
-                continue
+                raise RuntimeError(f"Sweep cohort is incomplete: missing metrics at {run_dir}")
 
             # Encode point values in filename
             val_str = "_".join(f"{v}" for v in point.values())
@@ -217,6 +222,8 @@ def run_sweep(cfg, override_runs=None):
             for col in all_outcomes:
                 val = lib.extract_outcome(mean_data, col, cfg["measure"])
                 std_val = lib.extract_outcome(std_data, col, cfg["measure"])
+                if not math.isfinite(val) or not math.isfinite(std_val):
+                    raise RuntimeError(f"Sweep cohort is incomplete: unavailable outcome {col!r}")
                 row[col] = val
                 row[f"{col}_std"] = std_val
             summary_rows.append(row)

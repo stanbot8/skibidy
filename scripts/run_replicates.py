@@ -25,7 +25,7 @@ from batch import lib
 def runtime_identity(binary):
     """Resolve and hash dependencies using the simulation's exact loader env."""
     binary = Path(binary).resolve()
-    environment = os.environ.copy()
+    environment = lib.simulation_environment()
     environment["LD_LIBRARY_PATH"] = str(binary.parent) + ":" + environment.get("LD_LIBRARY_PATH", "")
     resolved = subprocess.run(["ldd", str(binary)], env=environment,
                               capture_output=True, text=True, check=True)

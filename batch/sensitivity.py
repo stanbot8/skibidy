@@ -60,6 +60,7 @@ def load_config(path):
         trajectories=sa.get("trajectories", 10),
         levels=sa.get("levels", 4),
         replicates=sa.get("replicates", 1),
+        base_seed=sa.get("base_seed", 42),
         params=params,
         primary=outcomes.get("primary", "wound_closure_pct"),
         secondary=outcomes.get("secondary", []),
@@ -72,7 +73,7 @@ def load_config(path):
 # Morris trajectory generation
 # ---------------------------------------------------------------------------
 
-def generate_morris_trajectories(params, r, p):
+def generate_morris_trajectories(params, r, p, seed=None):
     """Generate r Morris trajectories for k parameters with p levels.
 
     Each trajectory has k+1 points (base + one perturbation per param).
@@ -82,16 +83,17 @@ def generate_morris_trajectories(params, r, p):
     Uses optimized random sampling with distance maximization.
     """
     import random
+    rng = random.Random(seed)
     k = len(params)
     delta = p // 2  # standard Morris delta = p/(2*(p-1)) but we use grid levels
 
     trajectories = []
     for _ in range(r * 10):  # generate candidates, keep best r
         # Random base point on the grid
-        base = [random.randint(0, p - 1) for _ in range(k)]
+        base = [rng.randint(0, p - 1) for _ in range(k)]
         # Random parameter order
         order = list(range(k))
-        random.shuffle(order)
+        rng.shuffle(order)
 
         traj = [list(base)]
         current = list(base)
@@ -111,16 +113,15 @@ def generate_morris_trajectories(params, r, p):
     if len(trajectories) <= r:
         selected = trajectories
     else:
-        selected = _select_spread_trajectories(trajectories, r)
+        selected = _select_spread_trajectories(trajectories, r, rng)
 
     return selected
 
 
-def _select_spread_trajectories(candidates, r):
+def _select_spread_trajectories(candidates, r, rng):
     """Greedy selection of r trajectories maximizing spread."""
-    import random
     # Start with a random trajectory
-    selected = [random.choice(candidates)]
+    selected = [rng.choice(candidates)]
     remaining = [t for t in candidates if t is not selected[0]]
 
     while len(selected) < r and remaining:
@@ -234,10 +235,7 @@ def summarize_effects(ee):
         summary[pname] = {}
         for outcome, values in outcomes.items():
             if not values:
-                summary[pname][outcome] = {
-                    "mu_star": 0, "sigma": 0, "mu": 0, "n": 0,
-                    "mu_star_ci_lo": 0, "mu_star_ci_hi": 0}
-                continue
+                raise ValueError(f"No elementary effects for {pname!r}, outcome {outcome!r}")
             n = len(values)
             mu = sum(values) / n
             mu_star = sum(abs(v) for v in values) / n
@@ -270,11 +268,19 @@ def summarize_effects(ee):
 
 def run_sensitivity(cfg, override_r=None, override_levels=None):
     """Execute Morris sensitivity analysis."""
-    r = override_r or cfg["trajectories"]
-    p = override_levels or cfg["levels"]
+    r = cfg["trajectories"] if override_r is None else override_r
+    p = cfg["levels"] if override_levels is None else override_levels
     params = cfg["params"]
     k = len(params)
     replicates = cfg["replicates"]
+    base_seed = cfg.get("base_seed", 42)
+    for name, value in (("trajectories", r), ("replicates", replicates)):
+        if isinstance(value, bool) or not isinstance(value, int) or value < 1:
+            raise ValueError(f"{name} must be a positive integer")
+    if isinstance(p, bool) or not isinstance(p, int) or p < 2 or p % 2:
+        raise ValueError("levels must be an even integer of at least two")
+    if isinstance(base_seed, bool) or not isinstance(base_seed, int) or base_seed < 0:
+        raise ValueError("base_seed must be a nonnegative integer")
     all_outcomes = [cfg["primary"]] + cfg["secondary"]
     measure = cfg["measure"]
 
@@ -290,7 +296,7 @@ def run_sensitivity(cfg, override_r=None, override_levels=None):
     print()
 
     # Generate trajectories
-    trajectories = generate_morris_trajectories(params, r, p)
+    trajectories = generate_morris_trajectories(params, r, p, seed=base_seed)
     print(f"  Generated {len(trajectories)} trajectories")
 
     # Output directory
@@ -331,25 +337,16 @@ def run_sensitivity(cfg, override_r=None, override_levels=None):
 
             # Run with replicates and average
             point_outcomes = {out: [] for out in all_outcomes}
-            all_ok = True
 
             for rep in range(replicates):
-                lib.merge_config()
-                if cfg["skin"]:
-                    lib.apply_profile(cfg["skin"])
-                if cfg["study"]:
-                    lib.apply_study(cfg["study"])
-                if cfg.get("treatment"):
-                    lib.apply_treatment(cfg["treatment"], cfg["study"])
+                lib.setup_run(skin=cfg["skin"], study=cfg["study"], treatment=cfg.get("treatment"))
 
                 for param_path, value in param_values.items():
                     lib.override_param(param_path, value)
 
-                # Set reproducible seed if base_seed provided
-                base_seed = cfg.get("base_seed")
-                if base_seed is not None:
-                    sim_seed = base_seed + traj_idx * 1000 + pt_idx * 10 + rep
-                    lib.override_param("simulation.random_seed", sim_seed)
+                # Distinct replicates, paired seeds across each trajectory's points.
+                sim_seed = base_seed + traj_idx * replicates + rep
+                lib.override_param("simulation.random_seed", sim_seed)
 
                 run_dir = os.path.join(
                     raw_dir, f"t{traj_idx:03d}_p{pt_idx:02d}_r{rep:02d}")
@@ -357,19 +354,18 @@ def run_sensitivity(cfg, override_r=None, override_levels=None):
 
                 if not ok:
                     print(f"FAIL", end=" ")
-                    all_ok = False
-                    continue
+                    raise RuntimeError(f"Sensitivity cohort is incomplete at {run_dir}")
 
                 csv_path = lib.get_metrics_path()
                 if not os.path.isfile(csv_path):
-                    all_ok = False
-                    continue
+                    raise RuntimeError(f"Sensitivity cohort is incomplete: missing metrics at {run_dir}")
 
                 data = lib.load_csv(csv_path)
                 for out in all_outcomes:
                     val = lib.extract_outcome(data, out, measure)
-                    if not math.isnan(val):
-                        point_outcomes[out].append(val)
+                    if not math.isfinite(val):
+                        raise RuntimeError(f"Sensitivity cohort is incomplete: unavailable outcome {out!r}")
+                    point_outcomes[out].append(val)
 
             # Average replicates
             avg = {}
@@ -378,10 +374,7 @@ def run_sensitivity(cfg, override_r=None, override_levels=None):
                 avg[out] = sum(vals) / len(vals) if vals else float("nan")
 
             traj_results.append(avg)
-            if all_ok:
-                print(f"OK ({time.time() - t_start:.0f}s total)")
-            else:
-                print(f"partial")
+            print(f"OK ({time.time() - t_start:.0f}s total)")
 
         results.append(traj_results)
 
@@ -478,11 +471,9 @@ def main():
     args = parser.parse_args()
 
     cfg = load_config(args.config)
-    if args.replicates:
+    if args.replicates is not None:
         cfg["replicates"] = args.replicates
     if args.seed is not None:
-        import random
-        random.seed(args.seed)
         cfg["base_seed"] = args.seed
     run_sensitivity(cfg, override_r=args.trajectories,
                     override_levels=args.levels)

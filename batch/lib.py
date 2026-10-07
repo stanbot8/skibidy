@@ -111,7 +111,7 @@ def apply_treatment(name, study=None):
     """Apply a treatment overlay by name.
 
     Searches studies/{study}/treatments/ first if study is given,
-    then all studies/*/treatments/ directories.
+    then studies/shared/treatments/. Other studies are never a fallback.
     """
     if not name or os.path.basename(name) != name or "\\" in name or name in (".", ".."):
         raise ValueError("Invalid treatment name")
@@ -125,14 +125,7 @@ def apply_treatment(name, study=None):
     if os.path.isfile(shared):
         apply_overlay(shared)
         return
-    # Search all study treatment dirs
-    import glob as _glob
-    for path in sorted(_glob.glob(os.path.join(
-            ROOT, "studies", "*", "treatments", f"{name}.toml"))):
-        apply_overlay(path)
-        return
-    print(f"ERROR: treatment '{name}' not found.")
-    sys.exit(1)
+    raise ValueError(f"Treatment {name!r} not found in requested study {study!r} or shared treatments")
 
 
 def override_param(param_path, value):
@@ -231,6 +224,13 @@ def build_if_needed():
 # Simulation execution
 # ---------------------------------------------------------------------------
 
+def simulation_environment(environment=None):
+    """Ordinary runs must not inherit checkpoint or state-witness controls."""
+    return {key: value for key, value in (os.environ if environment is None else environment).items()
+            if not key.startswith(("SKIBIDY_CKPT_", "SKIBIDY_CHECKPOINT_"))
+            and key != "SKIBIDY_STATE_SIGNATURE_FILE"}
+
+
 def run_simulation(output_path=None):
     """Run one simulation. Returns (success, elapsed_seconds).
 
@@ -269,10 +269,7 @@ def run_simulation(output_path=None):
                     os.path.join(evidence_dir, "run-config.toml"))
 
     t0 = time.time()
-    env = dict(os.environ)
-    for key in list(env):
-        if key.startswith("SKIBIDY_CHECKPOINT_") or key == "SKIBIDY_STATE_SIGNATURE_FILE":
-            env.pop(key)
+    env = simulation_environment()
     result = subprocess.run(
         [os.path.join(ROOT, "build", "skibidy")],
         cwd=ROOT, capture_output=True, text=True, env=env)

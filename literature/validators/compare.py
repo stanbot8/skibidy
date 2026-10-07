@@ -12,45 +12,20 @@ Usage:
 
 import os
 import sys
+import argparse
+import json
 
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from lib import (load_csv, plots_dir, detect_condition, surface_fraction,
-                 validate_wound, validate_fibroblast, validate_tumor,
-                 validate_microenvironment, validate_ph, validate_ra,
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+from batch.lib import parse_toml, validate_run_metrics
+from literature.lib import (load_csv, plots_dir, condition_from_config, surface_fraction,
+                 evaluate_run, saved_config_path,
                  plot_wound_panels, plot_fibroblast_panels, plot_tumor_panels,
                  plot_microenvironment_panels, plot_ph_panel, plot_ra_panels,
-                 print_summary, SIM_KW, REF_KW)
-
-
-def _parse_args():
-    positional = [a for a in sys.argv[1:] if not a.startswith("--")]
-    flags = [a for a in sys.argv[1:] if a.startswith("--")]
-    if not positional:
-        print(__doc__)
-        sys.exit(1)
-    module = positional[0]
-    sim_path = positional[1] if len(positional) > 1 else "output/skibidy/metrics.csv"
-    condition = None
-    for f in flags:
-        key = f.lstrip("-")
-        if key in ("diabetic", "normal", "burn", "pressure", "surgical", "rheumatoid"):
-            condition = key
-    if condition is None:
-        condition = detect_condition()
-    return module, sim_path, condition
-
-
-def _load_sim(sim_path):
-    if not os.path.exists(sim_path):
-        print(f"Error: {sim_path} not found.")
-        sys.exit(1)
-    sim = load_csv(sim_path)
-    sim_days = [h / 24.0 for h in sim["time_h"]]
-    return sim, sim_days
+                 SIM_KW, REF_KW)
 
 
 def _save(fig, out_dir, filename):
@@ -60,12 +35,8 @@ def _save(fig, out_dir, filename):
     print(f"  Saved {out_dir}/{filename}")
 
 
-def run_wound(sim, sim_days, condition, out_dir):
-    if "wound_closure_pct" not in sim or max(sim["wound_closure_pct"]) == 0:
-        print("No wound data found. Set wound_enabled = true and re-run.")
-        sys.exit(1)
-    r = validate_wound(sim, sim_days, condition)
-    print_summary(wound=r)
+def run_wound(results, sim_days, condition, out_dir):
+    r = results["wound"]
     fig, axes = plt.subplots(2, 2, figsize=(12, 8))
     plot_wound_panels(r, sim_days, axes)
     fig.suptitle("Wound Healing Validation", fontsize=14, fontweight="bold")
@@ -73,12 +44,8 @@ def run_wound(sim, sim_days, condition, out_dir):
     _save(fig, out_dir, "wound_validation.png")
 
 
-def run_fibroblast(sim, sim_days, _condition, out_dir):
-    if "n_myofibroblasts" not in sim or max(sim["n_myofibroblasts"]) == 0:
-        print("No fibroblast data found. Set fibroblast_enabled = true and re-run.")
-        sys.exit(1)
-    r = validate_fibroblast(sim, sim_days)
-    print_summary(fibroblast=r)
+def run_fibroblast(results, sim_days, _condition, out_dir):
+    r = results["fibroblast"]
     fig, axes = plt.subplots(3, 1, figsize=(8, 9), sharex=True)
     plot_fibroblast_panels(r, sim_days, axes)
     fig.suptitle("Fibroblast/Collagen Validation", fontsize=14, fontweight="bold")
@@ -86,17 +53,14 @@ def run_fibroblast(sim, sim_days, _condition, out_dir):
     _save(fig, out_dir, "fibroblast_validation.png")
 
 
-def run_microenvironment(sim, sim_days, _condition, out_dir):
-    if "mean_tgfb_wound" not in sim or max(sim["mean_tgfb_wound"]) == 0:
-        print("No microenvironment data found.")
-        sys.exit(1)
-    r = validate_microenvironment(sim, sim_days)
-    ph_r = None
-    if "mean_ph_wound" in sim and max(sim["mean_ph_wound"]) > 0:
-        ph_r = validate_ph(sim, sim_days)
-    print_summary(microenv=r, ph=ph_r)
+def run_microenvironment(results, sim_days, _condition, out_dir):
+    r, ph_r = results["microenv"], results["ph"]
     fig, axes = plt.subplots(3, 2, figsize=(12, 12))
-    plot_microenvironment_panels(r, sim_days, axes[:2])
+    if r is not None:
+        plot_microenvironment_panels(r, sim_days, axes[:2])
+    else:
+        for ax in axes[:2].flat:
+            ax.set_visible(False)
     if ph_r:
         plot_ph_panel(ph_r, sim_days, axes[2, 0])
     else:
@@ -107,12 +71,8 @@ def run_microenvironment(sim, sim_days, _condition, out_dir):
     _save(fig, out_dir, "microenvironment_validation.png")
 
 
-def run_tumor(sim, sim_days, _condition, out_dir):
-    if "n_tumor_cells" not in sim:
-        print("No tumor data found. Set tumor_enabled = true and re-run.")
-        sys.exit(1)
-    r = validate_tumor(sim, sim_days)
-    print_summary(tumor=r)
+def run_tumor(results, sim_days, _condition, out_dir):
+    r = results["tumor"]
     n_init = r["n_init"]
     n_final = r["obs_final"]
     print(f"\n  Scale context (Gompertzian):")
@@ -127,11 +87,9 @@ def run_tumor(sim, sim_days, _condition, out_dir):
     _save(fig, out_dir, "tumor_validation.png")
 
 
-def run_immune(sim, sim_days, condition, out_dir):
-    if "wound_closure_pct" not in sim or max(sim["wound_closure_pct"]) == 0:
-        print("No wound data found. Set wound_enabled = true and re-run.")
-        sys.exit(1)
-    r = validate_wound(sim, sim_days, condition)
+def run_immune(results, sim_days, condition, out_dir):
+    r = results["wound"]
+    sim_days = r["simulation_days"]
     print(f"Immune cell kinetics validation ({len(sim_days)} sim points vs literature)")
     print(f"  Neutrophils:  RMSE = {r['neut_rmse'] * 100:.2f} %  (peak count = {r['neut_peak']:.0f})")
     print(f"  Macrophages:  RMSE = {r['mac_rmse'] * 100:.2f} %  (peak count = {r['mac_peak']:.0f})")
@@ -147,7 +105,7 @@ def run_immune(sim, sim_days, condition, out_dir):
              transform=ax1.transAxes, ha="right", va="top", fontsize=9, color="gray")
     ax2.plot(sim_days, r["sim_mac"], **SIM_KW)
     ax2.plot(r["ref_immune"]["day"], r["ref_immune"]["macrophages_normalized"], **REF_KW)
-    ax2.set_xlabel("Time (days)")
+    ax2.set_xlabel("Days since wound")
     ax2.set_ylabel("Macrophages (normalized)")
     ax2.set_xlim(0, 30)
     ax2.set_ylim(-0.05, 1.15)
@@ -159,11 +117,8 @@ def run_immune(sim, sim_days, condition, out_dir):
     _save(fig, out_dir, "immune_validation.png")
 
 
-def run_ra(sim, sim_days, _condition, out_dir):
-    if "mean_tnf_alpha_wound" not in sim or max(sim["mean_tnf_alpha_wound"]) == 0:
-        print("No RA data found. Set ra_enabled = true and re-run.")
-        sys.exit(1)
-    r = validate_ra(sim, sim_days)
+def run_ra(results, sim_days, _condition, out_dir):
+    r = results["ra"]
     print(f"RA validation ({len(sim_days)} sim points vs literature)")
     print(f"  TNF-alpha:  RMSE = {r['tnf_rmse'] * 100:.2f} %  (peak = {r['tnf_peak']:.4f})")
     print(f"    Flare 0-7d:   RMSE = {r['tnf_flare_rmse'] * 100:.2f} %")
@@ -200,16 +155,56 @@ MODULES = {
 }
 
 
-def main():
-    module, sim_path, condition = _parse_args()
-    if module not in MODULES:
-        print(f"Unknown module: {module}")
-        print(f"Available: {', '.join(sorted(set(MODULES.values().__class__(MODULES.keys()))))}")
-        sys.exit(1)
-    sim, sim_days = _load_sim(sim_path)
-    out_dir = plots_dir(sim_path)
-    MODULES[module](sim, sim_days, condition, out_dir)
+OBSERVABLES = {
+    "wound": ("Wound closure", "Inflammation", "Neutrophils", "Macrophages"),
+    "fibroblast": ("Fibroblasts", "Myofibroblasts", "Collagen"),
+    "microenvironment": ("TGF-b", "VEGF", "Fibronectin", "MMP", "pH"),
+    "tumor": ("Tumor",), "immune": ("Neutrophils", "Macrophages"),
+    "ra": ("TNF-alpha", "IL-6", "Cartilage", "Bone", "T cells", "Synovium"),
+}
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("module", choices=sorted(MODULES))
+    parser.add_argument("metrics", nargs="?", default="output/skibidy/metrics.csv")
+    parser.add_argument("--config", help="Exact saved configuration for this run")
+    parser.add_argument("--report", help="JSON coverage and observable results")
+    parser.add_argument("--quick", action="store_true", help="Skip plots")
+    conditions = parser.add_mutually_exclusive_group()
+    for name in ("normal", "diabetic", "burn", "pressure", "surgical", "rheumatoid"):
+        conditions.add_argument("--" + name, dest="condition", action="store_const", const=name)
+    options = parser.parse_args(argv)
+    config_path = options.config or saved_config_path(options.metrics)
+    if config_path is None:
+        parser.error("No saved run configuration. Supply --config to establish condition and enabled mechanisms.")
+    config = parse_toml(config_path)
+    condition = options.condition or condition_from_config(config)
+    validate_run_metrics(options.metrics, config)
+    sim = load_csv(options.metrics)
+    sim_days = [h / 24.0 for h in sim["time_h"]]
+    results, report = evaluate_run(sim, sim_days, config, condition)
+    module = "microenvironment" if options.module == "microenv" else options.module
+    report["coverage"] = {name: report["coverage"][name] for name in OBSERVABLES[module]}
+    tested = [item for item in report["coverage"].values() if item["status"] != "not_tested"]
+    report.update(tested=len(tested), module=module, config=os.path.abspath(config_path),
+                  metrics=os.path.abspath(options.metrics),
+                  status="fail" if any(item["status"] == "fail" for item in tested)
+                  else "pass" if tested else "not_tested")
+    report_path = options.report or os.path.join(os.path.dirname(options.metrics), f"validation_{module}.json")
+    with open(report_path, "w") as f:
+        json.dump(report, f, indent=2, allow_nan=False)
+    print(f"Condition: {condition}")
+    for name, item in report["coverage"].items():
+        detail = item.get("reason", f"RMSE = {item.get('rmse_pct', 0):.2f}%")
+        print(f"  {name}: {item['status'].upper()} ({detail})")
+    print(f"{report['status'].upper()}: {len(tested)} tested observables")
+    print(report["criterion"])
+    groups = {"immune": ("wound",), "microenvironment": ("microenv", "ph")}
+    if not options.quick and any(results[key] is not None for key in groups.get(module, (module,))):
+        MODULES[options.module](results, sim_days, condition, plots_dir(options.metrics))
+    return 0 if report["status"] == "pass" else 1
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

@@ -44,6 +44,20 @@ configuration, so the first dashboard study can run without an existing `bdm.tom
 Scientific validation uses only overlapping reference dates and reports
 disabled or unsupported observables as untested. Normalized curve RMSE is an
 engineering screen. Simulated time points are not biological replicates.
+The dashboard, full validator and standalone module commands use the same
+`literature.lib.evaluate_run` computation and the run's saved configuration.
+Wound comparisons and plots count days from the configured injury's actual
+0.1-hour step. Independent RA and tumor curves retain simulation time.
+Module commands gate only their selected observables and save JSON coverage.
+
+Ordinary run environments remove checkpoint and state-witness controls through
+`batch.lib.simulation_environment`. Explicit checkpoint commands own those controls.
+Sweep and Morris cohorts retain distinct simulation seeds and reject every
+failed or missing replicate before publishing summaries. Sweep points share
+seed pairs, and Morris points share seed pairs within each trajectory. Their
+default base seed is 42. Each run retains its config and process logs.
+Treatment lookup is confined to the requested study and shared treatments.
+Statistical inference rejects missing replicates and undefined zero-error tests.
 
 Name project analysis tools for their scientific operation rather than the
 agent or automation that created them. Preserve this naming in filenames,

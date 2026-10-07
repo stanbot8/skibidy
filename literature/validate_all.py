@@ -7,8 +7,8 @@ Generates validation_dashboard.png plus per-module PNGs.
 Usage:
     python3 literature/validate_all.py [path/to/metrics.csv] [--normal|--diabetic|--burn|--pressure|--surgical|--rheumatoid]
 
-Condition auto-detection: reads bdm.toml for study-specific sections.
-Override with explicit flags.
+Condition auto-detection reads the run's saved configuration.
+Explicit condition flags must agree with that configuration.
 """
 
 import os
@@ -71,7 +71,7 @@ def main():
         raise ValueError("No saved run configuration. Supply --config to establish condition and enabled mechanisms.")
     config = parse_toml(config_path)
 
-    # Condition: CLI flag > auto-detect from bdm.toml
+    # Explicit flags assert the saved condition, checked by evaluate_run.
     condition = None
     for f in flags:
         if f == "--diabetic":
