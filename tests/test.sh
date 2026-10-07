@@ -15,6 +15,9 @@ export OMP_NUM_THREADS=1 OMP_DYNAMIC=FALSE
 echo "=== Reference data quality ==="
 "$PY" literature/check_data_quality.py
 
+echo "=== Source metadata ==="
+"$PY" literature/check_sources.py
+
 echo "=== literature/lib.py unit tests ==="
 "$PY" literature/test_lib.py
 

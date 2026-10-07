@@ -36,6 +36,29 @@ foreach(STUDY_DIR ${STUDY_MODULE_DIRS})
     include_directories("${STUDY_DIR}")
 endforeach()
 
+# The hook registry must exist before BioDynaMo configures its ROOT dictionary.
+# Config merging is a separate consumer and cannot be a build prerequisite.
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+set(STUDY_HOOK_SCRIPT "${CMAKE_SOURCE_DIR}/scripts/config/gen_study_hooks.py")
+set(STUDY_HOOK_HEADER "${CMAKE_SOURCE_DIR}/src/core/study_hooks_gen.h")
+file(GLOB STUDY_HOOK_DECLS CONFIGURE_DEPENDS
+     "${CMAKE_SOURCE_DIR}/studies/*/modules/study_hooks.decl")
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
+             "${STUDY_HOOK_SCRIPT}" ${STUDY_HOOK_DECLS})
+execute_process(COMMAND "${Python3_EXECUTABLE}" "${STUDY_HOOK_SCRIPT}"
+                RESULT_VARIABLE STUDY_HOOK_RESULT
+                OUTPUT_VARIABLE STUDY_HOOK_OUTPUT
+                ERROR_VARIABLE STUDY_HOOK_ERROR)
+if(NOT STUDY_HOOK_RESULT EQUAL 0)
+    message(FATAL_ERROR "Study hook generation failed: ${STUDY_HOOK_OUTPUT}${STUDY_HOOK_ERROR}")
+endif()
+add_custom_command(OUTPUT "${STUDY_HOOK_HEADER}"
+                   COMMAND "${Python3_EXECUTABLE}" "${STUDY_HOOK_SCRIPT}"
+                   DEPENDS "${STUDY_HOOK_SCRIPT}" ${STUDY_HOOK_DECLS}
+                   COMMENT "Generating study hook registry"
+                   VERBATIM)
+add_custom_target(${CMAKE_PROJECT_NAME}-study-hooks DEPENDS "${STUDY_HOOK_HEADER}")
+
 file(GLOB_RECURSE PROJECT_HEADERS src/*.h modules/*.h)
 # Include study module headers in the build
 foreach(STUDY_DIR ${STUDY_MODULE_DIRS})
@@ -50,6 +73,7 @@ bdm_add_executable(${CMAKE_PROJECT_NAME}
                    HEADERS ${PROJECT_HEADERS}
                    SOURCES ${PROJECT_SOURCES} ${CMAKE_SOURCE_DIR}/main.cc
                    LIBRARIES ${BDM_REQUIRED_LIBRARIES})
+add_dependencies(${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_NAME}-study-hooks)
 
 # Optimize for the build machine's native CPU in Release builds
 if(CMAKE_BUILD_TYPE STREQUAL "Release" OR NOT CMAKE_BUILD_TYPE)
