@@ -20,8 +20,10 @@ jobs:
         run: python -m pip install -r requirements-analysis.txt
       - name: Install pinned BioDynaMo
         run: |
-          curl --fail --location https://biodynamo.github.io/install --output "$RUNNER_TEMP/install-bdm.sh"
-          bash "$RUNNER_TEMP/install-bdm.sh"
+          curl --fail --location "https://raw.githubusercontent.com/BioDynaMo/biodynamo/$BDM_INSTALL/util/install" --output "$RUNNER_TEMP/install-bdm.sh"
+          # BioDynaMo's CI branch assumes its own GHA_REPOSITORY/GHA_BRANCH_NAME.
+          # Use the standalone checkout path for this downstream project.
+          env -u GITHUB_ACTIONS BDM_CMAKE_FLAGS="-Dnotebooks=off" bash "$RUNNER_TEMP/install-bdm.sh"
       - name: Build and test
         run: |
           export PYTHON="$(command -v python)"
