@@ -1,6 +1,6 @@
 # Skin BioDynaMo (SkiBiDy)
 
-**SkiBiDy** is a hybrid agent-continuum simulation of skin tissue biology built on [BioDynaMo](https://biodynamo.org). It models wound healing, immune response, fibroblast and collagen dynamics, scar formation, vascular perfusion, hemostasis, cellular senescence, cutaneous innervation, tumor growth, diabetic impairment, and therapeutic interventions across 34 modules. Mechanisms link to source papers; measured evidence, modelling assumptions and validation gaps are distinguished in the [evidence record](literature/provenance.md).
+**SkiBiDy** is a hybrid agent-continuum simulation of skin tissue biology built on [BioDynaMo](https://biodynamo.org). It models wound healing, immune response, fibroblast and collagen dynamics, scar formation, vascular perfusion, hemostasis, cellular senescence, cutaneous innervation, tumor growth, diabetic impairment, and therapeutic interventions across 34 modules. Mechanisms link to source papers. Measured evidence, modelling assumptions and validation gaps are distinguished in the [evidence record](literature/provenance.md).
 
 ![Wound healing simulation](docs/skibidy.gif?v=2)
 

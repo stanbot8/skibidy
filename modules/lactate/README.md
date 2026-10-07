@@ -1,4 +1,4 @@
-> [Home](../../README.md) / [Modules](../README.md) / Lactate
+> [Home](../../README.md) / [Modules](../../README.md#modules) / Lactate
 
 # Lactate
 

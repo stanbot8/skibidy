@@ -1,4 +1,4 @@
-> [Home](../../README.md) / [Modules](../README.md) / Scar
+> [Home](../../README.md) / [Modules](../../README.md#modules) / Scar
 
 # Scar
 

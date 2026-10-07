@@ -17,11 +17,11 @@ source "$HOME/biodynamo-v1.05.169/bin/thisbdm.sh"
 ```
 
 SkiBiDy's C++ tests require GoogleTest headers and its static library. BioDynaMo's
-standalone installer disables upstream tests and does not supply that dependency;
-on Ubuntu, install it with `sudo apt-get install libgtest-dev`. CMake also accepts
+standalone installer disables upstream tests and does not supply that dependency.
+On Ubuntu, install it with `sudo apt-get install libgtest-dev`. CMake also accepts
 the GoogleTest files bundled by a test-enabled BioDynaMo installation. The full
 `tests/test.sh` workflow additionally needs Python 3.11+ and
-`requirements-analysis.txt`; set `PYTHON` to that interpreter before sourcing
+`requirements-analysis.txt`. Set `PYTHON` to that interpreter before sourcing
 BioDynaMo when using a separate analysis environment.
 
 After changing the sourced BioDynaMo installation, clear CMake's cached dependency

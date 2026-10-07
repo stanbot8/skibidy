@@ -9,8 +9,8 @@ The companion file `modules/<m>/SOURCES.yaml` carries fuller per-paper notes;
 this table records the existing reference curves. Labels such as "consensus",
 "multi-paper mean" and "tabular" below are inherited descriptions, not verified
 patient-level extractions. Where source tables, extraction records, cohorts or
-aggregation weights are absent, these are qualitative modeling targets;
-citations do not establish their numerical values or uncertainty. Passing an
+aggregation weights are absent, these are qualitative modeling targets.
+Citations do not establish their numerical values or uncertainty. Passing an
 RMSE screen against such a curve is not empirical validation.
 
 Measured data added on 2026-10-07: [GSE209609 human wound RNA](../modules/wound/data/published/GSE209609/README.md),

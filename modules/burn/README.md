@@ -1,4 +1,4 @@
-> [Home](../../README.md) / [Modules](../README.md) / Burn
+> [Home](../../README.md) / [Modules](../../README.md#modules) / Burn
 
 # Burn
 

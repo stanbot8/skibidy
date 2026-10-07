@@ -1,4 +1,4 @@
-> [Home](../../README.md) / [Modules](../README.md) / MMP
+> [Home](../../README.md) / [Modules](../../README.md#modules) / MMP
 
 # MMP
 

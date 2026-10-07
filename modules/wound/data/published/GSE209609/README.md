@@ -8,8 +8,8 @@
 `sample_expression.csv` preserves 1,632 deposited measurements across 17 genes,
 including the actual custom-platform probes, sample IDs, subjects, tissues and
 times. `timecourse_summary.csv` reports 170 groups with n, mean and sample SD
-in RMA log2 units. Differences from baseline are differences of group means;
-they are not paired subject estimates or significance tests.
+in RMA log2 units. Differences from baseline are differences of group means.
+They are not paired subject estimates or significance tests.
 
 Skin n is 13, 7, 10, 9 and 6 at the five times. Selected skin baseline differences:
 
@@ -31,7 +31,7 @@ Numerical model comparison needs a justified RNA observation model first.
 
 Reproduce from the repository root with `python literature/extract_geo_wound.py
 --cache .git/research`. The actual platform is GPL29499, BrainArray Ensembl
-custom CDF v22; GPL570 annotations cannot map this processed matrix. Gene
+custom CDF v22. GPL570 annotations cannot map this processed matrix. Gene
 identity lookup URLs and input SHA-256 digests are saved in `provenance.json`.
 The extractor does not average probes, interpolate, impute, test hypotheses or
 fit parameters.

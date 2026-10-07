@@ -1,4 +1,4 @@
-> [Home](../../README.md) / [Modules](../README.md) / Neuropathy
+> [Home](../../README.md) / [Modules](../../README.md#modules) / Neuropathy
 
 # Neuropathy
 

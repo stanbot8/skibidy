@@ -36,7 +36,7 @@ bdm.core.toml + modules/*/config.toml           (merge)
   = bdm.toml                                      (runtime)
 ```
 
-The original presets move selected diabetic dysfunction parameters toward healthy values using the documented literature mappings. Exploratory presets below state their assumed effect sizes separately; a supported mechanism does not establish a calibrated clinical dose response.
+The original presets move selected diabetic dysfunction parameters toward healthy values using the documented literature mappings. Exploratory presets below state their assumed effect sizes separately. A supported mechanism does not establish a calibrated clinical dose response.
 
 ## Treatment mechanisms
 
@@ -46,8 +46,8 @@ The treatment schedule generator writes `[[experiment.configs.schedule]]` events
 with `treatment` and `start_day`. Screening uses the same event mechanism at day
 zero. The experiment runner embeds each treatment's complete TOML text in
 `[[treatment_schedule]]` entries in the saved run config, making the intervention
-independent of later preset edits. Start days are absolute simulation days;
-events apply at the first timestep boundary at or after that day, before wound,
+independent of later preset edits. Start days are absolute simulation days.
+Events apply at the first timestep boundary at or after that day, before wound,
 immune, source, and agent biology. No treatment parameter changes before its
 event. The preset's full numerical values apply at its start, with no fractional
 day-zero approximation.
@@ -67,7 +67,7 @@ grid decay coefficients refresh when interventions change their owners.
 Interactive hot reload applies only keys edited since the last accepted file,
 preserving scheduled values on unchanged keys. An unsafe edit or removal rejects
 the whole reload without changing simulation state. Checks occur before biology
-at the metrics interval; a scheduled event at the same boundary follows the
+at the metrics interval. A scheduled event at the same boundary follows the
 reload and takes precedence. Batch runs disable hot reload. Consensus replicates
 use distinct paired seeds and reject a cohort when any requested run fails.
 
@@ -165,35 +165,35 @@ The opt-in [pro-resolution sensitivity experiment](../studies/diabetic-wound/exp
 tests restoration of macrophage efferocytosis and inflammation resolution with
 the existing model targets. Tang et al. reported that local Resolvin D1 improved
 wound closure and reduced apoptotic-cell and macrophage accumulation in diabetic
-mice; diabetic macrophage phagocytosis also improved. This establishes the
+mice. Diabetic macrophage phagocytosis also improved. This establishes the
 mechanism direction in that experimental setting. [Primary study: Diabetes 2013,
 doi:10.2337/db12-0684](https://diabetesjournals.org/diabetes/article/62/2/618/15619/Proresolution-Therapy-for-the-Treatment-of-Delayed).
 
 The three new overlays assume 25%, 50%, or 75% recovery of the gap between the
 existing diabetic factors and the healthy value 1.0. Efferocytosis factors are
-0.625, 0.75, and 0.875; resolution factors are 0.475, 0.65, and 0.825. These
+0.625, 0.75, and 0.875. Resolution factors are 0.475, 0.65, and 0.825. These
 magnitudes are sensitivity assumptions, with no fitted dose response. The
 experiment compares all three day-zero assumptions and the middle assumption
 at days 7 and 14 against untreated diabetes, using paired seeds 42 through 46.
 Existing profiles and the original nine treatment presets stay fixed. This
-experiment explicitly sets 42 days; the study's existing default is 35 days.
+experiment explicitly sets 42 days. The study's existing default is 35 days.
 
 ```bash
 python3 scripts/study/experiment_runner.py studies/diabetic-wound/experiments/proresolution_sensitivity.toml
 ```
 
 Each execution uses a fresh result directory and freezes the executable and
-project library. The binary receipt records their hashes and loaded dependencies;
-the cohort manifest retains every planned seed, exact saved config, metrics hash,
+project library. The binary receipt records their hashes and loaded dependencies.
+The cohort manifest retains every planned seed, exact saved config, metrics hash,
 log, and completed/failed/pending status. Runs use one OpenMP thread and private
 working directories. An incomplete cohort cannot publish a comparison. Scalar
-outcomes are calculated per replicate before averaging; paired differences use
+outcomes are calculated per replicate before averaging. Paired differences use
 matching seeds. Unreached closure thresholds remain censored, with observed
 counts reported. Figures show mean and population standard deviation across five
-seeds; scalar and paired summaries report sample standard deviations.
+seeds. Scalar and paired summaries report sample standard deviations.
 
-The model represents the mediator through two effective biological factors;
-receptor signaling, drug concentration, exposure duration, and dose toxicity are
+The model represents the mediator through two effective biological factors.
+Receptor signaling, drug concentration, exposure duration, and dose toxicity are
 not represented. Results are hypotheses about the model's response to restored
 resolution, with no claim of human efficacy or quantitative reproduction of the
 mouse experiment. Runtime verification of scheduling is maintained in
@@ -205,7 +205,7 @@ contains 30 successful runs with paired seeds 42–46. Its
 preserves the exact configs, metrics and logs, alongside
 [paired differences](../studies/diabetic-wound/data/proresolution_20261007/paired_deltas.csv)
 and [trajectories](../studies/diabetic-wound/data/proresolution_20261007/trajectories.png).
-All arms reached 100% closure; that endpoint cannot rank treatments here.
+All arms reached 100% closure. That endpoint cannot rank treatments here.
 The table reports replicate mean ± sample SD, with five observations per value.
 
 | Assumed recovery and start | T50 (days) | T90 (days) | Final scar magnitude (model units) |
@@ -221,8 +221,8 @@ For the 50% day-zero assumption, paired T50 decreased by 0.83 ± 0.83 days,
 while scar magnitude increased by 0.171 ± 0.135 model units. This model response
 does not establish an optimal treatment or a monotonic effect on later closure.
 Metrics are sampled every 20 hours: T50/T90 are first observed threshold crossings,
-without interpolation. The configured simulation lasts 1008 hours (42 days);
-its last regular metrics sample is at hour 1000. Day-seven and day-fourteen arms
+without interpolation. The configured simulation lasts 1008 hours (42 days).
+Its last regular metrics sample is at hour 1000. Day-seven and day-fourteen arms
 matched their untreated partner in every saved pre-start metric row (nine and
 17 rows, respectively) for all five seeds and differed afterward. The untreated
 cohort's eventual healing and the small paired cohort limit conclusions about
@@ -265,23 +265,23 @@ separate measured outcomes, treatment protocols, and model assumptions.
 
 | Intervention | Primary measurement available | Connection and remaining calibration gap |
 |---|---|---|
-| RvD1 | Splinted 5-mm db/db mouse wounds received 100 ng/wound daily starting 24 h after injury; closure improved after eight treatment days. | Closure maps to `wound_closure_pct`. Day-five apoptotic/macrophage histology supports resolution direction. The XML has no numerical closure effect size or supplementary-material nodes; figure assets were inaccessible. A 0.1 nmol/L macrophage experiment measures opsonized-zymosan uptake, not the model's apoptotic-cell efferocytosis rate. [Tang 2013](https://pmc.ncbi.nlm.nih.gov/articles/PMC3554373/) |
+| RvD1 | Splinted 5-mm db/db mouse wounds received 100 ng/wound daily starting 24 h after injury. Closure improved after eight treatment days. | Closure maps to `wound_closure_pct`. Day-five apoptotic/macrophage histology supports resolution direction. The XML has no numerical closure effect size or supplementary-material nodes. Figure assets were inaccessible. A 0.1 nmol/L macrophage experiment measures opsonized-zymosan uptake, not the model's apoptotic-cell efferocytosis rate. [Tang 2013](https://pmc.ncbi.nlm.nih.gov/articles/PMC3554373/) |
 | HBO | At one year, 25/48 (52%) HBOT ulcers versus 12/42 (29%) placebo ulcers healed. | This selected-patient complete-healing fraction is not a mean wound-area trajectory or a fitted VEGF/perfusion/angiogenesis factor, and exceeds the 42-day horizon. [Londahl 2010](https://pmc.ncbi.nlm.nih.gov/articles/PMC2858204/) |
-| NPWT | In partial diabetic-foot amputation wounds, 43/77 (56%) versus 33/85 (39%) healed by 112 days. Pig experiments reported fourfold blood flow and granulation increases of 63.3% (continuous) or 103% (intermittent suction). | Different wound type, species, and endpoint; these values do not directly identify the model's angiogenesis, inward-bias, or collagen factors. [Armstrong 2005](https://doi.org/10.1016/S0140-6736(05)67695-7), [Morykwas 1997](https://doi.org/10.1097/00000637-199706000-00001) |
-| Doxycycline | Diabetic/control biopsy ratios differed by isoform: MMP1 65-fold, proMMP2 3-fold, activeMMP2 6-fold, MMP8 2-fold, MMP9 14-fold; TIMP2 was half the control level. | This disease comparison contains no doxycycline exposure. Isoform concentrations cannot calibrate aggregate MMP production 2.5 to 1.5 or TIMP production 0.4 to 0.76. [Lobmann 2002](https://doi.org/10.1007/s00125-002-0868-8) |
+| NPWT | In partial diabetic-foot amputation wounds, 43/77 (56%) versus 33/85 (39%) healed by 112 days. Pig experiments reported fourfold blood flow and granulation increases of 63.3% (continuous) or 103% (intermittent suction). | Different wound type, species, and endpoint. These values do not directly identify the model's angiogenesis, inward-bias, or collagen factors. [Armstrong 2005](https://doi.org/10.1016/S0140-6736(05)67695-7), [Morykwas 1997](https://doi.org/10.1097/00000637-199706000-00001) |
+| Doxycycline | Diabetic/control biopsy ratios differed by isoform: MMP1 65-fold, proMMP2 3-fold, activeMMP2 6-fold, MMP8 2-fold, MMP9 14-fold. TIMP2 was half the control level. | This disease comparison contains no doxycycline exposure. Isoform concentrations cannot calibrate aggregate MMP production 2.5 to 1.5 or TIMP production 0.4 to 0.76. [Lobmann 2002](https://doi.org/10.1007/s00125-002-0868-8) |
 | PDGF-BB | A pooled four-trial analysis (922 patients) estimated healing probability 50% versus 36% and the 35th percentile of complete-healing time 14.1 versus 20.1 weeks for 100 microg/g becaplermin versus placebo. | Cohort probability and a complete-healing percentile are distinct from fibroblast density 1.8 and mean model T50. [Smiell 1999](https://doi.org/10.1046/j.1524-475X.1999.00335.x) |
 | Senolytic | Nine diabetic-kidney-disease participants received dasatinib 100 mg plus quercetin 1000 mg for three days. Epidermal p16-positive and p21-positive cells/mm decreased 20% and 31%, assessed 11 days later. | Primary epidermal measurements differ from secondary review figures. This open-label marker study has no wound-healing endpoint and cannot identify a constant per-step clearance rate of 0.005. [Hickson 2019](https://pmc.ncbi.nlm.nih.gov/articles/PMC6796530/) |
-| MSC | A primary murine study reports decreased activated MMP9 at days three and seven and improved collagen I. | Supports direction; no extracted magnitude calibrates the preset's many targets. Its Cao 2017 citation is a review, and the Li 2024 author/year citation is insufficiently specific for a numeric constraint. [Xu 2017](https://doi.org/10.1152/physiolgenomics.00090.2016) |
-| Anti-inflammatory | Local IL-1beta blockade improved macrophage phenotype and repair in db/db mice. | This is a different cytokine target from the anti-TNF preset; it does not calibrate that preset's rates. [Mirza 2013](https://pmc.ncbi.nlm.nih.gov/articles/PMC3712034/) |
+| MSC | A primary murine study reports decreased activated MMP9 at days three and seven and improved collagen I. | Supports direction. No extracted magnitude calibrates the preset's many targets. Its Cao 2017 citation is a review, and the Li 2024 author/year citation is insufficiently specific for a numeric constraint. [Xu 2017](https://doi.org/10.1152/physiolgenomics.00090.2016) |
+| Anti-inflammatory | Local IL-1beta blockade improved macrophage phenotype and repair in db/db mice. | This is a different cytokine target from the anti-TNF preset. It does not calibrate that preset's rates. [Mirza 2013](https://pmc.ncbi.nlm.nih.gov/articles/PMC3712034/) |
 | Moisture | Winter's original pig study supports the moist-covering mechanism. | No extracted primary measurement establishes an 83% TEWL effect or recovery 0.06. The 83% value is arithmetic on the model's assumed loss-rate change. [Winter 1962](https://doi.org/10.1038/193293a0) |
-| Combination | Component evidence above. | No matching combination cohort establishes additivity, synergy, or a fitted combined effect; overlapping keys follow declared replacement order. |
+| Combination | Component evidence above. | No matching combination cohort establishes additivity, synergy, or a fitted combined effect. Overlapping keys follow declared replacement order. |
 
 Raw source records are downloaded to ignored `output/treatment-evidence/` with
 `python3 scripts/study/fetch_treatment_evidence.py`. Use `--cached` to verify an
-existing copy without another download. DOI identity and SHA256 hashes are saved;
-failed sources remain visible in provenance. No individual-subject dataset or
+existing copy without another download. DOI identity and SHA256 hashes are saved.
+Failed sources remain visible in provenance. No individual-subject dataset or
 parameter fit has been recovered. This evidence audit covers the diabetic-wound
-treatments; the other clinical-domain presets below retain their existing
+treatments. The other clinical-domain presets below retain their existing
 mechanistic descriptions and have not received this quantitative audit.
 
 ## RA treatment mechanisms

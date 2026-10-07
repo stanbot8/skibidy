@@ -1,4 +1,4 @@
-> [Home](../../README.md) / [Modules](../README.md) / Nitric Oxide
+> [Home](../../README.md) / [Modules](../../README.md#modules) / Nitric Oxide
 
 # Nitric Oxide
 

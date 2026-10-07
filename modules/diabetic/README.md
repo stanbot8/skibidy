@@ -1,4 +1,4 @@
-> [Home](../../README.md) / [Modules](../README.md) / Diabetic
+> [Home](../../README.md) / [Modules](../../README.md#modules) / Diabetic
 
 # Diabetic
 

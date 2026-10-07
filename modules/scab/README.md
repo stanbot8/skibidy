@@ -1,4 +1,4 @@
-> [Home](../../README.md) / [Modules](../README.md) / Scab
+> [Home](../../README.md) / [Modules](../../README.md#modules) / Scab
 
 # Scab
 

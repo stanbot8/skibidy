@@ -1,4 +1,4 @@
-> [Home](../../README.md) / [Modules](../README.md) / Bioelectric
+> [Home](../../README.md) / [Modules](../../README.md#modules) / Bioelectric
 
 # Bioelectric
 

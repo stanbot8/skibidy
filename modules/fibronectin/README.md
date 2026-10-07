@@ -1,4 +1,4 @@
-> [Home](../../README.md) / [Modules](../README.md) / Fibronectin
+> [Home](../../README.md) / [Modules](../../README.md#modules) / Fibronectin
 
 # Fibronectin
 

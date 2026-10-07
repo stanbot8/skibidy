@@ -1,14 +1,14 @@
-> [Home](../../README.md) / [Modules](../README.md) / Fibroblast
+> [Home](../../README.md) / [Modules](../../README.md#modules) / Fibroblast
 
 # Fibroblast
 
-TGF-beta driven fibroblast lifecycle with myofibroblast differentiation and collagen deposition. Clearance combines coarse-grained receptor uptake, tissue density and collagen-dependent sinks. These terms are inspired by biological mechanisms; receptor trafficking and decorin molecules are not simulated explicitly.
+TGF-beta driven fibroblast lifecycle with myofibroblast differentiation and collagen deposition. Clearance combines coarse-grained receptor uptake, tissue density and collagen-dependent sinks. These terms are inspired by biological mechanisms. Receptor trafficking and decorin molecules are not simulated explicitly.
 
 ## Biology
 
 Dermal fibroblasts are the primary effectors of wound repair in the dermis. After wounding, resident fibroblasts near the wound margin become activated by TGF-beta signaling from M2 macrophages. Activated fibroblasts migrate toward the wound center and differentiate into myofibroblasts, which are contractile cells that deposit collagen (the structural basis of scar tissue) and produce additional TGF-beta, creating a positive feedback loop.
 
-Myofibroblast TGF-beta production sustains a positive feedback loop. Three modeled sinks can oppose it: uptake proportional to concentration by fibroblasts and macrophages (inspired by Vilar et al. 2006), a sink scaled by resident tissue density, and a collagen-proportional sink inspired by decorin binding to TGF-beta (Yamaguchi et al. 1990). Their coefficients, the production taper and the stochastic apoptosis rules determine the simulated peak and decline together. The cited mechanisms do not establish these numerical coefficients or validate that trajectory. Myofibroblast apoptosis is modeled stochastically after the assumed minimum state age; Desmouliere et al. 1995 supports cell removal during repair, not the exact per-step probability.
+Myofibroblast TGF-beta production sustains a positive feedback loop. Three modeled sinks can oppose it: uptake proportional to concentration by fibroblasts and macrophages (inspired by Vilar et al. 2006), a sink scaled by resident tissue density, and a collagen-proportional sink inspired by decorin binding to TGF-beta (Yamaguchi et al. 1990). Their coefficients, the production taper and the stochastic apoptosis rules determine the simulated peak and decline together. The cited mechanisms do not establish these numerical coefficients or validate that trajectory. Myofibroblast apoptosis is modeled stochastically after the assumed minimum state age. Desmouliere et al. 1995 supports cell removal during repair, not the exact per-step probability.
 
 Staggered recruitment spreads fibroblasts across 6 waves over 120 hours (~5 days), producing a gradual rise in myofibroblast density rather than a synchronized spike.
 
@@ -27,10 +27,10 @@ Only myofibroblasts produce TGF-beta and deposit collagen. All non-quiescent sta
 
 TGF-beta production uses an exponential taper: `tgfb_rate * exp(-taper_rate * state_age)`, which gradually reduces the positive feedback as the wound matures.
 
-**TGF-beta PDE:** diffusion 0.03, no background decay (`tgfb_decay = 0`). Sources: M2 macrophages and myofibroblasts. Clearance uses three coarse-grained pathways inspired by mechanisms; their dimensionless coefficients are model assumptions, not measured molecular rates:
-1. **Receptor uptake proxy**: fibroblasts and macrophages remove ligand proportional to local concentration. Vilar et al. supports receptor-mediated signaling and trafficking; clathrin pits and receptor states are not represented (Vilar et al. 2006, [DOI](https://doi.org/10.1016/j.jtbi.2006.03.024)).
+**TGF-beta PDE:** diffusion 0.03, no background decay (`tgfb_decay = 0`). Sources: M2 macrophages and myofibroblasts. Clearance uses three coarse-grained pathways inspired by mechanisms. Their dimensionless coefficients are model assumptions, not measured molecular rates:
+1. **Receptor uptake proxy**: fibroblasts and macrophages remove ligand proportional to local concentration. Vilar et al. supports receptor-mediated signaling and trafficking. Clathrin pits and receptor states are not represented (Vilar et al. 2006, [DOI](https://doi.org/10.1016/j.jtbi.2006.03.024)).
 2. **Tissue density clearance**: resident tissue cells (keratinocytes, endothelial cells) clear TGF-beta at a rate proportional to local tissue density (max of stratum, vascular). Open wound = low density = low clearance; healed tissue = high clearance.
-3. **Collagen-dependent sequestration proxy**: an implicit decorin effect removes TGF-beta as `rate * collagen * tgfb`. This sink increases with modeled collagen; the coefficient and proportionality between collagen and decorin are assumptions (Yamaguchi et al. 1990, [DOI](https://doi.org/10.1038/346281a0)).
+3. **Collagen-dependent sequestration proxy**: an implicit decorin effect removes TGF-beta as `rate * collagen * tgfb`. This sink increases with modeled collagen. The coefficient and proportionality between collagen and decorin are assumptions (Yamaguchi et al. 1990, [DOI](https://doi.org/10.1038/346281a0)).
 
 **Collagen PDE:** no diffusion (structural deposit), optional MMP decay. Deposited by myofibroblasts at a constant rate (parametric mode) or via a constitutive + TGF-beta-responsive model (mechanistic mode).
 
@@ -65,7 +65,7 @@ From modules/fibroblast/config.toml:
 
 The source column gives mechanistic motivation. It does not establish the
 listed numerical coefficient in model units. "Calibrated" is an inherited
-model label; the repository does not provide a fitted dataset, objective and
+model label. The repository does not provide a fitted dataset, objective and
 uncertainty for these values. Defaults remain fixed during this audit.
 
 | Parameter | Default | Units | Description | Source |
@@ -91,7 +91,7 @@ uncertainty for these values. Defaults remain fixed during this audit.
 | `dermal_depth` | -1.0 | um | Z-coordinate for seeding (papillary dermis) | Convention |
 | `dermal_margin` | 1.0 | um | Extra radius beyond wound for seeding ring | Calibrated |
 | `tgfb_diffusion` | 0.03 | - | TGF-beta diffusion coefficient | Murphy et al. 2012 ([DOI](https://doi.org/10.1007/s11538-011-9712-y)) |
-| `tgfb_decay` | 0.0 | per step | Background decay disabled; coarse-grained sinks remain | Model assumption |
+| `tgfb_decay` | 0.0 | per step | Background decay disabled. Coarse-grained sinks remain | Model assumption |
 | `tgfb_wound_seed` | 0.04 | a.u. | Platelet alpha-granule TGF-beta1 bolus | Shah et al. 1995 ([DOI](https://doi.org/10.1016/S0140-6736(95)90124-8)) |
 | `tgfb_rate` | 0.001 | per step | TGF-beta per myofibroblast (secondary to M2 source) | Calibrated |
 | `tgfb_taper_rate` | 0.002 | - | Exponential taper for TGF-beta production | Tomasek 2002 |
@@ -102,7 +102,7 @@ uncertainty for these values. Defaults remain fixed during this audit.
 | `mech_collagen_tgfb_km` | 0.035 | a.u. | TGF-beta half-max for Michaelis-Menten component | Calibrated |
 | `mech_collagen_vmax` | 0.00025 | per step | TGF-b-responsive component Vmax | Calibrated |
 | `mech_collagen_basal` | 0.00035 | per step | Constitutive myofibroblast collagen rate | Calibrated |
-| `decorin_sequestration_rate` | 0.12 | model units | Collagen-proportional TGF-beta sink; decorin is implicit | Yamaguchi et al. 1990 supports the interaction, not this coefficient ([DOI](https://doi.org/10.1038/346281a0)) |
+| `decorin_sequestration_rate` | 0.12 | model units | Collagen-proportional TGF-beta sink. Decorin is implicit | Yamaguchi et al. 1990 supports the interaction, not this coefficient ([DOI](https://doi.org/10.1038/346281a0)) |
 | `tgfb_receptor_consumption` | 0.001 | per cell | Per-cell TbRII/TbRI endocytosis rate | Vilar et al. 2006 ([DOI](https://doi.org/10.1016/j.jtbi.2006.03.024)) |
 | `tgfb_tissue_clearance` | 0.025 | - | Coarse-grained uptake scaled by local tissue density | Model assumption |
 
@@ -155,7 +155,7 @@ Reference curves for validation (full citations in [SOURCES.yaml](SOURCES.yaml))
 | Fibroblast kinetics | [fibroblast_kinetics.csv](data/fibroblast_kinetics.csv) | Peak = 1.0 |
 
 <details>
-<summary>Inherited paper-attributed curves (8 papers; numerical extraction provenance pending)</summary>
+<summary>Inherited paper-attributed curves (8 papers, numerical extraction provenance pending)</summary>
 
 | File | Source |
 |------|--------|
