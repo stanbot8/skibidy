@@ -60,7 +60,8 @@ class ReplicateRuntimeTest(unittest.TestCase):
         from scripts.study.experiment_evidence import set_parameter
         root = Path(runner.lib.ROOT)
         output = Path(tempfile.mkdtemp(prefix="wiggum-runtime-proof-", dir=root / "output"))
-        original = (root / "bdm.toml").read_bytes()
+        config_path = root / "bdm.toml"
+        original = config_path.read_bytes() if config_path.exists() else None
         template = root / "batch/results/baseline-20261007-run2/normal-wound/seed42/bdm.toml"
         selected = root / ".git/baseline-runtime/build"
 
@@ -77,7 +78,10 @@ class ReplicateRuntimeTest(unittest.TestCase):
              mock.patch.object(runner.sys, "argv", argv), \
              mock.patch.dict(os.environ, {"LD_DEBUG": "libs"}):
             runner.main()
-        self.assertEqual((root / "bdm.toml").read_bytes(), original)
+        if original is None:
+            self.assertFalse(config_path.exists())
+        else:
+            self.assertEqual(config_path.read_bytes(), original)
         receipt = json.loads((output / "runtime.json").read_text())
         self.assertTrue(any(Path(item["path"]) == selected / "libskibidy.so" for item in receipt["dependencies"]))
         for seed in (42, 43):

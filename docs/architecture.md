@@ -39,6 +39,8 @@ Fresh builds and deleted generated headers do not require a prior config merge.
 GoogleTest is discovered from a test-enabled BioDynaMo installation or the system
 development package; CI installs `libgtest-dev` explicitly because BioDynaMo's
 standalone installer disables its own tests.
+The batch command restores both the bytes and the original presence of the runtime
+configuration, so the first dashboard study can run without an existing `bdm.toml`.
 Scientific validation uses only overlapping reference dates and reports
 disabled or unsupported observables as untested. Normalized curve RMSE is an
 engineering screen; simulated time points are not biological replicates.

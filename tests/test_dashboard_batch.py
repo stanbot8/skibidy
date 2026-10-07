@@ -54,7 +54,11 @@ class DashboardBatchTest(unittest.TestCase):
         self.assertEqual('A "quote"\nC:\\data', meta["description"])
         self.assertEqual("diabetic", lib.study_profile("api-test"))
         self.assertEqual(.5, lib.parse_toml(study / "preset.toml")["skin"]["duration_days"])
-        with patch.object(lib, "merge_config"), patch.object(lib, "apply_profile") as profile, \
+        private_root = Path(self.temporary.name) / "profile-config"
+        private_root.mkdir()
+        (private_root / "bdm.toml").write_text("[skin]\nduration_days=1\n")
+        with patch.object(lib, "ROOT", str(private_root)), \
+                patch.object(lib, "merge_config"), patch.object(lib, "apply_profile") as profile, \
                 patch.object(lib, "apply_study"), patch.object(lib, "override_param"):
             lib.setup_run(study="api-test")
             profile.assert_called_once_with("diabetic")
@@ -167,7 +171,8 @@ class DashboardBatchTest(unittest.TestCase):
     @unittest.skipUnless(os.environ.get("SKIBIDY_RUNTIME_TEST") == "1", "requires activated production binary")
     def test_actual_dashboard_api_two_run_cohort(self):
         from scripts.validation.checkpoint_regression import CONFIG
-        original = (Path(lib.ROOT) / "bdm.toml").read_bytes()
+        config_path = Path(lib.ROOT) / "bdm.toml"
+        original = config_path.read_bytes() if config_path.exists() else None
         self.patches.enter_context(patch.object(dashboard, "_run_state", {"proc": None, "log": ""}))
         server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), dashboard.DashHandler)
         thread = threading.Thread(target=server.serve_forever, daemon=True)
@@ -212,7 +217,10 @@ class DashboardBatchTest(unittest.TestCase):
                 self.assertEqual(record["metrics_sha256"], lib.file_sha256(raw / "skibidy" / "metrics.csv"))
                 lib.validate_run_metrics(raw / "skibidy" / "metrics.csv", cfg)
             self.assertTrue(request("/api/results?study=api-runtime"))
-            self.assertEqual(original, (Path(lib.ROOT) / "bdm.toml").read_bytes())
+            if original is None:
+                self.assertFalse(config_path.exists())
+            else:
+                self.assertEqual(original, config_path.read_bytes())
             evidence = os.environ.get("SKIBIDY_DASHBOARD_TEST_EVIDENCE")
             if evidence:
                 target = Path(evidence)
@@ -232,7 +240,10 @@ class DashboardBatchTest(unittest.TestCase):
             server.server_close()
             thread.join(timeout=10)
             self.assertFalse(thread.is_alive())
-            (Path(lib.ROOT) / "bdm.toml").write_bytes(original)
+            if original is None:
+                config_path.unlink(missing_ok=True)
+            else:
+                config_path.write_bytes(original)
 
 
 if __name__ == "__main__":

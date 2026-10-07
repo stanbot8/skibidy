@@ -36,9 +36,9 @@ cmake --build build --parallel 4
 ./build/skibidy-test
 ```
 
-### Runtime integration context
+### Dependency integration check (2026-10-05)
 
-For the next contributor and their AI (2026-10-05): this dependency update uses
+The dependency update on 2026-10-05 used
 historical Skibidy source baseline `38d8528535ba9d6563b524236135e4d82b9342c0`, with
 historical upstream integration base `e034d081df340e4d8805d591406d2e8c38f40288`. The BioDynaMo
 revision above is official upstream master. [README](../README.md) and this setup

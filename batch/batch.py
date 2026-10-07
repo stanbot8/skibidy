@@ -196,10 +196,19 @@ def main(argv=None):
 
 if __name__ == "__main__":
     config_path = os.path.join(lib.ROOT, "bdm.toml")
-    with open(config_path, "rb") as f:
-        original_config = f.read()
+    try:
+        with open(config_path, "rb") as f:
+            original_config = f.read()
+    except FileNotFoundError:
+        original_config = None
     try:
         sys.exit(main())
     finally:
-        with open(config_path, "wb") as f:
-            f.write(original_config)
+        if original_config is None:
+            try:
+                os.remove(config_path)
+            except FileNotFoundError:
+                pass
+        else:
+            with open(config_path, "wb") as f:
+                f.write(original_config)
