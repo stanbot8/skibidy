@@ -81,6 +81,18 @@ cohort fails the screen or has no tested observables.
 
 ## UWYN (Use What You Need)
 
+Local post reactions follow the substrate's tissue compartment: TGF-beta sinks,
+MMP activation/inhibition and matrix turnover, and ROS reactions dispatch in the
+dermis as well as the epidermal wound. Keratinocyte MMP/TIMP production stays in
+the epidermal pass. Structural ECM uses `coarse_si` and `coarse_w`; diffusing
+lymphatic density uses the fine `idx` without structural weighting. Disabling
+fibroblasts removes their collagen pathway but does not disable turnover of
+enabled fibronectin, elastin or fibrin. Regression checks exercise the fused
+operators, including isolated sinks and coarse-grid configurations.
+Immune recruitment samples the dermal wound bed and places arriving cells below
+the epidermal boundary. Their local cytokine deposits therefore reach the dermal
+compartment occupied by fibroblasts; in-plane migration preserves that layer.
+
 Skibidy uses a hybrid agent-continuum architecture:
 
 - **Continuum at rest**: the field registry contains 41 established channels plus the optional BasementMembrane channel (see `src/core/field_names.h`). Enabled modules determine which grids exist. No agents exist during homeostasis.

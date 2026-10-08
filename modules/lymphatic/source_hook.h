@@ -39,7 +39,8 @@ struct LymphaticSourceHook {
     if (!snap.in_wound || !snap.post_wound) return;
 
     // Lymphatic regeneration
-    size_t l_si = snap.coarse_si;
+    // Lymphatic density diffuses on the fine grid, unlike structural ECM.
+    size_t l_si = snap.idx;
     real_t lymph_val = lymph_grid->GetConcentration(l_si);
     real_t lymph_target = sp_->lymphatic.basal_density;
     if (sp_->diabetic.mode) {
@@ -57,7 +58,7 @@ struct LymphaticSourceHook {
       }
       real_t gain = std::min(lymph_target - lymph_val, rate);
       if (gain > 1e-10) {
-        lymph_grid->ChangeConcentrationBy(l_si, gain * snap.coarse_w);
+        lymph_grid->ChangeConcentrationBy(l_si, gain);
       }
     }
 

@@ -25,7 +25,15 @@ struct PerfusionPostHook {
     if (!tgfb_grid || !perf_grid) active = false;
   }
 
+  inline void ApplyDermal(const VoxelSnapshot& snap, SignalBoard& sig) {
+    ApplyVoxel(snap, sig);
+  }
+
   inline void ApplyEpiWound(const VoxelSnapshot& snap, SignalBoard& sig) {
+    ApplyVoxel(snap, sig);
+  }
+
+  inline void ApplyVoxel(const VoxelSnapshot& snap, SignalBoard& sig) {
     real_t tgfb_val = tgfb_grid->GetConcentration(snap.idx);
     if (tgfb_val <= 1e-10) return;
     real_t perf = perf_grid->GetConcentration(snap.idx);

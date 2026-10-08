@@ -34,7 +34,16 @@ struct FibroblastPostHook {
       col_grid = reg.Get(fields::kCollagenId);
   }
 
+  inline void ApplyDermal(const VoxelSnapshot& snap, SignalBoard& sig) {
+    ApplyVoxel(snap, sig);
+  }
+
   inline void ApplyEpiWound(const VoxelSnapshot& snap, SignalBoard& sig) {
+    ApplyVoxel(snap, sig);
+  }
+
+  // These local sinks also act where dermal fibroblasts deposit collagen.
+  inline void ApplyVoxel(const VoxelSnapshot& snap, SignalBoard& sig) {
     // Decorin-mediated TGF-beta sequestration
     if (do_decorin && col_grid) {
       real_t col_val = col_grid->GetConcentration(snap.coarse_si);

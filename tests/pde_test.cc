@@ -11,9 +11,174 @@
 #include "immune/macrophage_behavior.h"
 #include "immune/immune_response.h"
 #include "core/fused_source.h"
+#include "core/fused_post.h"
 
 namespace bdm {
 namespace skibidy {
+
+TEST(FusedPostTest, ClearsTGFBetaInDermisAndEpidermis) {
+  // Exercise the production dispatcher, including coarse collagen lookup.
+  // Each pathway is isolated so an unrelated sink cannot mask a missing one.
+  for (int resolution : {0, 5}) {
+    for (int pathway = 0; pathway < 5; ++pathway) {
+      SCOPED_TRACE(::testing::Message() << resolution << ":" << pathway);
+      Param::RegisterParamGroup(new SimParam());
+      auto* sim = new Simulation(TEST_NAME, [](Param* p) {
+        p->bound_space = Param::BoundSpaceMode::kClosed;
+        p->min_bound = -10;
+        p->max_bound = 50;
+        p->simulation_time_step = 0.1;
+        p->export_visualization = false;
+      });
+      auto* sp = const_cast<SimParam*>(sim->GetParam()->Get<SimParam>());
+      SanitizeForUnitTest(sp);
+      sp->grid_resolution = 10;
+      sp->grid_resolution_structural = resolution;
+      sp->fibroblast.enabled = true;
+      sp->wound.trigger_step = 0;
+      sp->wound.center_x = 25;
+      sp->wound.center_y = 25;
+      sp->wound.radius = 15;
+      sp->decorin_sequestration_rate = pathway == 0 ? 0.12 : 0;
+      sp->fibroblast.tgfb_tissue_clearance = pathway == 1 ? 0.025 : 0;
+      sp->perfusion.clearance_rate = pathway == 2 ? 0.003 : 0;
+      sp->lymphatic.enabled = pathway == 3;
+      sp->edema_drainage_rate = pathway == 3 ? 0.02 : 0;
+      SetupAllFields(sim);
+      sim->GetScheduler()->Simulate(1);
+      auto* rm = sim->GetResourceManager();
+      auto* tgfb = rm->GetDiffusionGrid(fields::kTGFBetaId);
+      auto* col = rm->GetDiffusionGrid(fields::kCollagenId);
+      auto* vasc = rm->GetDiffusionGrid(fields::kVascularId);
+      auto* stratum = rm->GetDiffusionGrid(fields::kStratumId);
+      std::vector<size_t> indices;
+      for (real_t z : {-7.0, 5.0}) {
+        Real3 pos = {25, 25, z};
+        size_t i = tgfb->GetBoxIndex(pos);
+        indices.push_back(i);
+        tgfb->ChangeConcentrationBy(i, 0.8 - tgfb->GetConcentration(i));
+        vasc->ChangeConcentrationBy(i, 0.4 - vasc->GetConcentration(i));
+        stratum->ChangeConcentrationBy(i, 0.6 - stratum->GetConcentration(i));
+        size_t ci = col->GetBoxIndex(pos);
+        col->ChangeConcentrationBy(ci, 0.5 - col->GetConcentration(ci));
+        if (pathway == 3) {
+          auto* lymph = rm->GetDiffusionGrid(fields::kLymphaticId);
+          size_t li = lymph->GetBoxIndex(pos);
+          lymph->ChangeConcentrationBy(li, 0.5 - lymph->GetConcentration(li));
+        }
+      }
+      FusedWoundPostOp op;
+      sp->wound.trigger_step = 2;
+      op();
+      for (size_t i : indices) EXPECT_NEAR(tgfb->GetConcentration(i), 0.8, 1e-10);
+      sp->wound.trigger_step = 0;
+      op();
+      for (size_t j = 0; j < indices.size(); ++j) {
+        real_t rate = pathway == 0 ? 0.12 * 0.5 :
+                      pathway == 1 ? 0.025 * (j == 0 ? 0.4 : 0.6) :
+                      pathway == 2 ? 0.003 * 0.4 :
+                      pathway == 3 ? 0.02 * 0.5 : 0;
+        EXPECT_NEAR(tgfb->GetConcentration(indices[j]), 0.8 * (1 - rate), 1e-10);
+      }
+      if (pathway == 3) {
+        auto* edema = rm->GetDiffusionGrid(fields::kEdemaId);
+        auto* lymph = rm->GetDiffusionGrid(fields::kLymphaticId);
+        sp->lymphatic.regen_rate = 0;
+        sp->edema_leak_rate = sp->edema_o2_impairment = 0;
+        size_t i = indices[0];
+        edema->ChangeConcentrationBy(i, 0.8 - edema->GetConcentration(i));
+        FusedWoundSourceOp source;
+        source();
+        EXPECT_NEAR(edema->GetConcentration(i), 0.792, 1e-10);
+        // Regeneration must update the same fine voxel at the full rate.
+        lymph->ChangeConcentrationBy(i, -lymph->GetConcentration(i));
+        sp->lymphatic.regen_rate = 0.02;
+        source();
+        EXPECT_NEAR(lymph->GetConcentration(i), 0.02, 1e-10);
+        // Restore the isolated post-drainage substrate for the cap check.
+        lymph->ChangeConcentrationBy(i, 0.5 - lymph->GetConcentration(i));
+      }
+      if (pathway < 4) {
+        sp->decorin_sequestration_rate = pathway == 0 ? 100 : 0;
+        sp->fibroblast.tgfb_tissue_clearance = pathway == 1 ? 100 : 0;
+        sp->perfusion.clearance_rate = pathway == 2 ? 100 : 0;
+        sp->edema_drainage_rate = pathway == 3 ? 100 : 0;
+        op();
+        for (size_t i : indices) EXPECT_NEAR(tgfb->GetConcentration(i), 0, 1e-10);
+      }
+      delete sim;
+    }
+  }
+}
+
+TEST(FusedPostTest, RemodelsDermalMatrixAndProcessesMMP) {
+  Param::RegisterParamGroup(new SimParam());
+  auto* sim = new Simulation(TEST_NAME, [](Param* p) {
+    p->bound_space = Param::BoundSpaceMode::kClosed;
+    p->min_bound = -10;
+    p->max_bound = 50;
+    p->simulation_time_step = 0.1;
+    p->export_visualization = false;
+  });
+  auto* sp = const_cast<SimParam*>(sim->GetParam()->Get<SimParam>());
+  SanitizeForUnitTest(sp);
+  sp->grid_resolution = 10;
+  sp->wound.trigger_step = 0;
+  sp->fibroblast.enabled = sp->mmp.enabled = true;
+  sp->fibronectin.enabled = sp->elastin.enabled = sp->hemostasis.enabled = true;
+  sp->mmp.collagen_degradation = sp->mmp.fibronectin_degradation = 0.02;
+  sp->elastin.mmp_degradation = sp->hemostasis.mmp_degradation = 0.02;
+  sp->mmp.timp_inhibition_rate = sp->mmp.prommp_activation_rate = 0.1;
+  sp->mmp.prommp_autocatalytic_rate = sp->matrikine_mmp_boost = 0;
+  sp->mmp.keratinocyte_rate = sp->mmp.timp_keratinocyte_rate = 0;
+  sp->ph.mmp_boost = 0;
+  sp->ros.enabled = true;
+  sp->ros.collagen_damage = sp->ros.mmp_activation = 0;
+  sp->ros.inflammation_amplification = 0;
+  SetupAllFields(sim);
+  TIMPPDE(sp).Init(sim);
+  ElastinPDE().Init(sim);
+  FibrinPDE(sp).Init(sim);
+  sim->GetScheduler()->Simulate(1);
+  auto* rm = sim->GetResourceManager();
+  Real3 pos = {25, 25, -7};
+  auto seed = [&](int id, real_t value) {
+    auto* g = rm->GetDiffusionGrid(id);
+    size_t i = g->GetBoxIndex(pos);
+    g->ChangeConcentrationBy(i, value - g->GetConcentration(i));
+  };
+  for (int id : {fields::kCollagenId, fields::kFibronectinId,
+                 fields::kElastinId, fields::kFibrinId}) seed(id, 0.7);
+  seed(fields::kMMPId, 0.4);
+  seed(fields::kProMMPId, 0.3);
+  seed(fields::kTIMPId, 0.2);
+  FusedWoundPostOp op;
+  op();
+  auto value = [&](int id) { return rm->GetDiffusionGrid(id)->GetValue(pos); };
+  for (int id : {fields::kCollagenId, fields::kFibronectinId,
+                 fields::kElastinId, fields::kFibrinId})
+    EXPECT_NEAR(value(id), 0.692, 1e-10);
+  EXPECT_NEAR(value(fields::kMMPId), 0.422, 1e-10);
+  EXPECT_NEAR(value(fields::kProMMPId), 0.27, 1e-10);
+  EXPECT_NEAR(value(fields::kTIMPId), 0.192, 1e-10);
+  // Other matrix substrates must still turn over with fibroblasts disabled.
+  sp->fibroblast.enabled = false;
+  seed(fields::kMMPId, 0.4);
+  for (int id : {fields::kCollagenId, fields::kFibronectinId,
+                 fields::kElastinId, fields::kFibrinId}) seed(id, 0.7);
+  op();
+  EXPECT_NEAR(value(fields::kCollagenId), 0.7, 1e-10);
+  for (int id : {fields::kFibronectinId, fields::kElastinId, fields::kFibrinId})
+    EXPECT_NEAR(value(id), 0.692, 1e-10);
+  // Dermal oxidative matrix damage must work independently of MMP.
+  sp->fibroblast.enabled = true;
+  sp->mmp.enabled = false;
+  sp->ros.collagen_damage = 0.02;
+  seed(fields::kROSId, 0.4);
+  op();
+  EXPECT_NEAR(value(fields::kCollagenId), 0.6944, 1e-10);
+  delete sim;
+}
 
 TEST(ProportionalScarTest, AccumulationOp) {
   auto* sim = CreateTestSim(TEST_NAME);

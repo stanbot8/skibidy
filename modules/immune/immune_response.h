@@ -76,7 +76,8 @@ struct ImmuneResponse : public StandaloneOperationImpl {
 
     // Macrophage continuous recruitment (inflammation-driven)
     if (wound_age >= static_cast<uint64_t>(sp->immune.macrophage_spawn_delay)) {
-      real_t query_z = sp->immune_cell_diameter / 2.0;
+      // Extravasation and its recruitment signal belong to the dermal bed.
+      real_t query_z = -sp->immune_cell_diameter / 2.0;
       Real3 center = {sp->wound.center_x, sp->wound.center_y, query_z};
       Real3 qpos = ClampToBounds(center, sim->GetParam());
 
@@ -169,7 +170,7 @@ struct ImmuneResponse : public StandaloneOperationImpl {
     real_t cy = sp->wound.center_y;
     real_t r = sp->wound.radius;
     real_t diameter = sp->immune_cell_diameter;
-    real_t spawn_z = diameter / 2.0;
+    real_t spawn_z = -diameter / 2.0;
 
     for (int i = 0; i < n_cells; i++) {
       // Immune cells extravasate from wound bed vasculature into the

@@ -25,9 +25,17 @@ struct LymphaticPostHook {
   }
 
   inline void ApplyEpiWound(const VoxelSnapshot& snap, SignalBoard& sig) {
+    ApplyVoxel(snap, sig);
+  }
+
+  inline void ApplyDermal(const VoxelSnapshot& snap, SignalBoard& sig) {
+    ApplyVoxel(snap, sig);
+  }
+
+  inline void ApplyVoxel(const VoxelSnapshot& snap, SignalBoard& sig) {
     real_t tgfb_val = tgfb_grid->GetConcentration(snap.idx);
     if (tgfb_val <= 1e-10) return;
-    real_t lymph_val = lymph_grid->GetConcentration(snap.coarse_si);
+    real_t lymph_val = lymph_grid->GetConcentration(snap.idx);
     if (lymph_val <= 1e-10) return;
     real_t sink = sp_->edema_drainage_rate * lymph_val * tgfb_val;
     tgfb_grid->ChangeConcentrationBy(snap.idx, -std::min(sink, tgfb_val));

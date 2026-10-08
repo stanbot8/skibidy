@@ -9,6 +9,60 @@
 namespace bdm {
 namespace skibidy {
 
+TEST(ImmuneResponseTest, DermalRecruitmentAndFibroblastSignal) {
+  Param::RegisterParamGroup(new SimParam());
+  auto* sim = new Simulation(TEST_NAME, [](Param* p) {
+    p->bound_space = Param::BoundSpaceMode::kClosed;
+    p->min_bound = -30;
+    p->max_bound = 30;
+    p->simulation_time_step = 0.1;
+    p->export_visualization = false;
+  });
+  auto* sp = const_cast<SimParam*>(sim->GetParam()->Get<SimParam>());
+  SanitizeForUnitTest(sp);
+  sp->grid_resolution = 12;
+  sp->fibroblast.enabled = true;
+  sp->wound.trigger_step = 0;
+  sp->wound.center_x = sp->wound.center_y = 0;
+  sp->wound.radius = 12;
+  sp->immune.neutrophil_spawn_delay = 1;
+  sp->immune.neutrophil_spawn_waves = 1;
+  sp->immune.macrophage_spawn_delay = 1;
+  sp->immune.macrophage_spawn_threshold = 0;
+  sp->immune.macrophage_spawn_rate = 100;
+  sp->immune.macrophage_spawn_taper = 0;
+  SetupAllFields(sim);
+  sim->GetScheduler()->Simulate(1);
+  auto* rm = sim->GetResourceManager();
+  auto* infl = GetInflammationGrid(sim);
+  Real3 bed = {0, 0, -sp->immune_cell_diameter / 2.0};
+  infl->ChangeConcentrationBy(infl->GetBoxIndex(bed), 1);
+  auto* response = new ImmuneResponse();
+  OperationRegistry::GetInstance()->AddOperationImpl(
+      "ImmuneResponse_dermal_test", OpComputeTarget::kCpu, response);
+  sim->GetScheduler()->ScheduleOp(
+      NewOperation("ImmuneResponse_dermal_test"), OpType::kPreSchedule);
+  sim->GetScheduler()->Simulate(1);
+  int neutrophils = 0, macrophages = 0;
+  auto* tgfb = rm->GetDiffusionGrid(fields::kTGFBetaId);
+  rm->ForEachAgent([&](Agent* a) {
+    auto* cell = dynamic_cast<ImmuneCell*>(a);
+    ASSERT_NE(cell, nullptr);
+    EXPECT_LT(cell->GetPosition()[2], 0);
+    if (cell->GetImmuneCellType() == kNeutrophil) { ++neutrophils; return; }
+    ++macrophages;
+    Real3 pos = cell->GetPosition();
+    Real3 fibroblast_pos = {pos[0], pos[1], sp->dermal_fibroblast_depth};
+    EXPECT_EQ(tgfb->GetBoxIndex(pos), tgfb->GetBoxIndex(fibroblast_pos));
+    real_t before = tgfb->GetValue(fibroblast_pos);
+    immune::ProduceTGFBeta(pos, sim, sp);
+    EXPECT_GT(tgfb->GetValue(fibroblast_pos), before);
+  });
+  EXPECT_GT(neutrophils, 0);
+  EXPECT_GT(macrophages, 0);
+  delete sim;
+}
+
 TEST(ImmuneCellTest, TypeAndStateDefaults) {
   auto* sim = CreateTestSim(TEST_NAME);
   auto* cell = new ImmuneCell({15, 15, 1.5});

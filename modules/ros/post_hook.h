@@ -41,8 +41,16 @@ struct ROSPostHook {
       sen_grid = reg.Get(fields::kSenescenceId);
   }
 
-  // Called per epidermal wound voxel.
+  inline void ApplyDermal(const VoxelSnapshot& snap, SignalBoard& sig) {
+    ApplyVoxel(snap, sig);
+  }
+
   inline void ApplyEpiWound(const VoxelSnapshot& snap, SignalBoard& sig) {
+    ApplyVoxel(snap, sig);
+  }
+
+  // Local oxidative reactions also act where dermal ROS is produced.
+  inline void ApplyVoxel(const VoxelSnapshot& snap, SignalBoard& sig) {
     real_t ros_val = ros_grid->GetConcentration(snap.idx);
     if (ros_val <= 1e-10) return;
 

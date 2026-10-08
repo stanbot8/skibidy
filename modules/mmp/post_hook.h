@@ -32,7 +32,9 @@ struct MMPPostHook {
 
   inline void Init(const GridRegistry& reg, SignalBoard& sig) {
     sp_ = reg.Params();
-    do_ecm = sp_->mmp.enabled && sp_->fibroblast.enabled;
+    do_ecm = sp_->mmp.enabled && (sp_->fibroblast.enabled ||
+        sp_->fibronectin.enabled || sp_->elastin.enabled ||
+        sp_->hemostasis.enabled);
     do_prommp = sp_->mmp.enabled;
     active = do_ecm || do_prommp;
     if (!active) return;
@@ -67,8 +69,18 @@ struct MMPPostHook {
       temp_grid = reg.Get(fields::kTemperatureId);
   }
 
-  // Called per epidermal wound voxel.
+  inline void ApplyDermal(const VoxelSnapshot& snap, SignalBoard& sig) {
+    ApplyVoxel(snap, sig, false);
+  }
+
   inline void ApplyEpiWound(const VoxelSnapshot& snap, SignalBoard& sig) {
+    ApplyVoxel(snap, sig, true);
+  }
+
+  // Local matrix reactions occur in both layers. Only the epidermis has
+  // keratinocyte production at a migration front.
+  inline void ApplyVoxel(const VoxelSnapshot& snap, SignalBoard& sig,
+                         bool epidermal) {
     // -- MMP-mediated ECM degradation --
     real_t total_degraded = 0;
     if (do_ecm) {
@@ -162,7 +174,7 @@ struct MMPPostHook {
 
     // -- Keratinocyte pro-MMP-1 at wound migration front --
     // Pilcher et al. 1997
-    if (sp_->mmp.keratinocyte_rate > 0 && prommp_grid) {
+    if (epidermal && sp_->mmp.keratinocyte_rate > 0 && prommp_grid) {
       real_t edge = snap.stratum * (1.0 - snap.stratum) * 4.0;  // peaks at sv=0.5
       if (edge > 1e-10) {
         prommp_grid->ChangeConcentrationBy(snap.idx,
@@ -172,7 +184,7 @@ struct MMPPostHook {
 
     // -- Keratinocyte TIMP-1 at wound migration front --
     // Saarialho-Kere et al. 1995 (doi:10.1172/JCI117883)
-    if (timp_grid && sp_->mmp.timp_keratinocyte_rate > 0) {
+    if (epidermal && timp_grid && sp_->mmp.timp_keratinocyte_rate > 0) {
       real_t edge = snap.stratum * (1.0 - snap.stratum) * 4.0;
       if (edge > 1e-10) {
         real_t rate = sp_->mmp.timp_keratinocyte_rate;

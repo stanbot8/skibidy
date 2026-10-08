@@ -104,8 +104,12 @@ cycle CV does not identify persistent trait CV. Component staining does not
 calibrate membrane repair. These limits are retained with the data.
 
 Mechanism audit: collagen-dependent TGF-beta sequestration and tissue-density
-clearance are active coarse-grained sinks. Decorin/receptor trafficking are
-implicit. Default gradient recruitment, efferocytosis-driven polarization,
+clearance are coarse-grained sinks. The later spatial-dispatch review found
+that these configured sinks had skipped the dermal compartment; the repair and
+paired runtime evidence are recorded in
+[dermal reactions](../literature/dermal-reactions-20261007/README.md).
+Decorin/receptor trafficking remain implicit. Default gradient recruitment,
+efferocytosis-driven polarization,
 constitutive-plus-responsive collagen and hypoxia-driven VEGF switches remain
 as configured. Full-model enables the latter three. Explicit IDO1/tryptophan/
 kynurenine/AhR and fibromodulin/IL-1β pathways are not represented by those
