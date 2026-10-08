@@ -229,7 +229,6 @@ struct SimParam : public ParamGroup {
   real_t no_neutrophil_production = 0.005;     // iNOS from neutrophils
   real_t no_vasodilation_factor = 0.05;         // perfusion boost from NO
   real_t no_antimicrobial_factor = 0.3;        // biofilm suppression factor
-  real_t no_collagen_suppression = 0.03;       // anti-fibrotic effect
   real_t sasp_inflammation_rate = 0.001;          // SASP pro-inflammatory output
   real_t sasp_mmp_rate = 0.0005;                  // SASP MMP-3/9 output (as pro-MMP)
   real_t sasp_tgfb_rate = 0.0002;                 // SASP TGF-beta1 output

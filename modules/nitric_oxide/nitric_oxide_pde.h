@@ -8,10 +8,9 @@ namespace bdm {
 namespace skibidy {
 
 // Nitric oxide field: produced by iNOS in M1 macrophages and neutrophils.
-// Very short half-life (seconds to minutes in tissue, modeled as high decay).
+// Physical NO is short-lived, but these field units and decay are uncalibrated.
 // Functions: vasodilation (increases local perfusion), antimicrobial
-// (kills bacteria in biofilm), and anti-fibrotic (suppresses excessive
-// collagen deposition).
+// (suppresses biofilm growth). Direct collagen dose response is not modeled.
 struct NitricOxidePDE : public PDE {
   explicit NitricOxidePDE(const SimParam* sp)
       : diffusion_(sp->no_diffusion),

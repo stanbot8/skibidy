@@ -32,7 +32,7 @@ TGF-beta production uses an exponential taper: `tgfb_rate * exp(-taper_rate * st
 2. **Tissue density clearance**: resident tissue cells (keratinocytes, endothelial cells) clear TGF-beta at a rate proportional to local tissue density (max of stratum, vascular). Open wound = low density = low clearance; healed tissue = high clearance.
 3. **Collagen-dependent sequestration proxy**: an implicit decorin effect removes TGF-beta as `rate * collagen * tgfb`. This sink increases with modeled collagen. The coefficient and proportionality between collagen and decorin are assumptions (Yamaguchi et al. 1990, [DOI](https://doi.org/10.1038/346281a0)).
 
-**Collagen PDE:** no diffusion (structural deposit), optional MMP decay. Deposited by activated fibroblasts and myofibroblasts at a constant rate (parametric mode) or via a basal + TGF-beta-responsive model (mechanistic mode). Both modes retain oxygen-dependent hydroxylation and enabled lactate, nitric oxide and diabetic modifiers.
+**Collagen PDE:** no diffusion (structural deposit), optional MMP decay. Deposited by activated fibroblasts and myofibroblasts at a constant rate (parametric mode) or via a basal + TGF-beta-responsive model (mechanistic mode). Both modes retain oxygen-dependent hydroxylation and enabled lactate and diabetic modifiers. Direct nitric-oxide regulation is unmodeled because its dose response cannot be mapped to the arbitrary-unit field. See the [NO evidence and limitations](../nitric_oxide/README.md#collagen-evidence-and-limits).
 
 **Feedback loop with coarse-grained clearance:**
 ```

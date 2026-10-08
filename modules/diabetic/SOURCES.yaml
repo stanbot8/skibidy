@@ -209,8 +209,8 @@ diabetic_wound_healing:
     title: Nitric oxide enhances experimental wound healing in diabetes
     journal: Br J Surg 89(12):1594-1601
     doi: 10.1046/j.1365-2168.2002.02263.x
-    notes: 'iNOS expression reduced approximately 40% in diabetic wounds, contributing to impaired healing.
-      Supports diabetic_no_factor=0.6.
+    notes: 'NO donor treatment enhanced collagen accumulation and wound breaking strength in diabetic rats.
+      This does not establish a fixed 40% per-cell iNOS reduction. The diabetic NO production modifier is assumed.
 
       '
   - id: bjarnsholt2008

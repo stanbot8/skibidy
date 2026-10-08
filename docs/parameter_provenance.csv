@@ -127,7 +127,6 @@ no_m1_production,core,0.01,assumed,,iNOS from M1 macrophages
 no_neutrophil_production,core,0.005,assumed,,iNOS from neutrophils
 no_vasodilation_factor,core,0.05,assumed,,Perfusion boost from NO
 no_antimicrobial_factor,core,0.3,assumed,,Biofilm suppression factor
-no_collagen_suppression,core,0.03,assumed,,Anti-fibrotic effect
 sasp_inflammation_rate,core,0.001,assumed,,SASP pro-inflammatory output
 sasp_mmp_rate,core,0.0005,assumed,,SASP MMP-3/9 output (as pro-MMP)
 sasp_tgfb_rate,core,0.0002,assumed,,SASP TGF-beta1 output
@@ -275,7 +274,7 @@ diabetic.vegf_factor,diabetic,0.4,assumed,,HIF-1alpha impairment
 diabetic.ph_recovery_factor,diabetic,0.5,assumed,,Impaired acid mantle restoration
 diabetic.mmp_factor,diabetic,3.0,literature,Lobmann et al. 2002 (doi:10.1007/s00125-002-0868-8),MMP overexpression multiplier
 diabetic.timp_production_factor,diabetic,0.4,literature,Lobmann et al. 2002 (doi:10.1007/s00125-002-0868-8),Reduced TIMP expression
-diabetic.no_factor,diabetic,0.6,assumed,,Impaired iNOS in diabetic tissue
+diabetic.no_factor,diabetic,0.6,assumed,,Assumed per-cell NO modifier; qualitative wound NO deficit does not establish this magnitude
 diabetic.senescence_factor,diabetic,2.5,assumed,,Hyperglycemia accelerates senescence
 diabetic.nerve_factor,diabetic,0.3,assumed,,Residual nerve density (70% loss)
 diabetic.nerve_regen_factor,diabetic,0.4,assumed,,Impaired regeneration
@@ -411,7 +410,7 @@ neuropathy.enabled,neuropathy,true,literature,doi:10.4049/jimmunol.1601751 (Suva
 neuropathy.diffusion,neuropathy,0.01,assumed,,Slow neurite extension diffusion
 neuropathy.decay,neuropathy,0.0,assumed,,Structural (no spontaneous loss)
 neuropathy.basal_density,neuropathy,1.0,assumed,,Normalized healthy innervation
-nitric_oxide.enabled,nitric_oxide,true,literature,doi:10.1016/S0022-4804(96)80068-5 (Schaffer et al. 1996),Nitric oxide module
+nitric_oxide.enabled,nitric_oxide,true,literature,doi:10.1006/jsre.1996.0254 (Schaffer et al. 1996),Nitric oxide module
 perfusion.diffusion,perfusion,0.03,assumed,,Capillary sprouting / lateral spread
 perfusion.decay,perfusion,0.0,assumed,,No decay (stable vessels)
 perfusion.basal,perfusion,1.0,assumed,,Healthy dermis = fully perfused

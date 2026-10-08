@@ -4,6 +4,7 @@
 #include "fibroblast/fibroblast_recruitment.h"
 #include "elastin/elastin_pde.h"
 #include "hyaluronan/hyaluronan_pde.h"
+#include "nitric_oxide/nitric_oxide_pde.h"
 
 namespace bdm {
 namespace skibidy {
@@ -210,7 +211,8 @@ TEST(FibroblastBehaviorTest, CollagenDeposition) {
 // Exercise scheduled matrix deposition before the contractile state is acquired.
 // An alpha-SMA-like state must not be a prerequisite for fibroblast synthesis.
 static real_t ScheduledCollagen(FibroblastState state, bool responsive,
-                               real_t tgfb_value, real_t oxygen_value) {
+                               real_t tgfb_value, real_t oxygen_value,
+                               real_t no_value = 0) {
   auto* sim = CreateTestSim("scheduled-fibroblast-collagen");
   auto* sp = const_cast<SimParam*>(sim->GetParam()->Get<SimParam>());
   SanitizeForUnitTest(sp);
@@ -223,12 +225,17 @@ static real_t ScheduledCollagen(FibroblastState state, bool responsive,
   sp->fibroblast.migration_speed = 0;
   sp->fibroblast.tgfb_diffusion = 0;
   sp->fibroblast.tgfb_decay = 0;
+  sp->nitric_oxide.enabled = true;
+  sp->no_diffusion = 0;
+  sp->no_decay = 0;
   TGFBetaPDE tgfb(sp);
   tgfb.Init(sim);
   CollagenPDE collagen(sp);
   collagen.Init(sim);
   OxygenPDE oxygen;
   oxygen.Init(sim);
+  NitricOxidePDE nitric_oxide(sp);
+  nitric_oxide.Init(sim);
   sim->GetScheduler()->Simulate(1);
   auto* rm = sim->GetResourceManager();
   Real3 pos = {15, 15, 2};
@@ -240,6 +247,10 @@ static real_t ScheduledCollagen(FibroblastState state, bool responsive,
         i, oxygen_value - oxygen_grid->GetConcentration(i));
   }
   tgfb_grid->ChangeConcentrationBy(tgfb_grid->GetBoxIndex(pos), tgfb_value);
+  auto* no_grid = rm->GetDiffusionGrid(fields::kNitricOxideId);
+  for (size_t i = 0; i < no_grid->GetNumBoxes(); ++i) {
+    no_grid->ChangeConcentrationBy(i, no_value);
+  }
   auto* cell = new Fibroblast(pos);
   cell->SetDiameter(4);
   cell->SetFibroblastState(state);
@@ -269,6 +280,26 @@ TEST(FibroblastBehaviorTest, ActivatedMatrixSynthesisRespondsToTGFBeta) {
   real_t stimulated = ScheduledCollagen(kFibroActivated, true, 1, 1);
   EXPECT_GT(basal, 0);
   EXPECT_GT(stimulated, basal);
+}
+
+TEST(FibroblastBehaviorTest, UncalibratedNONotABlanketCollagenInhibitor) {
+  // Witte 2000 and Obayashi 2006 report enhanced dermal fibroblast synthesis.
+  // Excessive NO can inhibit repair, but arbitrary field units cannot identify
+  // that exposure regime. Do not impose a universal inhibitory dose response.
+  for (bool responsive : {false, true}) {
+    for (auto state : {kFibroActivated, kMyofibroblast}) {
+      SCOPED_TRACE(responsive);
+      SCOPED_TRACE(state);
+      real_t baseline = ScheduledCollagen(state, responsive, 1, 1, 0);
+      EXPECT_GT(baseline, 0);
+      for (real_t no_value : {0.1, 1.0}) {
+        SCOPED_TRACE(no_value);
+        EXPECT_DOUBLE_EQ(ScheduledCollagen(state, responsive, 1, 1, no_value),
+                         baseline);
+      }
+      EXPECT_DOUBLE_EQ(ScheduledCollagen(state, responsive, 1, 0, 1), 0);
+    }
+  }
 }
 
 TEST(FibroblastBehaviorTest, TGFBetaProduction) {

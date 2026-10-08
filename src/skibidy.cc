@@ -576,7 +576,6 @@ void bdm::skibidy::SimParam::LoadConfig(const skibidy::TomlConfig& config) {
   BDM_ASSIGN_CONFIG_VALUE(no_neutrophil_production, "skin.nitric_oxide.neutrophil_production");
   BDM_ASSIGN_CONFIG_VALUE(no_vasodilation_factor, "skin.nitric_oxide.vasodilation_factor");
   BDM_ASSIGN_CONFIG_VALUE(no_antimicrobial_factor, "skin.nitric_oxide.antimicrobial_factor");
-  BDM_ASSIGN_CONFIG_VALUE(no_collagen_suppression, "skin.nitric_oxide.collagen_suppression");
   BDM_ASSIGN_CONFIG_VALUE(diabetic.no_factor, "skin.diabetic.no_factor");
 
   // Senescence module (modules/senescence/config.toml -> [skin.senescence])

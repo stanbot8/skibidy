@@ -62,6 +62,14 @@ Additional pro-MMP and TIMP defaults are listed in [config.toml](config.toml). T
 |---------|-----------|--------|-------|
 | `mmp_ecm_remodeling` | MMP levels, collagen/fibronectin degradation | Lobmann 2002, Nagase 1999, Ladwig 2002 | Biological rationale and diabetic imbalance, not numerical parameter derivation |
 
+An [isolated collagen-breakdown diagnostic](../../literature/no-collagen-20261007/README.md#mmp-diagnostic)
+preserves substantially more wound collagen in three normal-wound seeds when
+only the collagen degradation coefficient is set to zero. This identifies
+the modeled sink as a major contributor to near-zero collagen output; it does
+not validate disabling remodeling or determine replacement kinetics. The
+production coefficient is unchanged, and all diagnostic runs still fail
+biological validation.
+
 ## Literature data
 
 Reference curves for validation (full citations in [SOURCES.yaml](SOURCES.yaml)):

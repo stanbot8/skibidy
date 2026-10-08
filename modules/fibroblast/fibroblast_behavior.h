@@ -248,14 +248,9 @@ struct FibroblastBehavior : public Behavior {
           deposit *= (1.0 + sp->lactate.collagen_boost * lac);
         }
       }
-      // NO suppression (Schaffer et al. 1996, doi:10.1016/S0022-4804(96)80068-5)
-      if (sp->nitric_oxide.enabled) {
-        auto* no_grid = rm->GetDiffusionGrid(fields::kNitricOxideId);
-        if (no_grid) {
-          real_t no_val = no_grid->GetValue(qpos);
-          deposit *= std::max(0.0, 1.0 - sp->no_collagen_suppression * no_val);
-        }
-      }
+      // NO is not a universal collagen inhibitor (Witte et al. 2000,
+      // doi:10.1006/niox.2000.0307). A direct dose response requires a physical
+      // exposure scale, which this arbitrary-unit field does not yet provide.
       // O2-dependent hydroxylation (Myllyharju 2003)
       if (sp->fibroblast.collagen_o2_half_max > 0) {
         auto* o2_grid = rm->GetDiffusionGrid(fields::kOxygenId);

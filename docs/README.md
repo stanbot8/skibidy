@@ -78,7 +78,7 @@ Each module is self-contained in `modules/` with its own `config.toml`, source f
 | [glucose](../modules/glucose/README.md) | ATP availability, diabetic hyperglycemia gating | Glucose |
 | [temperature](../modules/temperature/README.md) | Q10 enzymatic rate scaling, wound surface cooling | Temperature |
 | [lactate](../modules/lactate/README.md) | HIF-1a VEGF boost, collagen synthesis, perfusion clearance | Lactate |
-| [nitric_oxide](../modules/nitric_oxide/README.md) | Vasodilation, antimicrobial, anti-fibrotic signaling | NitricOxide |
+| [nitric_oxide](../modules/nitric_oxide/README.md) | Vasodilation and antimicrobial signaling; direct collagen response unmodeled | NitricOxide |
 | [ph](../modules/ph/README.md) | Wound bed pH gradient, acid mantle disruption | pH |
 | [hemostasis](../modules/hemostasis/README.md) | Fibrin clot scaffold, platelet activation | Fibrin |
 

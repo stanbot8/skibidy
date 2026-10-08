@@ -1,0 +1,511 @@
+{
+  "base": "668708c4268a44f8f3bb3b3c484d436c110e1022",
+  "source_sha256": {
+    "modules/fibroblast/fibroblast_behavior.h": "8e8f17309c41f18c9204041153521378a5aec4ac17b711cc35c5c4085409bd2e",
+    "src/infra/sim_param.h": "556deaebf6be6b896caed54b4519ca5ad9a64056faf31aaa58aaf4b53f14d222",
+    "src/skibidy.cc": "d3af287e2296f1c8d5bc77afdef942713a184634cd0b6b998348b4acfe875353",
+    "modules/nitric_oxide/config.toml": "3e5c816319a95c54836632cb7c40be76e98d8176b8ac9284068351a18a2fda47",
+    "modules/nitric_oxide/nitric_oxide_pde.h": "136be2c6809375117588bbe0ce1504ffa4f7f82c7bd7499eadba2f14d138a7fa",
+    "tests/fibroblast_test.cc": "ca216d563a0fbaaa4ff436b9f5286e74324148f820ba1da28716f2420877a8de"
+  },
+  "runs": [
+    {
+      "arm": "control",
+      "cohort": "diabetic-diabetic-wound",
+      "seed": 42,
+      "final_hours": 820.0,
+      "validation_exit": 1,
+      "peak_collagen": 2.5565e-05,
+      "final_collagen": 1.13287e-11,
+      "config_differences": {}
+    },
+    {
+      "arm": "control",
+      "cohort": "diabetic-diabetic-wound",
+      "seed": 43,
+      "final_hours": 820.0,
+      "validation_exit": 1,
+      "peak_collagen": 3.44188e-05,
+      "final_collagen": 1.5508e-11,
+      "config_differences": {}
+    },
+    {
+      "arm": "control",
+      "cohort": "diabetic-diabetic-wound",
+      "seed": 44,
+      "final_hours": 820.0,
+      "validation_exit": 1,
+      "peak_collagen": 2.60664e-05,
+      "final_collagen": 1.17327e-11,
+      "config_differences": {}
+    },
+    {
+      "arm": "control",
+      "cohort": "normal-full-model",
+      "seed": 42,
+      "final_hours": 710.0,
+      "validation_exit": 1,
+      "peak_collagen": 0.00720407,
+      "final_collagen": 0.00649158,
+      "config_differences": {}
+    },
+    {
+      "arm": "control",
+      "cohort": "normal-full-model",
+      "seed": 43,
+      "final_hours": 710.0,
+      "validation_exit": 1,
+      "peak_collagen": 0.000556136,
+      "final_collagen": 1.55281e-11,
+      "config_differences": {}
+    },
+    {
+      "arm": "control",
+      "cohort": "normal-full-model",
+      "seed": 44,
+      "final_hours": 710.0,
+      "validation_exit": 1,
+      "peak_collagen": 0.00119177,
+      "final_collagen": 1.15245e-11,
+      "config_differences": {}
+    },
+    {
+      "arm": "control",
+      "cohort": "normal-wound",
+      "seed": 42,
+      "final_hours": 710.0,
+      "validation_exit": 1,
+      "peak_collagen": 0.0120577,
+      "final_collagen": 0.0113144,
+      "config_differences": {}
+    },
+    {
+      "arm": "control",
+      "cohort": "normal-wound",
+      "seed": 43,
+      "final_hours": 710.0,
+      "validation_exit": 1,
+      "peak_collagen": 9.8112e-05,
+      "final_collagen": 1.17331e-11,
+      "config_differences": {}
+    },
+    {
+      "arm": "control",
+      "cohort": "normal-wound",
+      "seed": 44,
+      "final_hours": 710.0,
+      "validation_exit": 1,
+      "peak_collagen": 3.0238e-05,
+      "final_collagen": 3.66894e-12,
+      "config_differences": {}
+    },
+    {
+      "arm": "candidate",
+      "cohort": "diabetic-diabetic-wound",
+      "seed": 42,
+      "final_hours": 820.0,
+      "validation_exit": 1,
+      "peak_collagen": 2.56014e-05,
+      "final_collagen": 1.13601e-11,
+      "config_differences": {
+        "skin.nitric_oxide.collagen_suppression": [
+          0.03,
+          null
+        ],
+        "simulation.output_dir": [
+          "/mnt/d/dev/skibidy/batch/results/lactate-signal-20261007/diabetic-diabetic-wound/seed42",
+          "/mnt/d/dev/skibidy/batch/results/no-collagen-20261007-clean/diabetic-diabetic-wound/seed42"
+        ]
+      }
+    },
+    {
+      "arm": "candidate",
+      "cohort": "diabetic-diabetic-wound",
+      "seed": 43,
+      "final_hours": 820.0,
+      "validation_exit": 1,
+      "peak_collagen": 3.94941e-05,
+      "final_collagen": 1.91622e-11,
+      "config_differences": {
+        "skin.nitric_oxide.collagen_suppression": [
+          0.03,
+          null
+        ],
+        "simulation.output_dir": [
+          "/mnt/d/dev/skibidy/batch/results/lactate-signal-20261007/diabetic-diabetic-wound/seed43",
+          "/mnt/d/dev/skibidy/batch/results/no-collagen-20261007-clean/diabetic-diabetic-wound/seed43"
+        ]
+      }
+    },
+    {
+      "arm": "candidate",
+      "cohort": "diabetic-diabetic-wound",
+      "seed": 44,
+      "final_hours": 820.0,
+      "validation_exit": 1,
+      "peak_collagen": 2.62275e-05,
+      "final_collagen": 1.16926e-11,
+      "config_differences": {
+        "skin.nitric_oxide.collagen_suppression": [
+          0.03,
+          null
+        ],
+        "simulation.output_dir": [
+          "/mnt/d/dev/skibidy/batch/results/lactate-signal-20261007/diabetic-diabetic-wound/seed44",
+          "/mnt/d/dev/skibidy/batch/results/no-collagen-20261007-clean/diabetic-diabetic-wound/seed44"
+        ]
+      }
+    },
+    {
+      "arm": "candidate",
+      "cohort": "normal-full-model",
+      "seed": 42,
+      "final_hours": 710.0,
+      "validation_exit": 1,
+      "peak_collagen": 6.19303e-05,
+      "final_collagen": 1.55418e-11,
+      "config_differences": {
+        "skin.nitric_oxide.collagen_suppression": [
+          0.03,
+          null
+        ],
+        "simulation.output_dir": [
+          "/mnt/d/dev/skibidy/batch/results/lactate-signal-20261007/normal-full-model/seed42",
+          "/mnt/d/dev/skibidy/batch/results/no-collagen-20261007-clean/normal-full-model/seed42"
+        ]
+      }
+    },
+    {
+      "arm": "candidate",
+      "cohort": "normal-full-model",
+      "seed": 43,
+      "final_hours": 710.0,
+      "validation_exit": 1,
+      "peak_collagen": 5.07557e-05,
+      "final_collagen": 1.54915e-11,
+      "config_differences": {
+        "skin.nitric_oxide.collagen_suppression": [
+          0.03,
+          null
+        ],
+        "simulation.output_dir": [
+          "/mnt/d/dev/skibidy/batch/results/lactate-signal-20261007/normal-full-model/seed43",
+          "/mnt/d/dev/skibidy/batch/results/no-collagen-20261007-clean/normal-full-model/seed43"
+        ]
+      }
+    },
+    {
+      "arm": "candidate",
+      "cohort": "normal-full-model",
+      "seed": 44,
+      "final_hours": 710.0,
+      "validation_exit": 1,
+      "peak_collagen": 0.00119225,
+      "final_collagen": 1.15776e-11,
+      "config_differences": {
+        "skin.nitric_oxide.collagen_suppression": [
+          0.03,
+          null
+        ],
+        "simulation.output_dir": [
+          "/mnt/d/dev/skibidy/batch/results/lactate-signal-20261007/normal-full-model/seed44",
+          "/mnt/d/dev/skibidy/batch/results/no-collagen-20261007-clean/normal-full-model/seed44"
+        ]
+      }
+    },
+    {
+      "arm": "candidate",
+      "cohort": "normal-wound",
+      "seed": 42,
+      "final_hours": 710.0,
+      "validation_exit": 1,
+      "peak_collagen": 8.56864e-05,
+      "final_collagen": 1.57891e-11,
+      "config_differences": {
+        "skin.nitric_oxide.collagen_suppression": [
+          0.03,
+          null
+        ],
+        "simulation.output_dir": [
+          "/mnt/d/dev/skibidy/batch/results/lactate-signal-20261007/normal-wound/seed42",
+          "/mnt/d/dev/skibidy/batch/results/no-collagen-20261007-clean/normal-wound/seed42"
+        ]
+      }
+    },
+    {
+      "arm": "candidate",
+      "cohort": "normal-wound",
+      "seed": 43,
+      "final_hours": 710.0,
+      "validation_exit": 1,
+      "peak_collagen": 9.82484e-05,
+      "final_collagen": 1.18004e-11,
+      "config_differences": {
+        "skin.nitric_oxide.collagen_suppression": [
+          0.03,
+          null
+        ],
+        "simulation.output_dir": [
+          "/mnt/d/dev/skibidy/batch/results/lactate-signal-20261007/normal-wound/seed43",
+          "/mnt/d/dev/skibidy/batch/results/no-collagen-20261007-clean/normal-wound/seed43"
+        ]
+      }
+    },
+    {
+      "arm": "candidate",
+      "cohort": "normal-wound",
+      "seed": 44,
+      "final_hours": 710.0,
+      "validation_exit": 1,
+      "peak_collagen": 7.22399e-05,
+      "final_collagen": 4.15298e-12,
+      "config_differences": {
+        "skin.nitric_oxide.collagen_suppression": [
+          0.03,
+          null
+        ],
+        "simulation.output_dir": [
+          "/mnt/d/dev/skibidy/batch/results/lactate-signal-20261007/normal-wound/seed44",
+          "/mnt/d/dev/skibidy/batch/results/no-collagen-20261007-clean/normal-wound/seed44"
+        ]
+      }
+    },
+    {
+      "arm": "mmp-off-diagnostic",
+      "cohort": "normal-wound",
+      "seed": 42,
+      "final_hours": 710.0,
+      "validation_exit": 1,
+      "peak_collagen": 0.121842,
+      "final_collagen": 0.121842,
+      "config_differences": {
+        "skin.nitric_oxide.collagen_suppression": [
+          0.03,
+          null
+        ],
+        "skin.mmp.collagen_degradation": [
+          0.002,
+          0
+        ],
+        "simulation.output_dir": [
+          "/mnt/d/dev/skibidy/batch/results/lactate-signal-20261007/normal-wound/seed42",
+          "/mnt/d/dev/skibidy/batch/results/no-collagen-20261007-mmp-off/normal-wound/seed42"
+        ]
+      }
+    },
+    {
+      "arm": "mmp-off-diagnostic",
+      "cohort": "normal-wound",
+      "seed": 43,
+      "final_hours": 710.0,
+      "validation_exit": 1,
+      "peak_collagen": 0.130795,
+      "final_collagen": 0.130795,
+      "config_differences": {
+        "skin.nitric_oxide.collagen_suppression": [
+          0.03,
+          null
+        ],
+        "skin.mmp.collagen_degradation": [
+          0.002,
+          0
+        ],
+        "simulation.output_dir": [
+          "/mnt/d/dev/skibidy/batch/results/lactate-signal-20261007/normal-wound/seed43",
+          "/mnt/d/dev/skibidy/batch/results/no-collagen-20261007-mmp-off/normal-wound/seed43"
+        ]
+      }
+    },
+    {
+      "arm": "mmp-off-diagnostic",
+      "cohort": "normal-wound",
+      "seed": 44,
+      "final_hours": 710.0,
+      "validation_exit": 1,
+      "peak_collagen": 0.00993788,
+      "final_collagen": 0.00928427,
+      "config_differences": {
+        "skin.nitric_oxide.collagen_suppression": [
+          0.03,
+          null
+        ],
+        "skin.mmp.collagen_degradation": [
+          0.002,
+          0
+        ],
+        "simulation.output_dir": [
+          "/mnt/d/dev/skibidy/batch/results/lactate-signal-20261007/normal-wound/seed44",
+          "/mnt/d/dev/skibidy/batch/results/no-collagen-20261007-mmp-off/normal-wound/seed44"
+        ]
+      }
+    }
+  ],
+  "artifacts": {
+    "candidate/diabetic-diabetic-wound/seed42/bdm.toml": "3f87691a13900f77c514758f6c31fe4dcf4071dd8d191af51d44688cac1e40ad",
+    "candidate/diabetic-diabetic-wound/seed42/receipt.json": "41e1fb157a54b0a1841bb95839732ab523ac7b3f62d0ba8aca6323514bff415b",
+    "candidate/diabetic-diabetic-wound/seed42/skibidy/metrics.csv": "1f52f049df9f9435c31a0198031234cf2d40fb566f2fbc366385b6f94da1024d",
+    "candidate/diabetic-diabetic-wound/seed42/skibidy/validation.json": "2cb74f96fe3c66d2af1508c9a5168a229fe3347704db308aa7a09b06514ad730",
+    "candidate/diabetic-diabetic-wound/seed42/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "candidate/diabetic-diabetic-wound/seed42/stdout.log": "b135d53ec521aa4aa06b2feac0841574d875987996260099051ac1f9daf5e3c9",
+    "candidate/diabetic-diabetic-wound/seed42/validation.txt": "e959429222a12cc20ad23fb556e5f62c734c0dcdec5d9fb064c9547eb333035b",
+    "candidate/diabetic-diabetic-wound/seed43/bdm.toml": "9c8391a71a4a28c6b019d10c990b66f2ab6e748431b54585e7b871d44b4cae1b",
+    "candidate/diabetic-diabetic-wound/seed43/receipt.json": "c8ef046f373458759ddf584d55c5e7d807298823df64c63f33f68f13b7ef64e1",
+    "candidate/diabetic-diabetic-wound/seed43/skibidy/metrics.csv": "c6240b7db4f48422f92b323d104e54bce3899200bc300ac3f37dae7e9c7f3ea2",
+    "candidate/diabetic-diabetic-wound/seed43/skibidy/validation.json": "4e118ac0550b6b30eaa82c098b9becbe3cfe824bee356ba2295b8e99b24af0a5",
+    "candidate/diabetic-diabetic-wound/seed43/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "candidate/diabetic-diabetic-wound/seed43/stdout.log": "83e79f229e63acbe0c9db96090b7dc3b781349747cd9c9d58aca826172bff88b",
+    "candidate/diabetic-diabetic-wound/seed43/validation.txt": "47044ae64adf9d7de066611af31ee28d9aaf7d762bff1e93626c16f71a07e344",
+    "candidate/diabetic-diabetic-wound/seed44/bdm.toml": "bb39fb5c6fe9f707afeeacd40fcedaca4c06b309fe414531e041503bef4fea35",
+    "candidate/diabetic-diabetic-wound/seed44/receipt.json": "a38473eb4e2c98834c8eca3fcd237c8065a987c4d88f2d92b071363f25e5cdf7",
+    "candidate/diabetic-diabetic-wound/seed44/skibidy/metrics.csv": "91eac69fb2031625c8ce513f4b5ddba671f7624583b3b0eda76658b050fe71e4",
+    "candidate/diabetic-diabetic-wound/seed44/skibidy/validation.json": "36c4f0efea8b67e83631c0f33dcc9ae1236192a474a5b1bf298e98994ccd0b18",
+    "candidate/diabetic-diabetic-wound/seed44/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "candidate/diabetic-diabetic-wound/seed44/stdout.log": "bc3879dad933bc3dd301e2d9769ed035109fd54271debaaceb7629ba20598d82",
+    "candidate/diabetic-diabetic-wound/seed44/validation.txt": "822d5454e8b2d07ce4a14d12b35df94d76ee1697a331ca3e69aff4dd30c2a0e7",
+    "candidate/normal-full-model/seed42/bdm.toml": "5ff0dcf5ae117de4b92c248368f81fef2125a8850203e4d41bb763dde267e166",
+    "candidate/normal-full-model/seed42/receipt.json": "9aeaa045f24651ac1d0250fdf0cc4241e242e9744fc5ed2c2e4a18d2aa3f6a5e",
+    "candidate/normal-full-model/seed42/skibidy/metrics.csv": "b33e46c280481eedd46e8e673b1dcb9adaf5c67aea3369f09f3975644ff62b07",
+    "candidate/normal-full-model/seed42/skibidy/validation.json": "6d3ab681403cd4f79ee3db16aab0fa51bf6868bd92d69ecb3cf83070f4973225",
+    "candidate/normal-full-model/seed42/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "candidate/normal-full-model/seed42/stdout.log": "dfbf959238414409e80c058f4f69516eda13faeeff4ba7e856f540c40a06019e",
+    "candidate/normal-full-model/seed42/validation.txt": "58c288935ea9e806692a59e54a198bc951cf3fc471e6d966106bf7f6894d6706",
+    "candidate/normal-full-model/seed43/bdm.toml": "9065c1108d6af31e49123b7fe272c934aa94e59fb1ac4412f110c3e484f0808a",
+    "candidate/normal-full-model/seed43/receipt.json": "3c1501c7431738bbd719742d3d75cc435ff64062e61fe2a5a0dae871cba54852",
+    "candidate/normal-full-model/seed43/skibidy/metrics.csv": "bd7930839278bfad29a96788a9453ad93d2896067661cfdcac3a74a9f030f7eb",
+    "candidate/normal-full-model/seed43/skibidy/validation.json": "c92bfc0cabda9efffc24b91f35e9b6c6cdffa09465f8ea3527af55f6c6926dea",
+    "candidate/normal-full-model/seed43/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "candidate/normal-full-model/seed43/stdout.log": "b6ff1b3bc857398b6d359ff631f01cb03ad657c722b19625c981cf98158abf12",
+    "candidate/normal-full-model/seed43/validation.txt": "819d3d57c45a00a157accf1be58199982f4fb96bf65a23d9bce7f4df9d6138e7",
+    "candidate/normal-full-model/seed44/bdm.toml": "3e6cbfad1e1ee2c8ddd2a7f4047e1fcbd54fa90ab79204fc85ad242b2576631e",
+    "candidate/normal-full-model/seed44/receipt.json": "1884d888e82984e54d2ec7ae55904976a6e2499efe7aea15f9f0e0e7b98fbb44",
+    "candidate/normal-full-model/seed44/skibidy/metrics.csv": "6ac7aca9d6dc6460e03408d2d75e70d90bdb96bd1613dab61656cf4b6c327c4c",
+    "candidate/normal-full-model/seed44/skibidy/validation.json": "1bd12f83a16a6a360c41a093efe686daf9a1bf87bf3181bbb007e76317699b5c",
+    "candidate/normal-full-model/seed44/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "candidate/normal-full-model/seed44/stdout.log": "873e55229e70731aebf83cd651ff6b75d6263380e1d4221ab67d559cfe69acab",
+    "candidate/normal-full-model/seed44/validation.txt": "1585ce888c697f70f7877c4dd69266644df87d67979b5b34afc7504d30a4cead",
+    "candidate/normal-wound/seed42/bdm.toml": "ddb54ddda19d3ea2fc6937e61d4a314800c197270125692c16ae6c6cbcf40ab6",
+    "candidate/normal-wound/seed42/receipt.json": "0d516c32a9cee28c9113e59017121a1fd5702b1777fa6cce013cd5f4c451f677",
+    "candidate/normal-wound/seed42/skibidy/metrics.csv": "73e68d3bfa543040f770ed3e0c1a9ecfb44bb91955da0df99d01c5653aebb65f",
+    "candidate/normal-wound/seed42/skibidy/validation.json": "0439bb549c7c55d90733819aaf4359a5d77693e0d880690a75ce5da7411eda3d",
+    "candidate/normal-wound/seed42/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "candidate/normal-wound/seed42/stdout.log": "2d0ed3b917e3ad8b9c95fb013e11943b56b4bb341f5011a519557cb1155263a7",
+    "candidate/normal-wound/seed42/validation.txt": "8b0f2a43ab3d58b81df35b44431a48945d3e363576ca3baad23614ef5d758a60",
+    "candidate/normal-wound/seed43/bdm.toml": "173bf6c0e46b9548d6126e2f77c31e138ad5d9623dc75abb87bbac42da9dba98",
+    "candidate/normal-wound/seed43/receipt.json": "61cb97f0b274f9ee23d9d3e6670735b8baea0e1936aec627b9a5e720a2c7deb9",
+    "candidate/normal-wound/seed43/skibidy/metrics.csv": "8986dd1430c2b1cdf9cf89bd4a5228f6d6da2686f5874b519c3cb2f84f669fbb",
+    "candidate/normal-wound/seed43/skibidy/validation.json": "bdebd79400590c66eba7f94395369c42a723b214c98708d8a4c182c62319d14a",
+    "candidate/normal-wound/seed43/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "candidate/normal-wound/seed43/stdout.log": "dfbf959238414409e80c058f4f69516eda13faeeff4ba7e856f540c40a06019e",
+    "candidate/normal-wound/seed43/validation.txt": "0f211cd68241d8b02ae9b5f2024f13b9bf57a1efec7dea20ebc0481ea6f6d062",
+    "candidate/normal-wound/seed44/bdm.toml": "9f96cf8f95c9b5b66b351788eea918f7c0cf21525ecf6cb582dfea287d5a2f1a",
+    "candidate/normal-wound/seed44/receipt.json": "f8dd57cc592e87ff0ee3899740100771ccf6398d30caa70adf5e84fe3d051888",
+    "candidate/normal-wound/seed44/skibidy/metrics.csv": "d919cd981a34eff602753ba5fa4b6b300d5aea9fa32e84fa2ff6b35f20e81aa0",
+    "candidate/normal-wound/seed44/skibidy/validation.json": "aaf4c0c093c6326c905ce8f43fe0914d5715836eb6b6f33878a0d6f8fcbfb9db",
+    "candidate/normal-wound/seed44/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "candidate/normal-wound/seed44/stdout.log": "873e55229e70731aebf83cd651ff6b75d6263380e1d4221ab67d559cfe69acab",
+    "candidate/normal-wound/seed44/validation.txt": "c2d107b52e0c6d496c69f02136f0d5d907991a54c91b2329c8a670d5a443528e",
+    "candidate/runtime.json": "f1abdc41bbfa0a45a8515b569586c223a4351d937aea6488d61b42921ded2982",
+    "checks/no-baseline-build.log": "92e06203738bca7e2b30f01b86811938439b0a70fc6287136e8676f3748a2d7a",
+    "checks/no-baseline-test.log": "166226ce33ede29d30275a7e6b06091bb668a1c6b95f24565f3ba132c03fb546",
+    "checks/no-candidate-build.log": "389e5f707f3807bfff8ef361670c949d441acfbd69a5ed186c841ad4b2916764",
+    "checks/no-candidate-test-resolved.log": "511ee5e597fd0d9b0eb03383b5a2e90d28750e5cd754fe6471eab5700e9f51c3",
+    "checks/no-candidate-test.log": "3a31fbd7a828655b92a305a072dd6aca1b36b20151efde817f6dcbcea394a2f6",
+    "checks/no-clean-build.log": "9bda49a83cd2fab01232b014d95394ce990f6133baf1ec05637c29ce0033124c",
+    "checks/no-cohorts.log": "05b5592522343930f4cee3d32ebfb78348842a736e086cd6f8e9fc2690eb5a1b",
+    "checks/no-data-quality.log": "22e897227f39560e0cefd267f7c5b1452eca783f044103a89c8877151f8547fc",
+    "checks/no-python.log": "f51f0f136aff05a502600478788b334047b1ca1bb97fcb8ae1c7fd72582c0687",
+    "checks/no-sources.log": "ea898f649620751536018b2fbf2e9b5f874d1e15865b2bdf2a9bbcff480a198f",
+    "checks/no-test-loader.log": "9c5f00e23531117b383c33f723b562221a7423e7c8f33cc765f6605ec4195866",
+    "control/diabetic-diabetic-wound/seed42/bdm.toml": "0e84350231c04747bb96774c3dacb9cd56d4fc17349233c7a3de855666205c85",
+    "control/diabetic-diabetic-wound/seed42/receipt.json": "224fb6338f2877eec1291cc6944f8fcdc3c9cd9b0e3a339bd2a1b0f603995869",
+    "control/diabetic-diabetic-wound/seed42/skibidy/metrics.csv": "a54226829baababf83f92c434cc8efc5a71dc49c3fc9d9a643f1ece87e18a962",
+    "control/diabetic-diabetic-wound/seed42/skibidy/validation.json": "c0aec33b22547cb7988f1a573bdfb49e24778964bca047e2190f6af4ad396214",
+    "control/diabetic-diabetic-wound/seed42/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "control/diabetic-diabetic-wound/seed42/stdout.log": "b135d53ec521aa4aa06b2feac0841574d875987996260099051ac1f9daf5e3c9",
+    "control/diabetic-diabetic-wound/seed42/validation.txt": "39c071c494ec0ab099b26a078dd883125f8748b33c1e47951c783a7f1a7b35bd",
+    "control/diabetic-diabetic-wound/seed43/bdm.toml": "64de8c2f4519779842a6408eed6ca97d9e609815f5fee11653130f9b4bc04acb",
+    "control/diabetic-diabetic-wound/seed43/receipt.json": "64eb72423c62b9d9f4e71388693d60b7b1b13d8bacfa775775eac0ffa3b1e720",
+    "control/diabetic-diabetic-wound/seed43/skibidy/metrics.csv": "126a3185bcad73e6cb93a4a3ac54eaca0d7b93d69e2db706c539e7398da330f0",
+    "control/diabetic-diabetic-wound/seed43/skibidy/validation.json": "66bfcc95e25e62df4907a01480d597ecddf0612fceaa9ee2e95c622256073fee",
+    "control/diabetic-diabetic-wound/seed43/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "control/diabetic-diabetic-wound/seed43/stdout.log": "893838c4dadb34f3042848da10d1411b88450a2be1d2b03f442b0b40dbcfac02",
+    "control/diabetic-diabetic-wound/seed43/validation.txt": "c68dacb057765305ab0247e1dc9a9781005f01ad59491dc98c9287e4f6120d87",
+    "control/diabetic-diabetic-wound/seed44/bdm.toml": "590c0830edeb706767cb4e30641d1a31281b1bc132aeec54bdc5591633f6820d",
+    "control/diabetic-diabetic-wound/seed44/receipt.json": "d9f18407e90441848249f9bbc4eb40d8b30dad8e1f98cae5a3375e3a6b86c49e",
+    "control/diabetic-diabetic-wound/seed44/skibidy/metrics.csv": "3cc48f1c3097e1a760019ddb7f045d8e4f1bb5f8222ccf65aa4fae2c8d938be6",
+    "control/diabetic-diabetic-wound/seed44/skibidy/validation.json": "18580b3a2bbe23a674ec3cd967acf7889f7af55cd2edb9b6732ac8e352b73724",
+    "control/diabetic-diabetic-wound/seed44/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "control/diabetic-diabetic-wound/seed44/stdout.log": "ef86998e2a27b7900ac57c052c87420eb309dd914053fab0f73c10f06931d975",
+    "control/diabetic-diabetic-wound/seed44/validation.txt": "f58cd7990f5ee21c992cfea477ca619d56dfc5db6e6edb0d6d1f109b21db4c3b",
+    "control/normal-full-model/seed42/bdm.toml": "7d2dfd94950e1804bbf94811f203213118dee63e999386423d8257c1fa6d6fb6",
+    "control/normal-full-model/seed42/receipt.json": "010d75052cd3a93f6833322693d6183e920fed1ec835d099417c68370b346289",
+    "control/normal-full-model/seed42/skibidy/metrics.csv": "3ce5524f5be726032c936619ea7082f5fd1bede57d540aaf3eeacdcfe9b25963",
+    "control/normal-full-model/seed42/skibidy/validation.json": "7681c036061b9de3fe6144dee20179b2ed487ab07b4bac2f67628e9415502580",
+    "control/normal-full-model/seed42/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "control/normal-full-model/seed42/stdout.log": "37dcd13352c3fa6c4074aa797c4e472cc5678a27b07cd3cb4d9f76c32471c9c3",
+    "control/normal-full-model/seed42/validation.txt": "75247cb67df6cded7976ab37b03925f0889d170a4cf3f8369ccc585ff4ce924e",
+    "control/normal-full-model/seed43/bdm.toml": "e5d800134841ec5daf39d011e73108c68aa1dae1bba5865250db3a4862f18ea5",
+    "control/normal-full-model/seed43/receipt.json": "fb7bcffcfc4da0aec6df2175c30095919190da2f789f1d8a02bc257b1a721de0",
+    "control/normal-full-model/seed43/skibidy/metrics.csv": "f6dadfb8120f70c87698291a57d08cbae7f5a3ad7343b87f71d9775fadaa4673",
+    "control/normal-full-model/seed43/skibidy/validation.json": "56d2e6f51f2a6db828d0ea520c2af290a7859b5f20ea4d7afe7e153a6710ef2a",
+    "control/normal-full-model/seed43/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "control/normal-full-model/seed43/stdout.log": "37dcd13352c3fa6c4074aa797c4e472cc5678a27b07cd3cb4d9f76c32471c9c3",
+    "control/normal-full-model/seed43/validation.txt": "bb2b703cbb9b923745cb6cd7129ae078e381e3522f26dc2c46210f1632e35211",
+    "control/normal-full-model/seed44/bdm.toml": "183f44edd0069b54419df8519b22532c0cd4c2a3aec44af7ab78420cac1080ad",
+    "control/normal-full-model/seed44/receipt.json": "014b1d3d8fc4fb20424718e5b5203349e43f3f76cc407043bb64c59f1b08e95f",
+    "control/normal-full-model/seed44/skibidy/metrics.csv": "b7ccf2120bb3691e0d9d43fd745fb340ab94de9e8231c19c29b445d2a04defd3",
+    "control/normal-full-model/seed44/skibidy/validation.json": "e2bb4cb32f9f7a00d9b134d53aee270e2198f53fe1e99911b5734671bdf19d70",
+    "control/normal-full-model/seed44/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "control/normal-full-model/seed44/stdout.log": "e1768d1d55e7a705bd591981f9112fb7e35a5c7ce1346a54080153bfc0a271e6",
+    "control/normal-full-model/seed44/validation.txt": "4bee8b620f71879adc4aee9d66beb56301ff51680a84aad4a2694207234ec321",
+    "control/normal-wound/seed42/bdm.toml": "e5fb8e568ffe0960db715202b8d6320749c8f4e181d7542d2d0bdea894123a3a",
+    "control/normal-wound/seed42/receipt.json": "b6892dd6d2d64f96270d7231f2e39dccc1e8984455408614528bf15ce8cad661",
+    "control/normal-wound/seed42/skibidy/metrics.csv": "e26f5237b701865cb5419e89bcf92990ee49be2610e905d2f8cc47af3846d2be",
+    "control/normal-wound/seed42/skibidy/validation.json": "3ca16e2c6833fe73457125602b397784719d23dd7b91aa94da775038af458c1e",
+    "control/normal-wound/seed42/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "control/normal-wound/seed42/stdout.log": "e1768d1d55e7a705bd591981f9112fb7e35a5c7ce1346a54080153bfc0a271e6",
+    "control/normal-wound/seed42/validation.txt": "7bf813ac5dd0801f60126b1279c624d9a785eb0a54523bf5b4a11fede29a1083",
+    "control/normal-wound/seed43/bdm.toml": "9ca0c512c2d23234a45d8f74de2913da755ee53e586f9dd8a12ac0ce91893ed4",
+    "control/normal-wound/seed43/receipt.json": "875f69790556852ac94a7165ecaa602bfa7cafc411b31e063e921997b243ed3d",
+    "control/normal-wound/seed43/skibidy/metrics.csv": "ab878d99dabc929133ea5684d237830e636f7d2cda73056ab9866b2960ddf6ec",
+    "control/normal-wound/seed43/skibidy/validation.json": "51f0723715cbfd0b0f3956d525c1a4585ec0f4a5194308cddaf92d967b4dcb58",
+    "control/normal-wound/seed43/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "control/normal-wound/seed43/stdout.log": "873e55229e70731aebf83cd651ff6b75d6263380e1d4221ab67d559cfe69acab",
+    "control/normal-wound/seed43/validation.txt": "c8437b1221b4a7e626977ed0bd4bbe3047550bf70334439079cd1fd65aacb002",
+    "control/normal-wound/seed44/bdm.toml": "262a660f28b8036e498d9e571933e408728a402944f0f942df38d36fc23f5499",
+    "control/normal-wound/seed44/receipt.json": "5d530d9baf592dc2cb66fea66f09bef817cbc164178879712a3ee2cb445be069",
+    "control/normal-wound/seed44/skibidy/metrics.csv": "d094bba4489b19f28b795cf0641cc2901049bc9fd8077b889098572199604158",
+    "control/normal-wound/seed44/skibidy/validation.json": "9a7c31581c2f04820c61bef48c81ea51b1b95f4c1af01de49e1c6624117f8092",
+    "control/normal-wound/seed44/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "control/normal-wound/seed44/stdout.log": "b6ff1b3bc857398b6d359ff631f01cb03ad657c722b19625c981cf98158abf12",
+    "control/normal-wound/seed44/validation.txt": "eaba4116d701c3481b0316271128a716adff79002e2456a00aeb8a62ad00f761",
+    "control/runtime.json": "0c01e0455179a4b39a1a07314e5d14bb783df0c69b5595d429b7271c464f3219",
+    "diagnostic-adapter.py": "be0c6e125a28349d6103bbece127d36a067e6235892253739f0847de6f368999",
+    "export-evidence.py": "81e029fd8484443b654b4dc3a02963d7959877ae8d6e3fd923c4c2eaf5078a55",
+    "implementation.patch": "e7f5ec52c4bc790643ba7de180aeee9970789d323e92cf53eee83b572f13cc03",
+    "mmp-off-diagnostic/normal-wound/seed42/bdm.toml": "5663bf96120bc30a01e8382923b6b6d6d1abdc9addb887fe1666748b8c3c9ee7",
+    "mmp-off-diagnostic/normal-wound/seed42/receipt.json": "f8f60f3d0f05419261ceabaf83c309a497b2db8e9c24096420d2456374c342a1",
+    "mmp-off-diagnostic/normal-wound/seed42/skibidy/metrics.csv": "0b45b64edb7b45bd49942564eb8623c966d69d62d589c3715984f2eea6d9b978",
+    "mmp-off-diagnostic/normal-wound/seed42/skibidy/validation.json": "4b4c4989a9dcc755f546b18fe4a1dfde55a7bdf66f0d03861628b34128fc170b",
+    "mmp-off-diagnostic/normal-wound/seed42/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "mmp-off-diagnostic/normal-wound/seed42/stdout.log": "37dcd13352c3fa6c4074aa797c4e472cc5678a27b07cd3cb4d9f76c32471c9c3",
+    "mmp-off-diagnostic/normal-wound/seed42/validation.txt": "b5f166f06aea7b5da9b43831cf9554f6642d15c120f7c7280b4d37c190221081",
+    "mmp-off-diagnostic/normal-wound/seed43/bdm.toml": "9df65f19b3a36a016ffc0093c0e7908eef57c819d2889425b0386cafca5365a8",
+    "mmp-off-diagnostic/normal-wound/seed43/receipt.json": "728d094425b33af18df225c3008b91e5b405c1627ab1d4d98d42e43c141f8866",
+    "mmp-off-diagnostic/normal-wound/seed43/skibidy/metrics.csv": "01fa2cacbdab0f8bf6dc3ccac958daa2416ee2f0c08e01fd7207cff8cd13c3a9",
+    "mmp-off-diagnostic/normal-wound/seed43/skibidy/validation.json": "4f9976fd37ed3b11439878c20ab9ce3fd12cb25f3002dd7b819491f15a3c6c7e",
+    "mmp-off-diagnostic/normal-wound/seed43/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "mmp-off-diagnostic/normal-wound/seed43/stdout.log": "e1768d1d55e7a705bd591981f9112fb7e35a5c7ce1346a54080153bfc0a271e6",
+    "mmp-off-diagnostic/normal-wound/seed43/validation.txt": "c88d9b15619deb4449822378b96d0692620d9ea240a18acad5042de725ed1f85",
+    "mmp-off-diagnostic/normal-wound/seed44/bdm.toml": "f5c3be91fa60fbb7ae3b86475804f296f0797ba4745682beed79365d3ddc5728",
+    "mmp-off-diagnostic/normal-wound/seed44/receipt.json": "52a4258ea364df88873c44c6b3d7b4b7ed0fad768c37e6d8fd997d42019b9221",
+    "mmp-off-diagnostic/normal-wound/seed44/skibidy/metrics.csv": "757911633e20cbd4a63c6bcdbc8da957f5c22982ded976178e1b23bbf078f684",
+    "mmp-off-diagnostic/normal-wound/seed44/skibidy/validation.json": "9f4694b593b874e6d02d1cb6a769b5876be143cb33d2a01ccec53166f729d68b",
+    "mmp-off-diagnostic/normal-wound/seed44/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "mmp-off-diagnostic/normal-wound/seed44/stdout.log": "b6ff1b3bc857398b6d359ff631f01cb03ad657c722b19625c981cf98158abf12",
+    "mmp-off-diagnostic/normal-wound/seed44/validation.txt": "6b2c5a4aed8453e510b86db2d4f4fb70255b048551a67c9a5a6b776c4e5a5c25",
+    "mmp-off-diagnostic/runtime.json": "5b36d73f203d514701d3e7e13335b0f012e7551e2bafab3f7539d45bb8a03db6",
+    "run-experiment.sh": "7835c5bd4042b78628b75609b1c2eb49260d10e8842b92ad89b684f7514ba618"
+  },
+  "zip_sha256": "b852a8a917d17eeba205d4d9d97fef3a1154f3e0c16636bfb2f7441e224d700d"
+}

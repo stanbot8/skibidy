@@ -125,7 +125,7 @@ Each module directory in `modules/` contains a `config.toml` owning one TOML sub
 | `glucose/` | `[skin.glucose]` | ATP availability, diabetic hyperglycemia gating |
 | `temperature/` | `[skin.temperature]` | Q10 enzymatic rate scaling, wound surface cooling |
 | `lactate/` | `[skin.lactate]` | HIF-1a VEGF boost, collagen synthesis |
-| `nitric_oxide/` | `[skin.nitric_oxide]` | Vasodilation, antimicrobial, anti-fibrotic |
+| `nitric_oxide/` | `[skin.nitric_oxide]` | Vasodilation, antimicrobial; direct collagen response unmodeled |
 | `ph/` | `[skin.ph]` | Wound bed pH gradient, acid mantle |
 | `senescence/` | `[skin.senescence]` | DNA damage accumulation, SASP output |
 | `neuropathy/` | `[skin.neuropathy]` | Nerve density, neuropeptide signaling |

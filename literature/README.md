@@ -73,3 +73,7 @@ remaining biological failures for the activated-cell collagen repair.
 The [lactate VEGF signal experiment](lactate-signal-20261007/README.md)
 records the evidence and matched-seed effects of restoring lactate signaling
 in oxygenated dermal and epidermal wound tissue.
+
+The [NO collagen evidence and matrix-loss diagnosis](no-collagen-20261007/README.md)
+records the removal of an unsupported inhibitory coupling, the remaining
+biological failures and an isolated MMP collagen-breakdown experiment.
