@@ -375,7 +375,7 @@ inflammation.decay,inflammation,0.003,assumed,,Background clearance
 inflammation.migration_threshold,inflammation,1.0,assumed,,Above this migration suppressed
 inflammation.prolif_threshold,inflammation,1.5,assumed,,Above this proliferation suppressed
 inflammation.split_inflammation_enabled,inflammation,false,assumed,,Use separate pro/anti fields
-lactate.enabled,lactate,true,literature,doi:10.1089/ten.2007.0115 (Hunt et al. 2007),Lactate hypoxia metabolite module
+lactate.enabled,lactate,true,literature,doi:10.1089/ars.2007.1674 (Hunt et al. 2007),Lactate metabolite and oxygenated VEGF signal module
 lactate.diffusion,lactate,0.01,assumed,,Tissue diffusion
 lactate.decay,lactate,0.02,assumed,,Clearance rate
 lactate.production_rate,lactate,0.003,assumed,,Hypoxia-driven production

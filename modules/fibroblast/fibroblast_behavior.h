@@ -239,7 +239,8 @@ struct FibroblastBehavior : public Behavior {
       if (sp->diabetic.mode) {
         deposit *= sp->diabetic.collagen_factor;
       }
-      // Lactate boost (Hunt et al. 2007, doi:10.1089/ten.2007.0115)
+      // Assumed linear lactate boost. Rat wound deposition evidence:
+      // Trabold et al. 2003, doi:10.1046/j.1524-475x.2003.11621.x.
       if (sp->lactate.enabled) {
         auto* lac_grid = rm->GetDiffusionGrid(fields::kLactateId);
         if (lac_grid) {

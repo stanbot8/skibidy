@@ -9,7 +9,7 @@ namespace skibidy {
 struct LactateParams {
 
   // Lactate (hypoxia metabolite and angiogenesis signal)
-  // Hunt et al. 2007 (doi:10.1089/ten.2007.0115)
+  // Hunt et al. 2007 (doi:10.1089/ars.2007.1674)
   bool enabled = true;
   real_t diffusion = 0.01;  // tissue diffusion
   real_t decay = 0.02;  // clearance rate

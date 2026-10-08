@@ -8,10 +8,11 @@ mmp_ecm_remodeling:
     title: Expression of matrix-metalloproteinases and their inhibitors in the wounds of diabetic and non-diabetic patients
     journal: Diabetologia 45:1011-1016
     doi: 10.1007/s00125-002-0868-8
-    notes: 'MMP-1 elevated 65-fold and MMP-9 14-fold in diabetic vs acute wounds. TIMP-2 reduced 2-fold. Supports diabetic_mmp_factor=3.0
-      and diabetic_timp_production_factor=0.4 parameters.
-
-      '
+    notes: >-
+      Chronic diabetic ulcer biopsies versus acute traumatic wounds showed MMP-1 65-fold, MMP-9 14-fold,
+      pro-MMP-2 threefold, active MMP-2 sixfold and MMP-8 twofold elevations. TIMP-2 was reduced by half.
+      These are protein concentrations, not per-cell production rates. They motivate imbalance but do not
+      derive the model's pooled diabetic MMP multiplier or its TIMP-1 production modifier.
   - id: nagase1999
     authors: Nagase H, Woessner JF
     year: 1999
@@ -19,7 +20,7 @@ mmp_ecm_remodeling:
     journal: J Biol Chem 274(31):21491-21494
     doi: 10.1074/jbc.274.31.21491
     notes: 'Review of MMP family biochemistry. MMP-1 (fibroblast collagenase), MMP-9 (gelatinase B from macrophages/neutrophils).
-      Supports mmp_diffusion and fibroblast MMP production parameters.
+      Motivates enzyme identities and mechanisms without measuring the model diffusion or production coefficients.
 
       '
   - id: ladwig2002
@@ -29,7 +30,7 @@ mmp_ecm_remodeling:
       are inversely correlated with healing of pressure ulcers
     journal: Wound Repair Regen 10(1):26-37
     doi: 10.1046/j.1524-475x.2002.10903.x
-    notes: 'High MMP-9:TIMP-1 ratio inversely correlates with healing. Supports MMP-collagen degradation rate calibration.
+    notes: 'High MMP-9:TIMP-1 ratio inversely correlates with pressure-ulcer healing. This association does not calibrate the model collagen degradation coefficient.
 
       '
   - id: pilcher1997

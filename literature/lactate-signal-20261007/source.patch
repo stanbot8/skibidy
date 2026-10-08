@@ -1,0 +1,42 @@
+diff --git a/modules/lactate/source_hook.h b/modules/lactate/source_hook.h
+index eb644af..955822f 100644
+--- a/modules/lactate/source_hook.h
++++ b/modules/lactate/source_hook.h
+@@ -11,2 +11,2 @@ namespace skibidy {
+-// Lactate stabilizes HIF-1alpha, boosting VEGF production (Warburg effect
+-// in wound healing). Perfusion clears lactate via venous washout.
++// Lactate can signal VEGF production under aerobic conditions as well.
++// Perfusion clears lactate via venous washout. Aerobic production is not modeled.
+@@ -18 +18 @@ namespace skibidy {
+-// Hunt et al. 2007 (doi:10.1089/wound.2007.0402)
++// Hunt et al. 2007 (doi:10.1089/ars.2007.1674)
+@@ -42 +42,10 @@ struct LactateSourceHook {
+-  // Dermal: hypoxia-driven production + perfusion clearance
++  // Shared tissue-level proxy for lactate-responsive VEGF producers.
++  // The linear coefficient is assumed, not a fitted physical dose response.
++  inline void ProduceVEGF(size_t idx, const SignalBoard& sig) {
++    if (!sig.do_vegf || !vegf_grid) return;
++    real_t lactate = lactate_grid->GetConcentration(idx);
++    real_t boost = sig.vegf_prod_rate * sp_->lactate.vegf_boost * lactate;
++    if (boost > 1e-10) vegf_grid->ChangeConcentrationBy(idx, boost);
++  }
++
++  // Dermal: hypoxic production, perfusion clearance and VEGF signaling.
+@@ -64,0 +74 @@ struct LactateSourceHook {
++    ProduceVEGF(snap.idx, sig);
+@@ -83,14 +93 @@ struct LactateSourceHook {
+-    // Lactate-HIF-1a VEGF boost (merged from ApplyVEGFBoost)
+-    if (sig.do_vegf && vegf_grid) {
+-      real_t lac_val = lactate_grid->GetConcentration(snap.idx);
+-      if (lac_val > 1e-10) {
+-        if (snap.o2 < sig.vegf_threshold) {
+-          real_t base_vegf = sig.vegf_prod_rate *
+-                             (sig.vegf_threshold - snap.o2) / sig.vegf_threshold;
+-          real_t boost = base_vegf * sp_->lactate.vegf_boost * lac_val;
+-          if (boost > 1e-10) {
+-            vegf_grid->ChangeConcentrationBy(snap.idx, boost);
+-          }
+-        }
+-      }
+-    }
++    ProduceVEGF(snap.idx, sig);

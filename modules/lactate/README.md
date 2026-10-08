@@ -2,17 +2,17 @@
 
 # Lactate
 
-Anaerobic glycolysis metabolite that accumulates in hypoxic wound tissue. Wound lactate levels reach 4 to 12 mM, approximately 3 to 5 times higher than arterial blood (Trabold et al. 2003). Lactate acts as an angiogenesis signal by stabilizing HIF-1alpha (boosting VEGF production) and directly stimulates collagen synthesis by fibroblasts.
+Lactate is a wound metabolite and tissue repair signal with both hypoxic and aerobic sources. The model represents a normalized lactate field, hypoxic production, perfusion clearance, VEGF signaling and a collagen synthesis modifier.
 
 ## Biology
 
-When tissue oxygen drops below a critical threshold, cells shift from aerobic oxidative phosphorylation to anaerobic glycolysis, producing lactate as an end product. In wounds, the avascular wound bed creates a steep oxygen gradient: the wound center is profoundly hypoxic, and lactate accumulates there to concentrations several-fold higher than in perfused tissue.
+Hypoxia can increase glycolytic lactate production, but it is only one source of wound lactate. [Trabold et al. 2003](https://pubmed.ncbi.nlm.nih.gov/14617293/) describe concentrations of 4 to 12 mM and signaling under normal oxygen conditions. The model's concentration has no established conversion to millimolar units.
 
-Rather than being merely a metabolic waste product, wound lactate serves important signaling functions. It stabilizes hypoxia-inducible factor 1-alpha (HIF-1alpha) even under normoxic conditions, which boosts vascular endothelial growth factor (VEGF) production in wound fibroblasts and macrophages (Constant et al. 2000). This lactate-HIF-1alpha-VEGF axis provides a metabolic signal for angiogenesis that complements the direct hypoxia-driven VEGF pathway.
+[Constant et al. 2000](https://pubmed.ncbi.nlm.nih.gov/11115148/) found increased VEGF expression in lactate-treated cultured macrophages. [Hunt et al. 2007](https://pubmed.ncbi.nlm.nih.gov/17567242/) found HIF-1alpha stabilization and increased VEGF in aerobic human endothelial cell cultures, with increased VEGF and angiogenesis in mouse lactate-polymer implants. These findings support a lactate-driven VEGF signal independent of the hypoxic VEGF trigger. The model does not resolve the responding cell types or HIF molecular kinetics.
 
-Lactate also directly stimulates collagen synthesis by fibroblasts, approximately doubling the deposition rate at wound-relevant concentrations, through a redox-dependent mechanism independent of hypoxia itself (Hunt et al. 2007). This ensures that the proliferative and remodeling phases proceed robustly even in the metabolically stressed wound environment.
+In rat wounds, Trabold et al. added 2 to 3 mM lactate using hydrolysable polyglycolide and measured a 50% increase in collagen deposition. This is an intervention-specific deposition result, not a universal doubling of fibroblast synthesis. Oxygen remains necessary for growth and matrix deposition. Hunt et al. found that arterial hypoxia abrogated implant angiogenesis despite lactate exposure.
 
-Lactate production couples to glucose availability: anaerobic glycolysis consumes glucose as substrate. When the glucose module is active, the lactate production rate scales with local glucose concentration. This means diabetic hyperglycemia produces more lactate under equal hypoxia, reflecting the increased glycolytic substrate available.
+When the glucose module is active, the model scales hypoxic lactate production with local glucose concentration. Increased production at equal hypoxia under hyperglycemia follows from this assumed linear coupling, rather than a fitted diabetic dose response.
 
 As vascular perfusion is restored through angiogenesis, lactate is cleared via venous washout, providing a natural feedback loop that resolves the metabolic signal as the wound heals.
 
@@ -27,12 +27,15 @@ Single diffusing continuum field representing normalized tissue lactate concentr
 - Active in both epidermal wound and dermal wound voxels
 
 **Lactate clearance:**
-- Background PDE decay (systemic clearance, maintains equilibrium)
+- Background PDE decay, which approaches zero without sources
 - Perfusion-driven washout proportional to local vascular density (only where perfusion exceeds 0.1)
 
 **Downstream signaling (via source hook):**
-- HIF-1alpha stabilization: boosts VEGF production proportional to `vegf_boost * lactate * base_vegf_rate`, applied where O2 is below the VEGF production threshold
+- Lactate-driven VEGF production proportional to `vegf_boost * lactate * base_vegf_rate`, applied in dermal and epidermal wound voxels after injury regardless of the hypoxia threshold
+- The base rate retains angiogenesis module enablement, diabetic scaling and time taper. Direct hypoxic VEGF production remains a separate source
 - Collagen boost: read by fibroblast behavior to scale collagen deposition by `(1 + collagen_boost * lactate)`
+
+The linear response and its coefficients are assumptions. Hunt et al. describe concentration-dependent responses that decline at high lactate exposure. A physical concentration mapping is needed before introducing that curve. Aerobic lactate production and transport through specific monocarboxylate transporters are not represented. Endogenous production still requires hypoxia, so the corrected signal acts on lactate already produced, retained or diffused into oxygenated wound tissue.
 
 ## Parameters
 
@@ -41,13 +44,13 @@ From modules/lactate/config.toml and params.h:
 | Parameter | Default | Units | Description | Source |
 |-----------|---------|-------|-------------|--------|
 | `enabled` | true | bool | Master switch | Convention |
-| `diffusion` | 0.01 | - | Tissue diffusion coefficient | Calibrated |
-| `decay` | 0.02 | per step | Systemic clearance (maintains equilibrium) | Calibrated |
-| `production_rate` | 0.003 | per step | Anaerobic glycolysis rate under hypoxia | Trabold et al. 2003 ([DOI](https://doi.org/10.1046/j.1524-475x.2003.11621.x)) |
-| `o2_threshold` | 0.3 | normalized | O2 below this triggers lactate production | Trabold et al. 2003 ([DOI](https://doi.org/10.1046/j.1524-475x.2003.11621.x)) |
-| `vegf_boost` | 0.03 | multiplier | HIF-1alpha stabilization boost to VEGF production | Constant et al. 2000 ([DOI](https://doi.org/10.1046/j.1524-475x.2000.00353.x)) |
-| `collagen_boost` | 0.03 | multiplier | Collagen synthesis enhancement factor for fibroblasts | Hunt et al. 2007 ([DOI](https://doi.org/10.1089/ars.2007.1674)) |
-| `perfusion_clearance` | 0.005 | per step | Perfusion-driven lactate venous washout rate | Calibrated |
+| `diffusion` | 0.01 | - | Tissue diffusion coefficient | Assumed |
+| `decay` | 0.02 | per model time | Background field loss | Assumed |
+| `production_rate` | 0.003 | per step | Hypoxic lactate production | Assumed |
+| `o2_threshold` | 0.3 | normalized | O2 below this triggers lactate production | Assumed |
+| `vegf_boost` | 0.03 | multiplier | Lactate-driven VEGF production factor | Assumed |
+| `collagen_boost` | 0.03 | multiplier | Collagen synthesis enhancement factor | Assumed |
+| `perfusion_clearance` | 0.005 | per step | Perfusion-driven lactate washout rate | Assumed |
 
 ## Coupling
 
@@ -57,13 +60,14 @@ From modules/lactate/config.toml and params.h:
 | O2 | oxygen | Hypoxia fraction drives lactate production (below `o2_threshold`) |
 | Glucose | glucose | Scales lactate production by glucose availability (anaerobic glycolysis substrate) |
 | Vascular | angiogenesis | Perfusion-driven lactate clearance (venous washout) |
-| VEGF | angiogenesis | Base VEGF production rate read from SignalBoard for HIF-1alpha boost calculation |
+
+The angiogenesis source hook supplies the VEGF base rate through SignalBoard.
 
 ### Writes
 | Field | Consumer modules | What is written |
 |-------|-----------------|-----------------|
 | Lactate | fibroblast (collagen boost) | Hypoxia-driven production, perfusion clearance |
-| VEGF | angiogenesis | HIF-1alpha stabilization boosts VEGF production in wound voxels |
+| VEGF | angiogenesis | Lactate-driven VEGF production in both wound tissue compartments |
 
 ## Source files
 

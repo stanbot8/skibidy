@@ -8,14 +8,14 @@ namespace skibidy {
 
 // Source hook for lactate module.
 // Hypoxic wound tissue shifts to anaerobic glycolysis, producing lactate.
-// Lactate stabilizes HIF-1alpha, boosting VEGF production (Warburg effect
-// in wound healing). Perfusion clears lactate via venous washout.
+// Lactate can signal VEGF production under aerobic conditions as well.
+// Perfusion clears lactate via venous washout. Aerobic production is not modeled.
 // Production rate now couples to both O2 deficit AND glucose availability:
 //   lactate_rate = production_rate * (1 - O2/threshold) * glucose
 // This ensures lactate accumulation requires glucose substrate (anaerobic
 // glycolysis consumes glucose), making the diabetic hyperglycemia phenotype
 // produce more lactate under equal hypoxia.
-// Hunt et al. 2007 (doi:10.1089/wound.2007.0402)
+// Hunt et al. 2007 (doi:10.1089/ars.2007.1674)
 // Trabold et al. 2003 (doi:10.1046/j.1524-475x.2003.11621.x)
 struct LactateSourceHook {
   DiffusionGrid* lactate_grid = nullptr;
@@ -39,7 +39,16 @@ struct LactateSourceHook {
     }
   }
 
-  // Dermal: hypoxia-driven production + perfusion clearance
+  // Shared tissue-level proxy for lactate-responsive VEGF producers.
+  // The linear coefficient is assumed, not a fitted physical dose response.
+  inline void ProduceVEGF(size_t idx, const SignalBoard& sig) {
+    if (!sig.do_vegf || !vegf_grid) return;
+    real_t lactate = lactate_grid->GetConcentration(idx);
+    real_t boost = sig.vegf_prod_rate * sp_->lactate.vegf_boost * lactate;
+    if (boost > 1e-10) vegf_grid->ChangeConcentrationBy(idx, boost);
+  }
+
+  // Dermal: hypoxic production, perfusion clearance and VEGF signaling.
   inline void ApplyDermal(const VoxelSnapshot& snap, SignalBoard& sig) {
     if (!snap.in_wound || !snap.post_wound) return;
     if (snap.o2 < sp_->lactate.o2_threshold) {
@@ -62,6 +71,7 @@ struct LactateSourceHook {
                                sp_->lactate.perfusion_clearance * snap.vasc);
       lactate_grid->ChangeConcentrationBy(snap.idx, -clear);
     }
+    ProduceVEGF(snap.idx, sig);
   }
 
   // Epidermal wound: hypoxia production + lactate-HIF-1a VEGF boost
@@ -80,20 +90,7 @@ struct LactateSourceHook {
       }
     }
 
-    // Lactate-HIF-1a VEGF boost (merged from ApplyVEGFBoost)
-    if (sig.do_vegf && vegf_grid) {
-      real_t lac_val = lactate_grid->GetConcentration(snap.idx);
-      if (lac_val > 1e-10) {
-        if (snap.o2 < sig.vegf_threshold) {
-          real_t base_vegf = sig.vegf_prod_rate *
-                             (sig.vegf_threshold - snap.o2) / sig.vegf_threshold;
-          real_t boost = base_vegf * sp_->lactate.vegf_boost * lac_val;
-          if (boost > 1e-10) {
-            vegf_grid->ChangeConcentrationBy(snap.idx, boost);
-          }
-        }
-      }
-    }
+    ProduceVEGF(snap.idx, sig);
   }
 };
 

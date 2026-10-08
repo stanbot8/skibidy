@@ -1,0 +1,1193 @@
+{
+  "status": "complete_byte_verified",
+  "control_commit": "afe1c62a4dda5f3cc9e4df4bc8bfc945f68be38e",
+  "source_patch_sha256": "b7150ac101676ecccca51528320d49a694c30a96e3ff878140b21401a86cd850",
+  "paired_configurations_identical_except_output": true,
+  "requested_runs": 18,
+  "runs": [
+    {
+      "arm": "control",
+      "cohort": "normal-wound",
+      "seed": 42,
+      "rows": 72,
+      "last_time_h": 710.0,
+      "validation_status": "fail"
+    },
+    {
+      "arm": "control",
+      "cohort": "normal-wound",
+      "seed": 43,
+      "rows": 72,
+      "last_time_h": 710.0,
+      "validation_status": "fail"
+    },
+    {
+      "arm": "control",
+      "cohort": "normal-wound",
+      "seed": 44,
+      "rows": 72,
+      "last_time_h": 710.0,
+      "validation_status": "fail"
+    },
+    {
+      "arm": "control",
+      "cohort": "diabetic-diabetic-wound",
+      "seed": 42,
+      "rows": 42,
+      "last_time_h": 820.0,
+      "validation_status": "fail"
+    },
+    {
+      "arm": "control",
+      "cohort": "diabetic-diabetic-wound",
+      "seed": 43,
+      "rows": 42,
+      "last_time_h": 820.0,
+      "validation_status": "fail"
+    },
+    {
+      "arm": "control",
+      "cohort": "diabetic-diabetic-wound",
+      "seed": 44,
+      "rows": 42,
+      "last_time_h": 820.0,
+      "validation_status": "fail"
+    },
+    {
+      "arm": "control",
+      "cohort": "normal-full-model",
+      "seed": 42,
+      "rows": 72,
+      "last_time_h": 710.0,
+      "validation_status": "fail"
+    },
+    {
+      "arm": "control",
+      "cohort": "normal-full-model",
+      "seed": 43,
+      "rows": 72,
+      "last_time_h": 710.0,
+      "validation_status": "fail"
+    },
+    {
+      "arm": "control",
+      "cohort": "normal-full-model",
+      "seed": 44,
+      "rows": 72,
+      "last_time_h": 710.0,
+      "validation_status": "fail"
+    },
+    {
+      "arm": "candidate",
+      "cohort": "normal-wound",
+      "seed": 42,
+      "rows": 72,
+      "last_time_h": 710.0,
+      "validation_status": "fail"
+    },
+    {
+      "arm": "candidate",
+      "cohort": "normal-wound",
+      "seed": 43,
+      "rows": 72,
+      "last_time_h": 710.0,
+      "validation_status": "fail"
+    },
+    {
+      "arm": "candidate",
+      "cohort": "normal-wound",
+      "seed": 44,
+      "rows": 72,
+      "last_time_h": 710.0,
+      "validation_status": "fail"
+    },
+    {
+      "arm": "candidate",
+      "cohort": "diabetic-diabetic-wound",
+      "seed": 42,
+      "rows": 42,
+      "last_time_h": 820.0,
+      "validation_status": "fail"
+    },
+    {
+      "arm": "candidate",
+      "cohort": "diabetic-diabetic-wound",
+      "seed": 43,
+      "rows": 42,
+      "last_time_h": 820.0,
+      "validation_status": "fail"
+    },
+    {
+      "arm": "candidate",
+      "cohort": "diabetic-diabetic-wound",
+      "seed": 44,
+      "rows": 42,
+      "last_time_h": 820.0,
+      "validation_status": "fail"
+    },
+    {
+      "arm": "candidate",
+      "cohort": "normal-full-model",
+      "seed": 42,
+      "rows": 72,
+      "last_time_h": 710.0,
+      "validation_status": "fail"
+    },
+    {
+      "arm": "candidate",
+      "cohort": "normal-full-model",
+      "seed": 43,
+      "rows": 72,
+      "last_time_h": 710.0,
+      "validation_status": "fail"
+    },
+    {
+      "arm": "candidate",
+      "cohort": "normal-full-model",
+      "seed": 44,
+      "rows": 72,
+      "last_time_h": 710.0,
+      "validation_status": "fail"
+    }
+  ],
+  "runtime_identity": {
+    "control": {
+      "binary": "/mnt/d/dev/skibidy/build/skibidy",
+      "binary_sha256": "069fb62a98dfe127664ccba0237da4225ba3ea77140201a29adb7e43516aa815",
+      "dependencies": [
+        {
+          "path": "/mnt/d/dev/skibidy/build/libskibidy.so",
+          "sha256": "86af7f07f0aae6e9f17aa1b0a4149e0395e1d4b8c90a914750c1f44f4bd2f452"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "sha256": "3a15d66867d83762c7f2f1e37359cb8f6c5743edb369c65285cb0b1c4f7498bf"
+        },
+        {
+          "path": "/root/biodynamo-v1.05.169/lib/libbiodynamo.so",
+          "sha256": "e6279202295cd83f77f11127839b513641530e20f9aabe9716f5a063a068c0c5"
+        },
+        {
+          "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libCore.so",
+          "sha256": "06675a6757905c982787572cdbdc6efdc3ba07ef4563f92479ad3059667a6e4c"
+        },
+        {
+          "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libRIO.so",
+          "sha256": "e1d59bc0021554d85bb08d132e01e7778e06318259ecce04a1af03dad3d8f969"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libgomp.so.1.0.0",
+          "sha256": "135f3c8f006d2fe5e68e51281c7974cb991a03de3bfb3593d68d174dfcf854d1"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33",
+          "sha256": "1fd75fe70354a416d75aef22bcae68c47bd25d20e2d0568c30b1a9838cf62f11"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libm.so.6",
+          "sha256": "fce00b6f25f459cf4ae0b7fae4257909a1a8a86f9149e7c029a5d617baf1ccd0"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libgcc_s.so.1",
+          "sha256": "d93224d2b0dab4247598be683adca02f5cf00586f99c187579cd7e92058fb7cb"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+          "sha256": "c20a2dc8917c755f02b94049356320fe1f62ac7d9f8994731f807d9df39302da"
+        },
+        {
+          "path": "/root/biodynamo-v1.05.169/lib/liboptim.so",
+          "sha256": "6c6b7acce3bd33fd0cfe4cf3ce4f9bb5728bae7a51d782641e20497a8b8de3fa"
+        },
+        {
+          "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libNet.so",
+          "sha256": "f3effa3a996e84678fd5eee8efd79fbdc2e45c455556d26902463ee5de9edb9b"
+        },
+        {
+          "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libHist.so",
+          "sha256": "7938e31d434019df6b2d808f9e429438ab892599cc90169c532127bb432423f8"
+        },
+        {
+          "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libGraf.so",
+          "sha256": "38d4384c99c26b3f6a1a3f04ca7a5dac3ee1663b33bdebfa89caf4e1d3884e93"
+        },
+        {
+          "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libGpad.so",
+          "sha256": "d1f736ea9a88df5927e97068c84ccc7f4c9cb09647d4b39060bd5960429a5e9b"
+        },
+        {
+          "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libMathCore.so",
+          "sha256": "e94a6e1ffa9dcd645c7357eb63c7582e2c9a41b53510947f00dfe4d39f2ff24e"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libmpi_cxx.so.40.30.1",
+          "sha256": "bf970d3b7ffdd471e5d073ff3bd689f2ef26a0b318eec5cfcef6acab802fe24b"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libmpi.so.40.30.6",
+          "sha256": "9055018b12757e830591aa0283e485e471f1f2a06d3bc0dd5fb35ab00386c172"
+        },
+        {
+          "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libThread.so",
+          "sha256": "0f144227d1c163cb07354c532b40170e36e2156eb0d5f06b4d486c47bccc8230"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3",
+          "sha256": "8ba4a98f44d763c2e648755ef452025919e28633339f23ff605044de3483a25d"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/openblas-pthread/liblapack.so.3",
+          "sha256": "1e82245607c58d13405580c71b9b0134b5a952686ac861f979fc7a886ebd4229"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libssl.so.3",
+          "sha256": "a40e7b67489bbd257e432c700ff8f6a1ad796425b5eccecdc2930127fdd86624"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libcrypto.so.3",
+          "sha256": "6866ed711dab8927e1bf82bf1cd30e828bdfc34f3cc1e83b1c9eb01ce6c37d9a"
+        },
+        {
+          "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libMatrix.so",
+          "sha256": "1cf806b1225fdb97a0c7d9b9f8a0824f7e95a36e998632d8d028ec29b3492042"
+        },
+        {
+          "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libImt.so",
+          "sha256": "2cb1ad06392ec81ab4a15647d2a6c550509e054b17723463c078f40af608ded1"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libopen-pal.so.40.30.3",
+          "sha256": "59c4d9b111cd3ec326a4df475a338daae050496087c67e86956187056fdc3051"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libopen-rte.so.40.30.3",
+          "sha256": "26467e1da428d31dab924ddbc50bc6ade75da47dbb82c77498a5f127a5466ba7"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libhwloc.so.15.7.0",
+          "sha256": "86dff44a023254d997cea910b9a51f35afefe6780f4b5530f974a2009ba47487"
+        },
+        {
+          "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libtbb.so.12.9",
+          "sha256": "c45c725b828eaa6eee6fafe34b4dcc94b9ad2498b008d83c5090e2c1be557f1b"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so",
+          "sha256": "bfc7492adbf84a8f567720a9e1fae2afc18f3d817da233e7f4d453683485308e"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libgfortran.so.5.0.0",
+          "sha256": "342618ccfebe840446e4ef2b7893f4161b2084845e570f42d68a70bfde58a58d"
+        },
+        {
+          "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libMultiProc.so",
+          "sha256": "9c4ee5bf798308fcaba0ad3719f031ee6450e90a8e64f218879b769e61631607"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libevent_core-2.1.so.7.0.1",
+          "sha256": "7fa4592ebaec38a7c1ce665c29244fbaae249cab6c1dbdd5024418dcdfd4898e"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libevent_pthreads-2.1.so.7.0.1",
+          "sha256": "e386329c9c16032b489bebbd545750f35eafc0f50ab88ef0c986a31acb4b47a2"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libz.so.1.3",
+          "sha256": "86200da370f20476a2507e9097a789b5ef97269b4ca8d5e164ad82dab9d99892"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libudev.so.1.7.8",
+          "sha256": "4298228175fa62a36af88b1afd4406cdd8b1bf166621f957d0dbbde45a698fe5"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libcap.so.2.66",
+          "sha256": "6ac6abc86ac891c6e13486470e26f1d939f47fda9e6b5d5508a7f5ec881adc84"
+        }
+      ],
+      "ldd": "\tlinux-vdso.so.1 (0x000077b55c6d1000)\n\tlibskibidy.so => /mnt/d/dev/skibidy/build/libskibidy.so (0x000077b55c438000)\n\tlibc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x000077b55c200000)\n\tlibbiodynamo.so => /root/biodynamo-v1.05.169/lib/libbiodynamo.so (0x000077b55be00000)\n\tlibCore.so => /root/biodynamo-v1.05.169/third_party/root/lib/libCore.so (0x000077b55b800000)\n\tlibRIO.so => /root/biodynamo-v1.05.169/third_party/root/lib/libRIO.so (0x000077b55b400000)\n\tlibgomp.so.1 => /lib/x86_64-linux-gnu/libgomp.so.1 (0x000077b55c1aa000)\n\tlibstdc++.so.6 => /lib/x86_64-linux-gnu/libstdc++.so.6 (0x000077b55b000000)\n\tlibm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x000077b55b317000)\n\tlibgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x000077b55c17c000)\n\t/lib64/ld-linux-x86-64.so.2 (0x000077b55c6d3000)\n\tliboptim.so => /root/biodynamo-v1.05.169/lib/liboptim.so (0x000077b55c115000)\n\tlibNet.so => /root/biodynamo-v1.05.169/third_party/root/lib/libNet.so (0x000077b55af19000)\n\tlibHist.so => /root/biodynamo-v1.05.169/third_party/root/lib/libHist.so (0x000077b55aa00000)\n\tlibGraf.so => /root/biodynamo-v1.05.169/third_party/root/lib/libGraf.so (0x000077b55a600000)\n\tlibGpad.so => /root/biodynamo-v1.05.169/third_party/root/lib/libGpad.so (0x000077b55a912000)\n\tlibMathCore.so => /root/biodynamo-v1.05.169/third_party/root/lib/libMathCore.so (0x000077b55a200000)\n\tlibmpi_cxx.so.40 => /lib/x86_64-linux-gnu/libmpi_cxx.so.40 (0x000077b55c0fc000)\n\tlibmpi.so.40 => /lib/x86_64-linux-gnu/libmpi.so.40 (0x000077b55a4ce000)\n\tlibThread.so => /root/biodynamo-v1.05.169/third_party/root/lib/libThread.so (0x000077b55b2aa000)\n\tlibblas.so.3 => /lib/x86_64-linux-gnu/libblas.so.3 (0x000077b55aeac000)\n\tliblapack.so.3 => /lib/x86_64-linux-gnu/liblapack.so.3 (0x000077b559a00000)\n\tlibssl.so.3 => /lib/x86_64-linux-gnu/libssl.so.3 (0x000077b55a868000)\n\tlibcrypto.so.3 => /lib/x86_64-linux-gnu/libcrypto.so.3 (0x000077b559400000)\n\tlibMatrix.so => /root/biodynamo-v1.05.169/third_party/root/lib/libMatrix.so (0x000077b559279000)\n\tlibImt.so => /root/biodynamo-v1.05.169/third_party/root/lib/libImt.so (0x000077b55c0e8000)\n\tlibopen-pal.so.40 => /lib/x86_64-linux-gnu/libopen-pal.so.40 (0x000077b55a14c000)\n\tlibopen-rte.so.40 => /lib/x86_64-linux-gnu/libopen-rte.so.40 (0x000077b55a090000)\n\tlibhwloc.so.15 => /lib/x86_64-linux-gnu/libhwloc.so.15 (0x000077b55a46d000)\n\tlibtbb.so.12 => /root/biodynamo-v1.05.169/third_party/root/lib/libtbb.so.12 (0x000077b5599a7000)\n\tlibopenblas.so.0 => /lib/x86_64-linux-gnu/libopenblas.so.0 (0x000077b556e98000)\n\tlibgfortran.so.5 => /lib/x86_64-linux-gnu/libgfortran.so.5 (0x000077b556a00000)\n\tlibMultiProc.so => /root/biodynamo-v1.05.169/third_party/root/lib/libMultiProc.so (0x000077b55bdf0000)\n\tlibevent_core-2.1.so.7 => /lib/x86_64-linux-gnu/libevent_core-2.1.so.7 (0x000077b55a833000)\n\tlibevent_pthreads-2.1.so.7 => /lib/x86_64-linux-gnu/libevent_pthreads-2.1.so.7 (0x000077b55c0e3000)\n\tlibz.so.1 => /lib/x86_64-linux-gnu/libz.so.1 (0x000077b55bdd4000)\n\tlibudev.so.1 => /lib/x86_64-linux-gnu/libudev.so.1 (0x000077b559974000)\n\tlibcap.so.2 => /lib/x86_64-linux-gnu/libcap.so.2 (0x000077b55b29d000)\n",
+      "dependency_evidence": "ldd resolution under the exact subprocess environment; not process mapping capture",
+      "ld_library_path": "/mnt/d/dev/skibidy/build:/root/biodynamo-v1.05.169/lib:/root/biodynamo-v1.05.169/third_party/root/lib:",
+      "bdmsys": "/root/biodynamo-v1.05.169",
+      "cohorts": [
+        [
+          "normal",
+          "wound"
+        ],
+        [
+          "diabetic",
+          "diabetic-wound"
+        ],
+        [
+          "normal",
+          "full-model"
+        ]
+      ],
+      "seeds": [
+        42,
+        43,
+        44
+      ]
+    },
+    "candidate": {
+      "binary": "/mnt/d/dev/skibidy/build/skibidy",
+      "binary_sha256": "069fb62a98dfe127664ccba0237da4225ba3ea77140201a29adb7e43516aa815",
+      "dependencies": [
+        {
+          "path": "/mnt/d/dev/skibidy/build/libskibidy.so",
+          "sha256": "3ad4d8cf4e68c22359eb15f8b3438bcfcb36784ad232e2bb41e754d51d91c54d"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "sha256": "3a15d66867d83762c7f2f1e37359cb8f6c5743edb369c65285cb0b1c4f7498bf"
+        },
+        {
+          "path": "/root/biodynamo-v1.05.169/lib/libbiodynamo.so",
+          "sha256": "e6279202295cd83f77f11127839b513641530e20f9aabe9716f5a063a068c0c5"
+        },
+        {
+          "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libCore.so",
+          "sha256": "06675a6757905c982787572cdbdc6efdc3ba07ef4563f92479ad3059667a6e4c"
+        },
+        {
+          "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libRIO.so",
+          "sha256": "e1d59bc0021554d85bb08d132e01e7778e06318259ecce04a1af03dad3d8f969"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libgomp.so.1.0.0",
+          "sha256": "135f3c8f006d2fe5e68e51281c7974cb991a03de3bfb3593d68d174dfcf854d1"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33",
+          "sha256": "1fd75fe70354a416d75aef22bcae68c47bd25d20e2d0568c30b1a9838cf62f11"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libm.so.6",
+          "sha256": "fce00b6f25f459cf4ae0b7fae4257909a1a8a86f9149e7c029a5d617baf1ccd0"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libgcc_s.so.1",
+          "sha256": "d93224d2b0dab4247598be683adca02f5cf00586f99c187579cd7e92058fb7cb"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+          "sha256": "c20a2dc8917c755f02b94049356320fe1f62ac7d9f8994731f807d9df39302da"
+        },
+        {
+          "path": "/root/biodynamo-v1.05.169/lib/liboptim.so",
+          "sha256": "6c6b7acce3bd33fd0cfe4cf3ce4f9bb5728bae7a51d782641e20497a8b8de3fa"
+        },
+        {
+          "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libNet.so",
+          "sha256": "f3effa3a996e84678fd5eee8efd79fbdc2e45c455556d26902463ee5de9edb9b"
+        },
+        {
+          "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libHist.so",
+          "sha256": "7938e31d434019df6b2d808f9e429438ab892599cc90169c532127bb432423f8"
+        },
+        {
+          "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libGraf.so",
+          "sha256": "38d4384c99c26b3f6a1a3f04ca7a5dac3ee1663b33bdebfa89caf4e1d3884e93"
+        },
+        {
+          "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libGpad.so",
+          "sha256": "d1f736ea9a88df5927e97068c84ccc7f4c9cb09647d4b39060bd5960429a5e9b"
+        },
+        {
+          "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libMathCore.so",
+          "sha256": "e94a6e1ffa9dcd645c7357eb63c7582e2c9a41b53510947f00dfe4d39f2ff24e"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libmpi_cxx.so.40.30.1",
+          "sha256": "bf970d3b7ffdd471e5d073ff3bd689f2ef26a0b318eec5cfcef6acab802fe24b"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libmpi.so.40.30.6",
+          "sha256": "9055018b12757e830591aa0283e485e471f1f2a06d3bc0dd5fb35ab00386c172"
+        },
+        {
+          "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libThread.so",
+          "sha256": "0f144227d1c163cb07354c532b40170e36e2156eb0d5f06b4d486c47bccc8230"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3",
+          "sha256": "8ba4a98f44d763c2e648755ef452025919e28633339f23ff605044de3483a25d"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/openblas-pthread/liblapack.so.3",
+          "sha256": "1e82245607c58d13405580c71b9b0134b5a952686ac861f979fc7a886ebd4229"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libssl.so.3",
+          "sha256": "a40e7b67489bbd257e432c700ff8f6a1ad796425b5eccecdc2930127fdd86624"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libcrypto.so.3",
+          "sha256": "6866ed711dab8927e1bf82bf1cd30e828bdfc34f3cc1e83b1c9eb01ce6c37d9a"
+        },
+        {
+          "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libMatrix.so",
+          "sha256": "1cf806b1225fdb97a0c7d9b9f8a0824f7e95a36e998632d8d028ec29b3492042"
+        },
+        {
+          "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libImt.so",
+          "sha256": "2cb1ad06392ec81ab4a15647d2a6c550509e054b17723463c078f40af608ded1"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libopen-pal.so.40.30.3",
+          "sha256": "59c4d9b111cd3ec326a4df475a338daae050496087c67e86956187056fdc3051"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libopen-rte.so.40.30.3",
+          "sha256": "26467e1da428d31dab924ddbc50bc6ade75da47dbb82c77498a5f127a5466ba7"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libhwloc.so.15.7.0",
+          "sha256": "86dff44a023254d997cea910b9a51f35afefe6780f4b5530f974a2009ba47487"
+        },
+        {
+          "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libtbb.so.12.9",
+          "sha256": "c45c725b828eaa6eee6fafe34b4dcc94b9ad2498b008d83c5090e2c1be557f1b"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so",
+          "sha256": "bfc7492adbf84a8f567720a9e1fae2afc18f3d817da233e7f4d453683485308e"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libgfortran.so.5.0.0",
+          "sha256": "342618ccfebe840446e4ef2b7893f4161b2084845e570f42d68a70bfde58a58d"
+        },
+        {
+          "path": "/root/biodynamo-v1.05.169/third_party/root/lib/libMultiProc.so",
+          "sha256": "9c4ee5bf798308fcaba0ad3719f031ee6450e90a8e64f218879b769e61631607"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libevent_core-2.1.so.7.0.1",
+          "sha256": "7fa4592ebaec38a7c1ce665c29244fbaae249cab6c1dbdd5024418dcdfd4898e"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libevent_pthreads-2.1.so.7.0.1",
+          "sha256": "e386329c9c16032b489bebbd545750f35eafc0f50ab88ef0c986a31acb4b47a2"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libz.so.1.3",
+          "sha256": "86200da370f20476a2507e9097a789b5ef97269b4ca8d5e164ad82dab9d99892"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libudev.so.1.7.8",
+          "sha256": "4298228175fa62a36af88b1afd4406cdd8b1bf166621f957d0dbbde45a698fe5"
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libcap.so.2.66",
+          "sha256": "6ac6abc86ac891c6e13486470e26f1d939f47fda9e6b5d5508a7f5ec881adc84"
+        }
+      ],
+      "ldd": "\tlinux-vdso.so.1 (0x00007473c1c61000)\n\tlibskibidy.so => /mnt/d/dev/skibidy/build/libskibidy.so (0x00007473c19c7000)\n\tlibc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007473c1600000)\n\tlibbiodynamo.so => /root/biodynamo-v1.05.169/lib/libbiodynamo.so (0x00007473c1200000)\n\tlibCore.so => /root/biodynamo-v1.05.169/third_party/root/lib/libCore.so (0x00007473c0c00000)\n\tlibRIO.so => /root/biodynamo-v1.05.169/third_party/root/lib/libRIO.so (0x00007473c0800000)\n\tlibgomp.so.1 => /lib/x86_64-linux-gnu/libgomp.so.1 (0x00007473c1957000)\n\tlibstdc++.so.6 => /lib/x86_64-linux-gnu/libstdc++.so.6 (0x00007473c0400000)\n\tlibm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007473c186e000)\n\tlibgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007473c1840000)\n\t/lib64/ld-linux-x86-64.so.2 (0x00007473c1c63000)\n\tliboptim.so => /root/biodynamo-v1.05.169/lib/liboptim.so (0x00007473c1599000)\n\tlibNet.so => /root/biodynamo-v1.05.169/third_party/root/lib/libNet.so (0x00007473c0719000)\n\tlibHist.so => /root/biodynamo-v1.05.169/third_party/root/lib/libHist.so (0x00007473bfe00000)\n\tlibGraf.so => /root/biodynamo-v1.05.169/third_party/root/lib/libGraf.so (0x00007473bfa00000)\n\tlibGpad.so => /root/biodynamo-v1.05.169/third_party/root/lib/libGpad.so (0x00007473c0312000)\n\tlibMathCore.so => /root/biodynamo-v1.05.169/third_party/root/lib/libMathCore.so (0x00007473bf600000)\n\tlibmpi_cxx.so.40 => /lib/x86_64-linux-gnu/libmpi_cxx.so.40 (0x00007473c1823000)\n\tlibmpi.so.40 => /lib/x86_64-linux-gnu/libmpi.so.40 (0x00007473bfcce000)\n\tlibThread.so => /root/biodynamo-v1.05.169/third_party/root/lib/libThread.so (0x00007473c152c000)\n\tlibblas.so.3 => /lib/x86_64-linux-gnu/libblas.so.3 (0x00007473c06ac000)\n\tliblapack.so.3 => /lib/x86_64-linux-gnu/liblapack.so.3 (0x00007473bee00000)\n\tlibssl.so.3 => /lib/x86_64-linux-gnu/libssl.so.3 (0x00007473bfc24000)\n\tlibcrypto.so.3 => /lib/x86_64-linux-gnu/libcrypto.so.3 (0x00007473be800000)\n\tlibMatrix.so => /root/biodynamo-v1.05.169/third_party/root/lib/libMatrix.so (0x00007473bf879000)\n\tlibImt.so => /root/biodynamo-v1.05.169/third_party/root/lib/libImt.so (0x00007473c1518000)\n\tlibopen-pal.so.40 => /lib/x86_64-linux-gnu/libopen-pal.so.40 (0x00007473bf54c000)\n\tlibopen-rte.so.40 => /lib/x86_64-linux-gnu/libopen-rte.so.40 (0x00007473bf490000)\n\tlibhwloc.so.15 => /lib/x86_64-linux-gnu/libhwloc.so.15 (0x00007473c02b1000)\n\tlibtbb.so.12 => /root/biodynamo-v1.05.169/third_party/root/lib/libtbb.so.12 (0x00007473beda7000)\n\tlibopenblas.so.0 => /lib/x86_64-linux-gnu/libopenblas.so.0 (0x00007473bc420000)\n\tlibgfortran.so.5 => /lib/x86_64-linux-gnu/libgfortran.so.5 (0x00007473bc000000)\n\tlibMultiProc.so => /root/biodynamo-v1.05.169/third_party/root/lib/libMultiProc.so (0x00007473c1508000)\n\tlibevent_core-2.1.so.7 => /lib/x86_64-linux-gnu/libevent_core-2.1.so.7 (0x00007473c027c000)\n\tlibevent_pthreads-2.1.so.7 => /lib/x86_64-linux-gnu/libevent_pthreads-2.1.so.7 (0x00007473c1818000)\n\tlibz.so.1 => /lib/x86_64-linux-gnu/libz.so.1 (0x00007473c14ec000)\n\tlibudev.so.1 => /lib/x86_64-linux-gnu/libudev.so.1 (0x00007473bed74000)\n\tlibcap.so.2 => /lib/x86_64-linux-gnu/libcap.so.2 (0x00007473c14df000)\n",
+      "dependency_evidence": "ldd resolution under the exact subprocess environment; not process mapping capture",
+      "ld_library_path": "/mnt/d/dev/skibidy/build:/root/biodynamo-v1.05.169/lib:/root/biodynamo-v1.05.169/third_party/root/lib:",
+      "bdmsys": "/root/biodynamo-v1.05.169",
+      "cohorts": [
+        [
+          "normal",
+          "wound"
+        ],
+        [
+          "diabetic",
+          "diabetic-wound"
+        ],
+        [
+          "normal",
+          "full-model"
+        ]
+      ],
+      "seeds": [
+        42,
+        43,
+        44
+      ]
+    }
+  },
+  "archive_sha256": "31250ff3a3a7d51723a8e6941a1f09c140917edcc57d57cad6c422cabfacbb5b",
+  "files": [
+    {
+      "path": "source.patch",
+      "sha256": "b7150ac101676ecccca51528320d49a694c30a96e3ff878140b21401a86cd850",
+      "bytes": 2038
+    },
+    {
+      "path": "control/runtime.json",
+      "sha256": "4fb95391b6676b87d8ef038b3e5ed726ee2f94b8b65d24d1b9e8091a7c1d11ea",
+      "bytes": 9879
+    },
+    {
+      "path": "control/normal-wound/seed42/bdm.toml",
+      "sha256": "323b4956a7d78e465e12b1c389d9b918db72db325d877bb8ff0fdb53fd4e7e7d",
+      "bytes": 59401
+    },
+    {
+      "path": "control/normal-wound/seed42/receipt.json",
+      "sha256": "1624c21572524f4fe53c2757de2c65cf5883298afc916fa5cf37de908110d3b2",
+      "bytes": 145
+    },
+    {
+      "path": "control/normal-wound/seed42/stdout.log",
+      "sha256": "2d0ed3b917e3ad8b9c95fb013e11943b56b4bb341f5011a519557cb1155263a7",
+      "bytes": 159
+    },
+    {
+      "path": "control/normal-wound/seed42/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "control/normal-wound/seed42/validation.txt",
+      "sha256": "e664018bbc90c8cda2a14f91bbce8e0e988547f8d9fff40a6a157a17b176ece6",
+      "bytes": 2454
+    },
+    {
+      "path": "control/normal-wound/seed42/skibidy/metrics.csv",
+      "sha256": "2049a5ab673b4bb4c702780c581edef6ca2a0694183c5408a59b0ef3e3cb126e",
+      "bytes": 24766
+    },
+    {
+      "path": "control/normal-wound/seed42/skibidy/validation.json",
+      "sha256": "02cc3dbbfaf6ad089d031ece94fc8509d9455bbf63e98d241ef241eefca5b8b2",
+      "bytes": 27125
+    },
+    {
+      "path": "control/normal-wound/seed43/bdm.toml",
+      "sha256": "fbf6446f0928a309324ed32f7e41c746f29e38cbf61c2854c1c14ff36189f4d3",
+      "bytes": 59401
+    },
+    {
+      "path": "control/normal-wound/seed43/receipt.json",
+      "sha256": "e254fa2493e4a332a11fe60423aa2e32e2517db37361b80232c5e5a501028f67",
+      "bytes": 151
+    },
+    {
+      "path": "control/normal-wound/seed43/stdout.log",
+      "sha256": "b6ff1b3bc857398b6d359ff631f01cb03ad657c722b19625c981cf98158abf12",
+      "bytes": 159
+    },
+    {
+      "path": "control/normal-wound/seed43/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "control/normal-wound/seed43/validation.txt",
+      "sha256": "5799c8e93ee933cba49b1b886427ff72a0093a1bb13d2c73b733ae6f20bb43ef",
+      "bytes": 2460
+    },
+    {
+      "path": "control/normal-wound/seed43/skibidy/metrics.csv",
+      "sha256": "8ad1827c4bf2ebf3ee4873edefd3acf58971ce7af42c41c24c662f1761aa995b",
+      "bytes": 24950
+    },
+    {
+      "path": "control/normal-wound/seed43/skibidy/validation.json",
+      "sha256": "47c638ed0ad8529c2983ca2ed8e53fc948d357bc969fb45bbc2e6124fa989689",
+      "bytes": 27125
+    },
+    {
+      "path": "control/normal-wound/seed44/bdm.toml",
+      "sha256": "9416ae67b5485e15dee973b787e02493d5279d4e79b053417c76764fe479ff7d",
+      "bytes": 59401
+    },
+    {
+      "path": "control/normal-wound/seed44/receipt.json",
+      "sha256": "4b52ae87faccffbbc952446af2fe35dd7edb6ede0afd83ab13c093760b9131d7",
+      "bytes": 151
+    },
+    {
+      "path": "control/normal-wound/seed44/stdout.log",
+      "sha256": "37dcd13352c3fa6c4074aa797c4e472cc5678a27b07cd3cb4d9f76c32471c9c3",
+      "bytes": 159
+    },
+    {
+      "path": "control/normal-wound/seed44/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "control/normal-wound/seed44/validation.txt",
+      "sha256": "a3cdec5151d7ba8bcd42ebd9fbed165e8f86b1d7f72457e83e668810affaab34",
+      "bytes": 2461
+    },
+    {
+      "path": "control/normal-wound/seed44/skibidy/metrics.csv",
+      "sha256": "6ae3005968b64796d4032235ff2ac3550f5f21ec3e10108ed70f24885b4e27ac",
+      "bytes": 24858
+    },
+    {
+      "path": "control/normal-wound/seed44/skibidy/validation.json",
+      "sha256": "a43d67e463b36246a0122bc18d8ed2f70ea1fdd04f8e6baeff9cabd88eae6dcc",
+      "bytes": 27126
+    },
+    {
+      "path": "control/diabetic-diabetic-wound/seed42/bdm.toml",
+      "sha256": "d9ffbfaa3156eb76cc3c1615434b4299c05526e5a0ddb231c621ab2672d39efe",
+      "bytes": 59401
+    },
+    {
+      "path": "control/diabetic-diabetic-wound/seed42/receipt.json",
+      "sha256": "db416adc7611d56b7c5123ca639abcc893a0618c704dc1e1984fe091eb253d55",
+      "bytes": 161
+    },
+    {
+      "path": "control/diabetic-diabetic-wound/seed42/stdout.log",
+      "sha256": "d13ea97b57641a1d80a72367da9dbe0333144a7d3040d7b85c72602f54195a74",
+      "bytes": 160
+    },
+    {
+      "path": "control/diabetic-diabetic-wound/seed42/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "control/diabetic-diabetic-wound/seed42/validation.txt",
+      "sha256": "55f22b9e58653f2716a1fddf53cc53a41e820508c2e56ca4b722b22a953ed79a",
+      "bytes": 3552
+    },
+    {
+      "path": "control/diabetic-diabetic-wound/seed42/skibidy/metrics.csv",
+      "sha256": "24adc951501058d15543c5c33897bd4849fa3fcc40adbec762d4369003d26218",
+      "bytes": 14743
+    },
+    {
+      "path": "control/diabetic-diabetic-wound/seed42/skibidy/validation.json",
+      "sha256": "dcbf41eb3d73578c794990f1f00260010b0104ed34685514ff6ff0f2d314097a",
+      "bytes": 10094
+    },
+    {
+      "path": "control/diabetic-diabetic-wound/seed43/bdm.toml",
+      "sha256": "1a4c1894b959df560b6e282ca42c6efdf81d7c1e811e3e5371be4028c2e069e2",
+      "bytes": 59401
+    },
+    {
+      "path": "control/diabetic-diabetic-wound/seed43/receipt.json",
+      "sha256": "9cc8883edf850488edc54a849cc8e4b2c4da3261cfb453387f1587da85cad2cb",
+      "bytes": 162
+    },
+    {
+      "path": "control/diabetic-diabetic-wound/seed43/stdout.log",
+      "sha256": "c40be6c8096896d032d8b04710fe31ecef7d0765cfe76b17092fc6507006e045",
+      "bytes": 160
+    },
+    {
+      "path": "control/diabetic-diabetic-wound/seed43/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "control/diabetic-diabetic-wound/seed43/validation.txt",
+      "sha256": "b51179482450f239cff259153ea161641a977020ba789b15035ddc78f66d93ff",
+      "bytes": 3552
+    },
+    {
+      "path": "control/diabetic-diabetic-wound/seed43/skibidy/metrics.csv",
+      "sha256": "e453d8cf4dd985091d615f7ff2cb04efd95db56124399e5c688c61397f11ab60",
+      "bytes": 14707
+    },
+    {
+      "path": "control/diabetic-diabetic-wound/seed43/skibidy/validation.json",
+      "sha256": "6cadaafb8744a0f3e1b14fa435946128c2c0c239932b0e87440e58cc51e102dd",
+      "bytes": 10094
+    },
+    {
+      "path": "control/diabetic-diabetic-wound/seed44/bdm.toml",
+      "sha256": "fa93adf9b328a1cad8d14411d67a7108612124c4e5173b606bb010f087b0ba1e",
+      "bytes": 59401
+    },
+    {
+      "path": "control/diabetic-diabetic-wound/seed44/receipt.json",
+      "sha256": "f34d53a3eef0de59e5f06f55e4ba0dc50cf8584eef5e93a8a1b079c172807dd6",
+      "bytes": 161
+    },
+    {
+      "path": "control/diabetic-diabetic-wound/seed44/stdout.log",
+      "sha256": "b135d53ec521aa4aa06b2feac0841574d875987996260099051ac1f9daf5e3c9",
+      "bytes": 160
+    },
+    {
+      "path": "control/diabetic-diabetic-wound/seed44/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "control/diabetic-diabetic-wound/seed44/validation.txt",
+      "sha256": "684fbde918aef2d4fc43586ab830edd98c50d1269585b28865cd69e859a65c98",
+      "bytes": 3552
+    },
+    {
+      "path": "control/diabetic-diabetic-wound/seed44/skibidy/metrics.csv",
+      "sha256": "ce1331efe515b4ef8c47aba9a421d9bf9d2b812b57c21f55c574df21bcf42588",
+      "bytes": 14708
+    },
+    {
+      "path": "control/diabetic-diabetic-wound/seed44/skibidy/validation.json",
+      "sha256": "bff07cb34d415a3080a9d05310333d4568d0403cbd87d76c6ba3d5d9a49e0b5e",
+      "bytes": 10091
+    },
+    {
+      "path": "control/normal-full-model/seed42/bdm.toml",
+      "sha256": "697f14e882dbaa7aec41b1e10451ccb6906383ed3f2b918c20feb6be8e250c44",
+      "bytes": 59403
+    },
+    {
+      "path": "control/normal-full-model/seed42/receipt.json",
+      "sha256": "aeb03eeab49ac2fe61b7a86d46223e140a58da54d7855585d0e2b8ce0fdd5fb3",
+      "bytes": 156
+    },
+    {
+      "path": "control/normal-full-model/seed42/stdout.log",
+      "sha256": "b6ff1b3bc857398b6d359ff631f01cb03ad657c722b19625c981cf98158abf12",
+      "bytes": 159
+    },
+    {
+      "path": "control/normal-full-model/seed42/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "control/normal-full-model/seed42/validation.txt",
+      "sha256": "d244c72765de2d911acab814963184285087a725caa714a6c597d73c8d3837be",
+      "bytes": 2459
+    },
+    {
+      "path": "control/normal-full-model/seed42/skibidy/metrics.csv",
+      "sha256": "e106f3e4d5964f8dd964488a4287dbb4c7c182864fd27981393faec5d382abb5",
+      "bytes": 24955
+    },
+    {
+      "path": "control/normal-full-model/seed42/skibidy/validation.json",
+      "sha256": "b2fd4c1b43195e52f1bd6280956793b51949aa984e51f953b21231b7e8111086",
+      "bytes": 27135
+    },
+    {
+      "path": "control/normal-full-model/seed43/bdm.toml",
+      "sha256": "65a968abcf54b74788d9793fb51dcac55cfc132db5e92a68c2f4a3374296c882",
+      "bytes": 59403
+    },
+    {
+      "path": "control/normal-full-model/seed43/receipt.json",
+      "sha256": "225b7409717b02d19ff4cd1c7fb9a5ab3c249b0d8314adda36eef31d8c6c9eef",
+      "bytes": 156
+    },
+    {
+      "path": "control/normal-full-model/seed43/stdout.log",
+      "sha256": "37dcd13352c3fa6c4074aa797c4e472cc5678a27b07cd3cb4d9f76c32471c9c3",
+      "bytes": 159
+    },
+    {
+      "path": "control/normal-full-model/seed43/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "control/normal-full-model/seed43/validation.txt",
+      "sha256": "e069794f05f0a0c5478a9022d7613ef50a8bca41c32678d7b546e71fe648b514",
+      "bytes": 2465
+    },
+    {
+      "path": "control/normal-full-model/seed43/skibidy/metrics.csv",
+      "sha256": "2eab8d41729841d5f03ce3ba4f4a46e605fa470ee60e717f283a96115c33dd06",
+      "bytes": 24899
+    },
+    {
+      "path": "control/normal-full-model/seed43/skibidy/validation.json",
+      "sha256": "11402975bcb54ed2428ebdc9f239afc042dc9f97eada7f8a588703b1eaf5c8df",
+      "bytes": 27136
+    },
+    {
+      "path": "control/normal-full-model/seed44/bdm.toml",
+      "sha256": "95fcb6c9fe959fff7aa9ea99d982ad4d65df4e4f488ca11bf4cf02a92aee464a",
+      "bytes": 59403
+    },
+    {
+      "path": "control/normal-full-model/seed44/receipt.json",
+      "sha256": "a9207280887233347817dbb258d3c410aa8036be2ec8b2d972ec2ba3ffebceae",
+      "bytes": 155
+    },
+    {
+      "path": "control/normal-full-model/seed44/stdout.log",
+      "sha256": "dfbf959238414409e80c058f4f69516eda13faeeff4ba7e856f540c40a06019e",
+      "bytes": 159
+    },
+    {
+      "path": "control/normal-full-model/seed44/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "control/normal-full-model/seed44/validation.txt",
+      "sha256": "900147b2f303ac92f2a4002545d01a3d15f4b7d825d138d61dd4c3a2d80f5410",
+      "bytes": 2459
+    },
+    {
+      "path": "control/normal-full-model/seed44/skibidy/metrics.csv",
+      "sha256": "131fd48c7e8ed99439af79d13e28e5fc107ac133f024452f216a26eb0328c12c",
+      "bytes": 24745
+    },
+    {
+      "path": "control/normal-full-model/seed44/skibidy/validation.json",
+      "sha256": "963948debd57fcd1a11afbc378cf3d54f8af1625a35be4ff8591309550268f75",
+      "bytes": 27133
+    },
+    {
+      "path": "candidate/runtime.json",
+      "sha256": "0c01e0455179a4b39a1a07314e5d14bb783df0c69b5595d429b7271c464f3219",
+      "bytes": 9879
+    },
+    {
+      "path": "candidate/normal-wound/seed42/bdm.toml",
+      "sha256": "e5fb8e568ffe0960db715202b8d6320749c8f4e181d7542d2d0bdea894123a3a",
+      "bytes": 59402
+    },
+    {
+      "path": "candidate/normal-wound/seed42/receipt.json",
+      "sha256": "b6892dd6d2d64f96270d7231f2e39dccc1e8984455408614528bf15ce8cad661",
+      "bytes": 150
+    },
+    {
+      "path": "candidate/normal-wound/seed42/stdout.log",
+      "sha256": "e1768d1d55e7a705bd591981f9112fb7e35a5c7ce1346a54080153bfc0a271e6",
+      "bytes": 159
+    },
+    {
+      "path": "candidate/normal-wound/seed42/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "candidate/normal-wound/seed42/validation.txt",
+      "sha256": "7bf813ac5dd0801f60126b1279c624d9a785eb0a54523bf5b4a11fede29a1083",
+      "bytes": 2453
+    },
+    {
+      "path": "candidate/normal-wound/seed42/skibidy/metrics.csv",
+      "sha256": "e26f5237b701865cb5419e89bcf92990ee49be2610e905d2f8cc47af3846d2be",
+      "bytes": 24835
+    },
+    {
+      "path": "candidate/normal-wound/seed42/skibidy/validation.json",
+      "sha256": "3ca16e2c6833fe73457125602b397784719d23dd7b91aa94da775038af458c1e",
+      "bytes": 27122
+    },
+    {
+      "path": "candidate/normal-wound/seed43/bdm.toml",
+      "sha256": "9ca0c512c2d23234a45d8f74de2913da755ee53e586f9dd8a12ac0ce91893ed4",
+      "bytes": 59402
+    },
+    {
+      "path": "candidate/normal-wound/seed43/receipt.json",
+      "sha256": "875f69790556852ac94a7165ecaa602bfa7cafc411b31e063e921997b243ed3d",
+      "bytes": 151
+    },
+    {
+      "path": "candidate/normal-wound/seed43/stdout.log",
+      "sha256": "873e55229e70731aebf83cd651ff6b75d6263380e1d4221ab67d559cfe69acab",
+      "bytes": 159
+    },
+    {
+      "path": "candidate/normal-wound/seed43/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "candidate/normal-wound/seed43/validation.txt",
+      "sha256": "c8437b1221b4a7e626977ed0bd4bbe3047550bf70334439079cd1fd65aacb002",
+      "bytes": 2459
+    },
+    {
+      "path": "candidate/normal-wound/seed43/skibidy/metrics.csv",
+      "sha256": "ab878d99dabc929133ea5684d237830e636f7d2cda73056ab9866b2960ddf6ec",
+      "bytes": 24922
+    },
+    {
+      "path": "candidate/normal-wound/seed43/skibidy/validation.json",
+      "sha256": "51f0723715cbfd0b0f3956d525c1a4585ec0f4a5194308cddaf92d967b4dcb58",
+      "bytes": 27121
+    },
+    {
+      "path": "candidate/normal-wound/seed44/bdm.toml",
+      "sha256": "262a660f28b8036e498d9e571933e408728a402944f0f942df38d36fc23f5499",
+      "bytes": 59402
+    },
+    {
+      "path": "candidate/normal-wound/seed44/receipt.json",
+      "sha256": "5d530d9baf592dc2cb66fea66f09bef817cbc164178879712a3ee2cb445be069",
+      "bytes": 151
+    },
+    {
+      "path": "candidate/normal-wound/seed44/stdout.log",
+      "sha256": "b6ff1b3bc857398b6d359ff631f01cb03ad657c722b19625c981cf98158abf12",
+      "bytes": 159
+    },
+    {
+      "path": "candidate/normal-wound/seed44/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "candidate/normal-wound/seed44/validation.txt",
+      "sha256": "eaba4116d701c3481b0316271128a716adff79002e2456a00aeb8a62ad00f761",
+      "bytes": 2460
+    },
+    {
+      "path": "candidate/normal-wound/seed44/skibidy/metrics.csv",
+      "sha256": "d094bba4489b19f28b795cf0641cc2901049bc9fd8077b889098572199604158",
+      "bytes": 24868
+    },
+    {
+      "path": "candidate/normal-wound/seed44/skibidy/validation.json",
+      "sha256": "9a7c31581c2f04820c61bef48c81ea51b1b95f4c1af01de49e1c6624117f8092",
+      "bytes": 27125
+    },
+    {
+      "path": "candidate/diabetic-diabetic-wound/seed42/bdm.toml",
+      "sha256": "0e84350231c04747bb96774c3dacb9cd56d4fc17349233c7a3de855666205c85",
+      "bytes": 59402
+    },
+    {
+      "path": "candidate/diabetic-diabetic-wound/seed42/receipt.json",
+      "sha256": "224fb6338f2877eec1291cc6944f8fcdc3c9cd9b0e3a339bd2a1b0f603995869",
+      "bytes": 161
+    },
+    {
+      "path": "candidate/diabetic-diabetic-wound/seed42/stdout.log",
+      "sha256": "b135d53ec521aa4aa06b2feac0841574d875987996260099051ac1f9daf5e3c9",
+      "bytes": 160
+    },
+    {
+      "path": "candidate/diabetic-diabetic-wound/seed42/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "candidate/diabetic-diabetic-wound/seed42/validation.txt",
+      "sha256": "39c071c494ec0ab099b26a078dd883125f8748b33c1e47951c783a7f1a7b35bd",
+      "bytes": 3551
+    },
+    {
+      "path": "candidate/diabetic-diabetic-wound/seed42/skibidy/metrics.csv",
+      "sha256": "a54226829baababf83f92c434cc8efc5a71dc49c3fc9d9a643f1ece87e18a962",
+      "bytes": 14751
+    },
+    {
+      "path": "candidate/diabetic-diabetic-wound/seed42/skibidy/validation.json",
+      "sha256": "c0aec33b22547cb7988f1a573bdfb49e24778964bca047e2190f6af4ad396214",
+      "bytes": 10090
+    },
+    {
+      "path": "candidate/diabetic-diabetic-wound/seed43/bdm.toml",
+      "sha256": "64de8c2f4519779842a6408eed6ca97d9e609815f5fee11653130f9b4bc04acb",
+      "bytes": 59402
+    },
+    {
+      "path": "candidate/diabetic-diabetic-wound/seed43/receipt.json",
+      "sha256": "64eb72423c62b9d9f4e71388693d60b7b1b13d8bacfa775775eac0ffa3b1e720",
+      "bytes": 162
+    },
+    {
+      "path": "candidate/diabetic-diabetic-wound/seed43/stdout.log",
+      "sha256": "893838c4dadb34f3042848da10d1411b88450a2be1d2b03f442b0b40dbcfac02",
+      "bytes": 160
+    },
+    {
+      "path": "candidate/diabetic-diabetic-wound/seed43/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "candidate/diabetic-diabetic-wound/seed43/validation.txt",
+      "sha256": "c68dacb057765305ab0247e1dc9a9781005f01ad59491dc98c9287e4f6120d87",
+      "bytes": 3551
+    },
+    {
+      "path": "candidate/diabetic-diabetic-wound/seed43/skibidy/metrics.csv",
+      "sha256": "126a3185bcad73e6cb93a4a3ac54eaca0d7b93d69e2db706c539e7398da330f0",
+      "bytes": 14684
+    },
+    {
+      "path": "candidate/diabetic-diabetic-wound/seed43/skibidy/validation.json",
+      "sha256": "66bfcc95e25e62df4907a01480d597ecddf0612fceaa9ee2e95c622256073fee",
+      "bytes": 10091
+    },
+    {
+      "path": "candidate/diabetic-diabetic-wound/seed44/bdm.toml",
+      "sha256": "590c0830edeb706767cb4e30641d1a31281b1bc132aeec54bdc5591633f6820d",
+      "bytes": 59402
+    },
+    {
+      "path": "candidate/diabetic-diabetic-wound/seed44/receipt.json",
+      "sha256": "d9f18407e90441848249f9bbc4eb40d8b30dad8e1f98cae5a3375e3a6b86c49e",
+      "bytes": 162
+    },
+    {
+      "path": "candidate/diabetic-diabetic-wound/seed44/stdout.log",
+      "sha256": "ef86998e2a27b7900ac57c052c87420eb309dd914053fab0f73c10f06931d975",
+      "bytes": 160
+    },
+    {
+      "path": "candidate/diabetic-diabetic-wound/seed44/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "candidate/diabetic-diabetic-wound/seed44/validation.txt",
+      "sha256": "f58cd7990f5ee21c992cfea477ca619d56dfc5db6e6edb0d6d1f109b21db4c3b",
+      "bytes": 3551
+    },
+    {
+      "path": "candidate/diabetic-diabetic-wound/seed44/skibidy/metrics.csv",
+      "sha256": "3cc48f1c3097e1a760019ddb7f045d8e4f1bb5f8222ccf65aa4fae2c8d938be6",
+      "bytes": 14685
+    },
+    {
+      "path": "candidate/diabetic-diabetic-wound/seed44/skibidy/validation.json",
+      "sha256": "18580b3a2bbe23a674ec3cd967acf7889f7af55cd2edb9b6732ac8e352b73724",
+      "bytes": 10093
+    },
+    {
+      "path": "candidate/normal-full-model/seed42/bdm.toml",
+      "sha256": "7d2dfd94950e1804bbf94811f203213118dee63e999386423d8257c1fa6d6fb6",
+      "bytes": 59404
+    },
+    {
+      "path": "candidate/normal-full-model/seed42/receipt.json",
+      "sha256": "010d75052cd3a93f6833322693d6183e920fed1ec835d099417c68370b346289",
+      "bytes": 156
+    },
+    {
+      "path": "candidate/normal-full-model/seed42/stdout.log",
+      "sha256": "37dcd13352c3fa6c4074aa797c4e472cc5678a27b07cd3cb4d9f76c32471c9c3",
+      "bytes": 159
+    },
+    {
+      "path": "candidate/normal-full-model/seed42/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "candidate/normal-full-model/seed42/validation.txt",
+      "sha256": "75247cb67df6cded7976ab37b03925f0889d170a4cf3f8369ccc585ff4ce924e",
+      "bytes": 2458
+    },
+    {
+      "path": "candidate/normal-full-model/seed42/skibidy/metrics.csv",
+      "sha256": "3ce5524f5be726032c936619ea7082f5fd1bede57d540aaf3eeacdcfe9b25963",
+      "bytes": 24837
+    },
+    {
+      "path": "candidate/normal-full-model/seed42/skibidy/validation.json",
+      "sha256": "7681c036061b9de3fe6144dee20179b2ed487ab07b4bac2f67628e9415502580",
+      "bytes": 27131
+    },
+    {
+      "path": "candidate/normal-full-model/seed43/bdm.toml",
+      "sha256": "e5d800134841ec5daf39d011e73108c68aa1dae1bba5865250db3a4862f18ea5",
+      "bytes": 59404
+    },
+    {
+      "path": "candidate/normal-full-model/seed43/receipt.json",
+      "sha256": "fb7bcffcfc4da0aec6df2175c30095919190da2f789f1d8a02bc257b1a721de0",
+      "bytes": 155
+    },
+    {
+      "path": "candidate/normal-full-model/seed43/stdout.log",
+      "sha256": "37dcd13352c3fa6c4074aa797c4e472cc5678a27b07cd3cb4d9f76c32471c9c3",
+      "bytes": 159
+    },
+    {
+      "path": "candidate/normal-full-model/seed43/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "candidate/normal-full-model/seed43/validation.txt",
+      "sha256": "bb2b703cbb9b923745cb6cd7129ae078e381e3522f26dc2c46210f1632e35211",
+      "bytes": 2465
+    },
+    {
+      "path": "candidate/normal-full-model/seed43/skibidy/metrics.csv",
+      "sha256": "f6dadfb8120f70c87698291a57d08cbae7f5a3ad7343b87f71d9775fadaa4673",
+      "bytes": 24927
+    },
+    {
+      "path": "candidate/normal-full-model/seed43/skibidy/validation.json",
+      "sha256": "56d2e6f51f2a6db828d0ea520c2af290a7859b5f20ea4d7afe7e153a6710ef2a",
+      "bytes": 27133
+    },
+    {
+      "path": "candidate/normal-full-model/seed44/bdm.toml",
+      "sha256": "183f44edd0069b54419df8519b22532c0cd4c2a3aec44af7ab78420cac1080ad",
+      "bytes": 59404
+    },
+    {
+      "path": "candidate/normal-full-model/seed44/receipt.json",
+      "sha256": "014b1d3d8fc4fb20424718e5b5203349e43f3f76cc407043bb64c59f1b08e95f",
+      "bytes": 156
+    },
+    {
+      "path": "candidate/normal-full-model/seed44/stdout.log",
+      "sha256": "e1768d1d55e7a705bd591981f9112fb7e35a5c7ce1346a54080153bfc0a271e6",
+      "bytes": 159
+    },
+    {
+      "path": "candidate/normal-full-model/seed44/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "candidate/normal-full-model/seed44/validation.txt",
+      "sha256": "4bee8b620f71879adc4aee9d66beb56301ff51680a84aad4a2694207234ec321",
+      "bytes": 2465
+    },
+    {
+      "path": "candidate/normal-full-model/seed44/skibidy/metrics.csv",
+      "sha256": "b7ccf2120bb3691e0d9d43fd745fb340ab94de9e8231c19c29b445d2a04defd3",
+      "bytes": 24817
+    },
+    {
+      "path": "candidate/normal-full-model/seed44/skibidy/validation.json",
+      "sha256": "e2bb4cb32f9f7a00d9b134d53aee270e2198f53fe1e99911b5734671bdf19d70",
+      "bytes": 27132
+    },
+    {
+      "path": "tests/lactate-baseline-test.log",
+      "sha256": "01ca7c56c1e70bd1a487253caf451ef859e23bb8a5a81a099be994d64ce5b805",
+      "bytes": 1040
+    },
+    {
+      "path": "tests/lactate-tests.log",
+      "sha256": "1f459bc87a797c648fdb4523bd6de7021c45fdd770f49fdf40339b221f66d5b9",
+      "bytes": 4304406
+    },
+    {
+      "path": "tests/lactate-sources.log",
+      "sha256": "3df571c1bfa3e78ea604856ad180fe7010b553e637521bd9f6966d61336e3021",
+      "bytes": 207
+    },
+    {
+      "path": "tests/lactate-quality.log",
+      "sha256": "22e897227f39560e0cefd267f7c5b1452eca783f044103a89c8877151f8547fc",
+      "bytes": 45
+    },
+    {
+      "path": "tests/lactate-lib.log",
+      "sha256": "242c1f1ce06ce69995a6fb57a4349751d0e353d1f320dc3dee0087a23c7ccf94",
+      "bytes": 121
+    },
+    {
+      "path": "tests/lactate-quality-tests.log",
+      "sha256": "a38af3790a1af0635e439ef78c3ac50b17db30bee872aca975afba444dd40f15",
+      "bytes": 121
+    },
+    {
+      "path": "tests/lactate-python.log",
+      "sha256": "5bf85a5721bf2c697338d69970441fe26d509a2213714f550cca5f42eb96990a",
+      "bytes": 225
+    }
+  ],
+  "limits": "Three model seeds per cohort. Control data reused from the verified fibroblast producer experiment. All biological failures retained. Model density has arbitrary units. No clinical validation, physical lactate concentration mapping or fitted signal coefficients."
+}

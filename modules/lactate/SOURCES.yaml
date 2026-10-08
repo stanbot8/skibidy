@@ -1,34 +1,38 @@
 # Literature sources for lactate module
 wound_lactate:
-  description: Wound lactate as hypoxia metabolite, HIF-1a stabilizer, and collagen synthesis signal
+  description: Wound lactate signaling, including oxygenated VEGF responses and matrix deposition
   sources:
   - id: hunt2007
-    authors: Hunt TK, Avissar N, Herber F, Hopf HW
+    authors: Hunt TK, Aslam RS, Beckert S, Wagner S, Ghani QP, Hussain MZ, Roy S, Sen CK
     year: 2007
     title: 'Aerobically derived lactate stimulates revascularization and tissue repair via redox mechanisms'
     journal: Antioxid Redox Signal 9(8):1115-1124
     doi: 10.1089/ars.2007.1674
-    notes: 'Lactate at wound concentrations (4 to 12 mM) stimulates collagen synthesis approximately 2x in fibroblasts,
-      independent of hypoxia. Supports collagen_boost=0.2.
-
-      '
+    notes: >-
+      Mouse subcutaneous Matrigel implants containing lactate polymer increased VEGF and angiogenesis.
+      Arterial hypoxia abrogated angiogenesis. Aerobic human endothelial cell cultures showed lactate-associated
+      HIF-1alpha stabilization and VEGF expression. Supports a lactate signal independent of the hypoxic
+      VEGF trigger, without removing oxygen requirements for tissue growth. Neither the model's linear
+      dose response nor its VEGF and collagen coefficients are measured by this study.
   - id: constant2000
     authors: Constant JS, Feng JJ, Zabel DD, Yuan H, Suh DY, Scheuenstuhl H, Hunt TK, Hussain MZ
     year: 2000
-    title: Lactate elicits vascular endothelial growth factor from macrophages
-    journal: Exp Dermatol 9(6):517-522
-    doi: 10.1046/j.1524-475x.2000.00353.x
-    notes: 'Lactate stabilizes HIF-1a under normoxia, boosting VEGF production in wound fibroblasts and macrophages.
-      Supports vegf_boost=0.3.
-
-      '
+    title: 'Lactate elicits vascular endothelial growth factor from macrophages: a possible alternative to hypoxia'
+    journal: Wound Repair Regen 8(5):353-360
+    doi: 10.1111/j.1524-475x.2000.00353.x
+    notes: >-
+      Lactate increased VEGF mRNA and protein in cultured macrophages. Their conditioned medium promoted
+      angiogenesis in rabbit cornea and Matrigel assays, largely blocked by anti-VEGF antibody.
+      This supports macrophage VEGF signaling, not a measured fibroblast HIF response or the model's boost coefficient.
   - id: trabold2003
-    authors: Trabold O, Wagner S, Wicke C, Scheuenstuhl H, Hussain MZ, Rosen N, Serber A, Hunt TK
+    authors: Trabold O, Wagner S, Wicke C, Scheuenstuhl H, Hussain MZ, Rosen N, Seremetiev A, Becker HD, Hunt TK
     year: 2003
     title: Lactate and oxygen constitute a fundamental regulatory mechanism in wound healing
     journal: Wound Repair Regen 11(6):504-509
     doi: 10.1046/j.1524-475x.2003.11621.x
-    notes: 'Wound lactate levels reach 4 to 12 mM, 3 to 5x higher than arterial blood. Lactate accumulates where
-      O2 is low (anaerobic glycolysis). Supports o2_threshold=0.3.
-
-      '
+    notes: >-
+      Describes wound lactate concentrations of 4 to 12 mM, with hypoxia only one of several sources.
+      Adding 2 to 3 mM lactate using hydrolysable polyglycolide in rat wounds increased VEGF about twofold,
+      TGF-beta two to threefold and collagen deposition by 50 percent. These intervention results do not
+      establish a universal twofold fibroblast synthesis rate, the normalized oxygen threshold or a
+      conversion between model lactate units and millimolar concentrations.

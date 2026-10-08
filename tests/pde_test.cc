@@ -12,9 +12,70 @@
 #include "immune/immune_response.h"
 #include "core/fused_source.h"
 #include "core/fused_post.h"
+#include "lactate/lactate_pde.h"
 
 namespace bdm {
 namespace skibidy {
+
+TEST(FusedSourceTest, LactateSignalsVEGFInOxygenatedWoundTissue) {
+  // Run the production dispatcher in both tissue compartments. Disable
+  // production and washout to isolate signaling from an existing substrate.
+  for (int control = 0; control < 6; ++control) {
+    SCOPED_TRACE(control);
+    Param::RegisterParamGroup(new SimParam());
+    auto* sim = new Simulation(TEST_NAME, [](Param* p) {
+      p->bound_space = Param::BoundSpaceMode::kClosed;
+      p->min_bound = -10;
+      p->max_bound = 50;
+      p->simulation_time_step = 0.1;
+      p->export_visualization = false;
+    });
+    auto* sp = const_cast<SimParam*>(sim->GetParam()->Get<SimParam>());
+    SanitizeForUnitTest(sp);
+    sp->grid_resolution = 10;
+    sp->angiogenesis.enabled = true;
+    sp->lactate.enabled = true;
+    sp->lactate.production_rate = 0;
+    sp->lactate.perfusion_clearance = 0;
+    sp->wound.trigger_step = 0;
+    sp->wound.center_x = sp->wound.center_y = 25;
+    sp->wound.radius = 15;
+    SetupAllFields(sim);
+    VEGFPDE vegf_pde(sp);
+    vegf_pde.Init(sim);
+    LactatePDE lactate_pde(sp);
+    lactate_pde.Init(sim);
+    sim->GetScheduler()->Simulate(1);
+    auto* rm = sim->GetResourceManager();
+    auto* vegf = rm->GetDiffusionGrid(fields::kVEGFId);
+    auto* lactate = rm->GetDiffusionGrid(fields::kLactateId);
+    auto* oxygen = rm->GetDiffusionGrid(fields::kOxygenId);
+    std::vector<size_t> indices;
+    for (Real3 pos : {Real3{25, 25, -7}, Real3{25, 25, 5},
+                      Real3{1, 1, -7}, Real3{1, 1, 5}}) {
+      size_t i = vegf->GetBoxIndex(pos);
+      indices.push_back(i);
+      vegf->ChangeConcentrationBy(i, -vegf->GetConcentration(i));
+      lactate->ChangeConcentrationBy(i,
+          (control == 1 ? 0 : 0.5) - lactate->GetConcentration(i));
+      oxygen->ChangeConcentrationBy(i, 0.8 - oxygen->GetConcentration(i));
+    }
+    if (control == 2) sp->lactate.enabled = false;
+    if (control == 3) sp->wound.trigger_step = 2;
+    if (control == 4) sp->lactate.vegf_boost = 0;
+    if (control == 5) sp->angiogenesis.enabled = false;
+    FusedWoundSourceOp source;
+    source();
+    for (size_t j = 0; j < indices.size(); ++j) {
+      if (control == 0 && j < 2) {
+        EXPECT_GT(vegf->GetConcentration(indices[j]), 0);
+      } else {
+        EXPECT_NEAR(vegf->GetConcentration(indices[j]), 0, 1e-10);
+      }
+    }
+    delete sim;
+  }
+}
 
 TEST(FusedPostTest, ClearsTGFBetaInDermisAndEpidermis) {
   // Exercise the production dispatcher, including coarse collagen lookup.
