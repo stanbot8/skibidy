@@ -15,7 +15,8 @@ RMSE screen against such a curve is not empirical validation.
 
 Measured data added on 2026-10-07: [GSE209609 human wound RNA](../modules/wound/data/published/GSE209609/README.md),
 with 96 biopsies, 18 subjects, 17 genes, deposited processed values, sample IDs,
-group SDs, source hashes and a reproducible extractor. This supports RNA timing,
+group SDs, matched-subject contrasts, missing-pair counts, individual directions,
+source hashes and a reproducible extractor. This supports RNA timing,
 not calibration of the current protein, cell-count, collagen or membrane fields.
 
 Other primary evidence added at the same time:

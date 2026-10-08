@@ -17,7 +17,7 @@ import tempfile
 import unittest
 
 sys.path.insert(0, os.path.dirname(__file__))
-from check_data_quality import check_csv, discover_csvs, _build_sources_index, _SCHEMAS
+from check_data_quality import check_csv, discover_csvs, _build_sources_index, _SCHEMAS, _check_evidence_rows
 
 
 def _write(path, content):
@@ -42,6 +42,11 @@ class TestSyntheticCSVs(unittest.TestCase):
             writer = csv.DictWriter(stream, fieldnames=_SCHEMAS[schema].split())
             writer.writeheader()
             writer.writerows(records)
+        if schema == "mean_log2":
+            # These fixtures test row grammar. Source equality is exercised by
+            # the real corpus and tests/test_geo_pairs.py with complete inputs.
+            return _check_evidence_rows(schema, _SCHEMAS[schema].split(),
+                                        [[str(row[col]) for col in _SCHEMAS[schema].split()] for row in records], path)
         return check_csv(path, {}, strict=False)[0]
 
     def _cell(self, **changes):

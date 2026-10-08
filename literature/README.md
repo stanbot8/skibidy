@@ -44,6 +44,12 @@ integrity checks. A consensus figure is descriptive. Normalize and assess
 individual replicates separately because scoring a mean curve can hide failures.
 Source and CSV checks establish structural integrity, not assay equivalence,
 cohort independence, extraction accuracy or biological validity.
+RNA group and paired summaries are also recomputed against their recorded sample
+inputs. Paired provenance hashes must match the current inputs and extractor.
+Before interpreting a cohort average as a biological response, inspect the
+experimental unit, matched subjects, unmatched samples and individual directions.
+A positive mean does not establish that every subject increased. Keep changing
+subject subsets explicit rather than presenting them as one patient trajectory.
 
 Before changing biology based on a screen, establish the observable's units,
 species, wound model, assay, numerical extraction, normalization, uncertainty

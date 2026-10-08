@@ -27,6 +27,8 @@ Usage:
 import argparse
 import csv
 import glob
+import hashlib
+import json
 from itertools import chain
 import math
 import os
@@ -35,6 +37,8 @@ import sys
 
 _PROJECT_ROOT = os.path.realpath(os.path.join(os.path.dirname(__file__), os.pardir))
 _MODULES_DIR = os.path.join(_PROJECT_ROOT, "modules")
+if __package__ in (None, ""):
+    sys.path.insert(0, _PROJECT_ROOT)
 
 # Columns whose values represent peak-normalized fractions (0..~1).
 _PEAK_NORMALIZED_SUFFIXES = (
@@ -60,6 +64,11 @@ _SCHEMAS = {
     "sample": "gene probe sample subject tissue day rma_log2_expression",
     "mean_log2": "gene probe tissue day n mean_log2 sample_sd_log2 "
                  "log2_difference_from_group_baseline",
+    "baseline_sample": "gene probe tissue day subject baseline_sample post_sample "
+                       "baseline_log2 post_log2 delta_log2",
+    "n_pairs": "gene probe tissue day n_timepoint n_baseline n_pairs n_unpaired "
+               "paired_subjects mean_delta_log2 sample_sd_delta_log2 min_delta_log2 "
+               "max_delta_log2 n_increased n_decreased n_unchanged unpaired_group_delta_log2",
     "source_id": "source_id treatment population observable time measurement "
                  "value unit n model_connection calibration_status",
 }
@@ -263,7 +272,9 @@ def _check_evidence_rows(schema, header, rows, path):
             required("gene", "probe", "tissue")
             if row["tissue"] not in {"skin", "palate"}:
                 fail("unrecognized GSE209609 tissue")
-            number("day", minimum=0)
+            day = number("day", minimum=0)
+            if day not in {0, .25, 1, 3, 7}:
+                fail("unrecognized GSE209609 sampling time")
             if schema == "sample":
                 required("sample", "subject")
                 if not re.fullmatch(r"GSM[1-9]\d*", row["sample"]):
@@ -275,10 +286,50 @@ def _check_evidence_rows(schema, header, rows, path):
                 if previous != metadata:
                     fail("GEO sample has inconsistent subject, tissue or day")
             else:
-                number("n", minimum=1, integer=True)
+                n = number("n", minimum=1, integer=True)
                 number("mean_log2")
-                number("sample_sd_log2", minimum=0)
+                number("sample_sd_log2", minimum=0, optional=n == 1)
+                if n == 1 and row["sample_sd_log2"] != "":
+                    fail("sample SD needs at least two observations")
                 number("log2_difference_from_group_baseline")
+                unique("gene", "probe", "tissue", "day")
+        elif schema in {"baseline_sample", "n_pairs"}:
+            required("gene", "probe", "tissue")
+            if row["tissue"] not in {"skin", "palate"}:
+                fail("unrecognized GSE209609 tissue")
+            day = number("day", minimum=0)
+            if day not in {.25, 1, 3, 7}:
+                fail("paired RNA contrast requires a recorded post-injury time")
+            if schema == "baseline_sample":
+                required("subject", "baseline_sample", "post_sample")
+                for col in ("baseline_sample", "post_sample"):
+                    if not re.fullmatch(r"GSM[1-9]\d*", row[col]):
+                        fail("invalid GEO sample accession")
+                baseline, post, delta = [number(col) for col in ("baseline_log2", "post_log2", "delta_log2")]
+                if None not in (baseline, post, delta) and not math.isclose(post - baseline, delta, abs_tol=1e-9):
+                    fail("paired delta differs from post minus baseline")
+                unique("gene", "probe", "tissue", "subject", "day")
+            else:
+                counts = {col: number(col, minimum=0, integer=True) for col in
+                          ("n_timepoint", "n_baseline", "n_pairs", "n_unpaired",
+                           "n_increased", "n_decreased", "n_unchanged")}
+                if None not in counts.values():
+                    n = counts["n_pairs"]
+                    if (n + counts["n_unpaired"] != counts["n_timepoint"]
+                            or n > counts["n_baseline"]
+                            or sum(counts[col] for col in ("n_increased", "n_decreased", "n_unchanged")) != n):
+                        fail("inconsistent paired subject counts")
+                    subjects = row["paired_subjects"].split(";") if row["paired_subjects"] else []
+                    if len(subjects) != n or len(set(subjects)) != n:
+                        fail("paired subject list differs from pair count")
+                    for col in ("mean_delta_log2", "min_delta_log2", "max_delta_log2"):
+                        number(col, optional=n == 0)
+                        if n == 0 and row[col] != "":
+                            fail("no paired estimate can be supplied without pairs")
+                    number("sample_sd_delta_log2", minimum=0, optional=n < 2)
+                    if n < 2 and row["sample_sd_delta_log2"] != "":
+                        fail("sample SD needs at least two pairs")
+                number("unpaired_group_delta_log2", optional=counts["n_baseline"] == 0)
                 unique("gene", "probe", "tissue", "day")
         elif schema == "source_id":
             required(*(col for col in expected if col not in {"value", "n"}))
@@ -302,6 +353,12 @@ def _check_evidence_rows(schema, header, rows, path):
                     fail("reported sample count range/fraction is reversed")
                 if re.search(r"(?:^|;)\s*0(?:\s|$)", count):
                     fail("reported group sample counts must be positive")
+    if schema == "sample" and not errors:
+        from literature.extract_geo_wound import _observations
+        try:
+            _observations([dict(zip(header, row)) for row in rows])
+        except (ValueError, KeyError, TypeError) as error:
+            errors.append(f"{path}: invalid RNA observations: {error}")
     return errors
 
 
@@ -357,6 +414,50 @@ def discover_csvs():
     return sorted(set(curves + study_curves + measured + treatments))
 
 
+def _check_geo_source(schema, header, rows, path):
+    """Verify derived RNA tables against their actual same-directory inputs."""
+    from literature.extract_geo_wound import paired_changes, group_summaries
+    source = os.path.join(os.path.dirname(path), "sample_expression.csv")
+    try:
+        with open(source, newline="", encoding="utf-8") as stream:
+            sample_records = list(csv.DictReader(stream))
+        if schema == "mean_log2":
+            expected = group_summaries(sample_records)
+        else:
+            pairs, summaries = paired_changes(sample_records)
+            expected = pairs if schema == "baseline_sample" else summaries
+            receipt_path = os.path.join(os.path.dirname(path), "paired_provenance.json")
+            with open(receipt_path, encoding="utf-8") as stream:
+                receipt = json.load(stream)
+            script = os.path.join(_PROJECT_ROOT, "literature", "extract_geo_wound.py")
+            for name, input_path in (("input_sha256", source), ("script_sha256", script)):
+                with open(input_path, "rb") as stream:
+                    if receipt[name] != hashlib.sha256(stream.read()).hexdigest():
+                        return [f"{path}: stale paired provenance '{name}'"]
+            if (receipt["input_file"] != "sample_expression.csv"
+                    or receipt["script"] != "literature/extract_geo_wound.py"
+                    or receipt["paired_records"] != len(pairs)
+                    or receipt["summary_groups"] != len(summaries)):
+                return [f"{path}: paired provenance identity or counts differ"]
+        records = [dict(zip(header, row)) for row in rows]
+        keys = ("gene", "probe", "tissue", "day", "subject") if schema == "baseline_sample" else ("gene", "probe", "tissue", "day")
+        def key(row):
+            return tuple(float(row[col]) if col == "day" else row[col] for col in keys)
+        indexed = {key(row): row for row in records}
+        if len(records) != len(expected) or indexed.keys() != {key(row) for row in expected}:
+            return [f"{path}: derived RNA rows or subjects differ from sample_expression.csv"]
+        for row in expected:
+            actual = indexed[key(row)]
+            for col, value in row.items():
+                same = (math.isclose(float(actual[col]), value, rel_tol=1e-9, abs_tol=1e-9)
+                        if isinstance(value, (int, float)) else actual[col] == value)
+                if not same:
+                    return [f"{path}: {key(row)} '{col}' differs from sample_expression.csv"]
+    except (OSError, ValueError, KeyError, TypeError) as error:
+        return [f"{path}: cannot verify RNA source: {error}"]
+    return []
+
+
 def check_csv(path, sources_index, strict):
     errors = []
     warnings = []
@@ -367,7 +468,7 @@ def check_csv(path, sources_index, strict):
     if header is None:
         errors.append(f"{path}: missing header row")
         return errors, warnings
-    if not rows:
+    if not rows and "baseline_sample" not in header:
         errors.append(f"{path}: no data rows")
         return errors, warnings
     if any(not col for col in header) or len(header) != len(set(header)):
@@ -375,6 +476,8 @@ def check_csv(path, sources_index, strict):
     schema = next((key for key in _SCHEMAS if key in header), None)
     if schema is not None:
         errors.extend(_check_evidence_rows(schema, header, rows, path))
+        if not errors and schema in {"baseline_sample", "n_pairs", "mean_log2"}:
+            errors.extend(_check_geo_source(schema, header, rows, path))
         _check_provenance(path, comments, sources_index, warnings)
         return errors, warnings
     numeric_rows, parse_errors = _parse_numeric(rows, header, path)

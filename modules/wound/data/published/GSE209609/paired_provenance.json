@@ -1,0 +1,12 @@
+{
+  "accession": "GSE209609",
+  "publication": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10006330/",
+  "input_file": "sample_expression.csv",
+  "input_sha256": "c35a1aaee03020c9118c06ed3a27b80b7b7f88e66599fd967905c540a1a439a3",
+  "script": "literature/extract_geo_wound.py",
+  "script_sha256": "8701037cce4195f9dc31ef8b9223b77d49b77b5138b7d026e04fa0bedba3e977",
+  "paired_records": 935,
+  "summary_groups": 136,
+  "method": "Exact within-subject, within-tissue, within-probe post minus day-0 RMA log2 expression. Arithmetic paired mean, sample SD, range and sign counts. No imputation, interpolation, fitting or hypothesis tests.",
+  "limitations": "Separate wounds at each biopsy. Changing paired subsets across times. Pair counts are subjects within a timepoint, not independent repeated subjects across time. Sparse late skin samples. SD and range describe observed spread, not a confidence interval or parameter distribution. Not a reproduction of the paper's subject-adjusted LIMMA analysis. RNA is not protein or collagen mass."
+}
