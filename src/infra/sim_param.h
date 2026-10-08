@@ -192,7 +192,7 @@ struct SimParam : public ParamGroup {
   bool mech_collagen_deposition = false;     // TGF-beta receptor occupancy replaces flat rate
   real_t mech_collagen_tgfb_km = 0.035;      // TGF-beta half-max for collagen synthesis (Michaelis-Menten)
   real_t mech_collagen_vmax = 0.00025;         // TGF-b-responsive component Vmax
-  real_t mech_collagen_basal = 0.00035;        // constitutive myofibroblast collagen rate (epigenetically locked)
+  real_t mech_collagen_basal = 0.00035;        // basal synthesis per activated fibroblast or myofibroblast (assumed)
   bool mech_vegf_production = false;         // HIF-1alpha stabilization replaces flat m2_vegf_rate
   real_t mech_hif_o2_threshold = 0.3;        // O2 below this stabilizes HIF-1alpha
   real_t mech_hif_vegf_rate = 0.003;         // max VEGF production at zero O2

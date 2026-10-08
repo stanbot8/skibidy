@@ -16,8 +16,9 @@ enum FibroblastState {
 // ---------------------------------------------------------------------------
 // Fibroblast -- dermal cell recruited to wound site that deposits collagen
 // (scar tissue). Quiescent fibroblasts activate in response to TGF-beta,
-// then differentiate into myofibroblasts that produce TGF-beta (positive
-// feedback) and deposit collagen proportional to local TGF-beta.
+// deposit collagen while activated, then differentiate into contractile
+// myofibroblasts with the modeled TGF-beta positive feedback. Collagen uses
+// a constant rate or the optional basal plus saturating TGF-beta response.
 // ---------------------------------------------------------------------------
 class Fibroblast : public Cell {
   BDM_AGENT_HEADER(Fibroblast, Cell, 1);

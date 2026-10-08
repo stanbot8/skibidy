@@ -65,3 +65,7 @@ Plots are saved in `plots/` beside the selected metrics CSV:
 | `tumor_validation.png` | Growth rate + doubling time |
 
 For detailed parameter sources and validation datasets, see each module's README under `modules/*/README.md`.
+
+The [fibroblast producer experiment](fibroblast-producers-20261007/README.md)
+records the primary evidence, matched-seed comparison, raw trajectories and
+remaining biological failures for the activated-cell collagen repair.

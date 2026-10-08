@@ -79,7 +79,7 @@ Optional biophysical replacements for simplified parametric models. All default 
 |--------|---------------|-------------|
 | `mech_immune_recruitment` | `skin.immune` | Gradient-driven monocyte extravasation (Michaelis-Menten) |
 | `mech_m1_m2_transition` | `skin.immune` | Efferocytosis engulfment count drives M1 to M2 |
-| `mech_collagen_deposition` | `skin.fibroblast` | Constitutive basal + TGF-beta receptor occupancy collagen |
+| `mech_collagen_deposition` | `skin.fibroblast` | Basal + saturating TGF-beta response in activated fibroblasts and myofibroblasts (assumed) |
 | `mech_vegf_production` | `skin.angiogenesis` | HIF-1alpha stabilization drives VEGF production |
 
 See each module's README for parameter details. Enable via `studies/full-model/preset.toml` for testing.

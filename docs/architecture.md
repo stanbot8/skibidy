@@ -192,7 +192,7 @@ Four optional mechanistic replacements can be enabled independently via boolean 
 |--------|--------|----------|-------------------|
 | `mech_immune_recruitment` | immune | threshold + rate + taper recruitment | Chemokine gradient magnitude with Michaelis-Menten saturation |
 | `mech_m1_m2_transition` | immune | Cytokine-threshold M1 to M2 | Efferocytosis engulfment count with timer ceiling fallback |
-| `mech_collagen_deposition` | fibroblast | Constant collagen rate | Constitutive basal + TGF-beta receptor occupancy (Michaelis-Menten) |
+| `mech_collagen_deposition` | fibroblast | Constant collagen rate in activated fibroblasts and myofibroblasts | Basal + saturating TGF-beta response in both states (assumed) |
 | `mech_vegf_production` | angiogenesis | Flat M2 VEGF rate | HIF-1alpha stabilization under hypoxia |
 
 The `full-model` study preset (`studies/full-model/preset.toml`) enables M1 to M2, collagen, and VEGF toggles for validation testing. Gradient-driven recruitment is implemented but excluded from the test preset pending further calibration.

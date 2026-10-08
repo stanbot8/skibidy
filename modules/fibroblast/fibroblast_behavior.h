@@ -20,8 +20,8 @@ namespace skibidy {
 //
 // States: quiescent -> activated -> myofibroblast -> removed
 // Transitions driven by local TGF-beta concentration.
-// Only myofibroblasts produce TGF-beta (positive feedback) and deposit
-// collagen (= mechanistic scar output).
+// Activated fibroblasts and myofibroblasts deposit collagen. Only
+// myofibroblasts contribute the modeled TGF-beta positive feedback.
 // ---------------------------------------------------------------------------
 struct FibroblastBehavior : public Behavior {
   BDM_BEHAVIOR_HEADER(FibroblastBehavior, Behavior, 1);
@@ -60,13 +60,12 @@ struct FibroblastBehavior : public Behavior {
     auto* tgfb_grid = rm->GetDiffusionGrid(fields::kTGFBetaId);
     real_t local_tgfb = tgfb_grid->GetValue(qpos);
 
-    // --- Receptor-mediated TGF-beta endocytosis ---
-    // TGF-beta binds TbRII, recruits TbRI, complex internalized via
-    // clathrin-coated pits and degraded in lysosomes. Clearance scales
-    // with cell density. (Vilar et al. 2006, doi:10.1016/j.jtbi.2006.03.024)
-    // Myofibroblasts upregulate TbRI/TbRII expression ~5x as part of the
-    // autocrine loop maintaining the contractile phenotype, internalizing
-    // proportionally more ligand. (Tomasek et al. 2002, doi:10.1038/nrm809)
+    // --- Cell-associated TGF-beta uptake proxy ---
+    // Receptor trafficking motivates cell-associated ligand removal
+    // (Vilar et al. 2006, doi:10.1371/journal.pcbi.0020003), but receptors
+    // and internalization compartments are not explicitly represented.
+    // Activated/myofibroblast uptake multipliers (2/5) are assumptions,
+    // not measured receptor-expression ratios supplied by that paper.
     {
       real_t eff_tgfb = local_tgfb;
       if (cell->GetFibroblastState() == kMyofibroblast)
@@ -215,16 +214,21 @@ struct FibroblastBehavior : public Behavior {
       }
     }
 
-    // --- Collagen deposition (myofibroblasts only) ---
+    // --- Collagen deposition (matrix-synthetic fibroblasts) ---
     // Collagen is non-diffusing (structural ECM).
-    if (cell->GetFibroblastState() == kMyofibroblast) {
+    // Col1a1 is also expressed in alpha-SMA-negative wound fibroblasts
+    // (McAndrews et al. 2022, doi:10.15252/embj.2021109470, Fig. 4N).
+    // The activated state is our coarse-grained synthetic population.
+    // Sharing its per-cell rates with myofibroblasts remains an assumption.
+    if (cell->GetFibroblastState() == kFibroActivated ||
+        cell->GetFibroblastState() == kMyofibroblast) {
       auto* col_grid = rm->GetDiffusionGrid(fields::kCollagenId);
       size_t col_idx = col_grid->GetBoxIndex(qpos);
       real_t deposit;
       if (sp->mech_collagen_deposition) {
         // Mechanistic: constitutive + TGF-b-responsive collagen synthesis.
-        // Basal: epigenetically locked myofibroblast program (constitutive).
-        // Responsive: Michaelis-Menten TGF-b receptor occupancy modulation.
+        // Basal and responsive components are phenomenological assumptions.
+        // The saturating term is not an explicit receptor occupancy model.
         deposit = sp->mech_collagen_basal +
                   sp->mech_collagen_vmax *
                   local_tgfb / (sp->mech_collagen_tgfb_km + local_tgfb);

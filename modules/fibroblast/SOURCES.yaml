@@ -1,4 +1,16 @@
 # Literature sources for fibroblast module
+collagen_producer_identity:
+  description: Collagen synthesis is not exclusive to alpha-SMA-positive myofibroblasts.
+  notes: The activated model state represents non-contractile synthetic fibroblasts. Equal per-cell synthesis rates across activated and myofibroblast states are an assumption, not a measurement from this study.
+  sources:
+  - id: mcandrews2022
+    authors: McAndrews KM, Miyake T, Ehsanipour EA, Kelly PJ, Becker LM, McGrail DJ, Sugimoto H, LeBleu VS, Ge Y, Kalluri R
+    year: 2022
+    title: Dermal alpha-SMA-positive myofibroblasts orchestrate skin wound repair via beta1 integrin and independent of type I collagen production
+    journal: EMBO J 41(7):e109470
+    doi: 10.15252/embj.2021109470
+    pmc: PMC8982612
+    notes: Primary mouse wound experiments. Fig. 4N shows Col1a1 expression in alpha-SMA-negative fibroblasts. Fig. 4E-H reports reduced collagen after myofibroblast-specific Col1a1 deletion, while Fig. 4I reports preserved wound closure. Cell depletion is a different intervention. No model-unit production coefficient is derived here.
 scleroderma_profile_background:
   description: Fibrosis and vasculopathy reviews cited by profiles/scleroderma.toml.
   notes: Mechanistic background; numerical scenario multipliers are heuristic, not fitted to these reviews.

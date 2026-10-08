@@ -6,7 +6,7 @@ TGF-beta driven fibroblast lifecycle with myofibroblast differentiation and coll
 
 ## Biology
 
-Dermal fibroblasts are the primary effectors of wound repair in the dermis. After wounding, resident fibroblasts near the wound margin become activated by TGF-beta signaling from M2 macrophages. Activated fibroblasts migrate toward the wound center and differentiate into myofibroblasts, which are contractile cells that deposit collagen (the structural basis of scar tissue) and produce additional TGF-beta, creating a positive feedback loop.
+Dermal fibroblasts contribute to matrix synthesis and wound repair. After wounding, resident fibroblasts near the wound margin become activated by signals including TGF-beta from macrophages. Activated fibroblasts migrate toward the wound center, synthesize collagen and may differentiate into contractile myofibroblasts. Collagen synthesis and contractile differentiation are distinct functions. McAndrews et al. 2022 found Col1a1 expression in alpha-SMA-negative wound fibroblasts (Fig. 4N). Myofibroblast-specific Col1a1 deletion reduced collagen deposition but preserved wound closure (Fig. 4E-I). These mouse experiments support including non-myofibroblast producers, without establishing their relative synthesis rates in human wounds ([primary study](https://doi.org/10.15252/embj.2021109470)).
 
 Myofibroblast TGF-beta production sustains a positive feedback loop. Three modeled sinks can oppose it: uptake proportional to concentration by fibroblasts and macrophages (inspired by Vilar et al. 2006), a sink scaled by resident tissue density, and a collagen-proportional sink inspired by decorin binding to TGF-beta (Yamaguchi et al. 1990). Their coefficients, the production taper and the stochastic apoptosis rules determine the simulated peak and decline together. The cited mechanisms do not establish these numerical coefficients or validate that trajectory. Myofibroblast apoptosis is modeled stochastically after the assumed minimum state age. Desmouliere et al. 1995 supports cell removal during repair, not the exact per-step probability.
 
@@ -23,16 +23,16 @@ Myofibroblast  [state_age > apoptosis_onset, stochastic]  Removed
 Any state  [age > lifespan]  Removed
 ```
 
-Only myofibroblasts produce TGF-beta and deposit collagen. All non-quiescent states migrate via chemotaxis on TGF-beta gradient (or geometric fallback toward wound center).
+Activated fibroblasts and myofibroblasts deposit collagen. The activated state represents a coarse-grained non-contractile synthetic population. Both states share the existing per-cell synthesis coefficients, an unmeasured model assumption. Only myofibroblasts produce the modeled fibroblast TGF-beta feedback. All non-quiescent states migrate via chemotaxis on TGF-beta gradient (or geometric fallback toward wound center).
 
 TGF-beta production uses an exponential taper: `tgfb_rate * exp(-taper_rate * state_age)`, which gradually reduces the positive feedback as the wound matures.
 
 **TGF-beta PDE:** diffusion 0.03, no background decay (`tgfb_decay = 0`). Sources: M2 macrophages and myofibroblasts. Clearance uses three coarse-grained pathways inspired by mechanisms. Their dimensionless coefficients are model assumptions, not measured molecular rates:
-1. **Receptor uptake proxy**: fibroblasts and macrophages remove ligand proportional to local concentration. Vilar et al. supports receptor-mediated signaling and trafficking. Clathrin pits and receptor states are not represented (Vilar et al. 2006, [DOI](https://doi.org/10.1016/j.jtbi.2006.03.024)).
+1. **Receptor uptake proxy**: fibroblasts and macrophages remove ligand proportional to local concentration. The Vilar et al. paper models receptor-mediated signaling and trafficking. Clathrin pits and receptor states are not represented here. Uptake multipliers of 2 for activated fibroblasts and 5 for myofibroblasts are assumed, without measured receptor-expression ratios supporting these values (Vilar et al. 2006, [DOI](https://doi.org/10.1371/journal.pcbi.0020003)).
 2. **Tissue density clearance**: resident tissue cells (keratinocytes, endothelial cells) clear TGF-beta at a rate proportional to local tissue density (max of stratum, vascular). Open wound = low density = low clearance; healed tissue = high clearance.
 3. **Collagen-dependent sequestration proxy**: an implicit decorin effect removes TGF-beta as `rate * collagen * tgfb`. This sink increases with modeled collagen. The coefficient and proportionality between collagen and decorin are assumptions (Yamaguchi et al. 1990, [DOI](https://doi.org/10.1038/346281a0)).
 
-**Collagen PDE:** no diffusion (structural deposit), optional MMP decay. Deposited by myofibroblasts at a constant rate (parametric mode) or via a constitutive + TGF-beta-responsive model (mechanistic mode).
+**Collagen PDE:** no diffusion (structural deposit), optional MMP decay. Deposited by activated fibroblasts and myofibroblasts at a constant rate (parametric mode) or via a basal + TGF-beta-responsive model (mechanistic mode). Both modes retain oxygen-dependent hydroxylation and enabled lactate, nitric oxide and diabetic modifiers.
 
 **Feedback loop with coarse-grained clearance:**
 ```
@@ -40,9 +40,9 @@ M2 Macrophages  [m2_tgfb_rate]  TGF-beta field
                                         |
                                    Fibroblast activation
                                         |
-                                   Myofibroblast differentiation
+                       Activated fibroblasts and myofibroblasts
                                      /        \
-        [fibroblast_tgfb_rate]                  [collagen_deposition_rate * local_tgfb]
+        [myofibroblast TGF-beta source]         [collagen synthesis in both states]
                   |                                      |
            TGF-beta field  <---  clearance  <---  Collagen field
                   |                                      |
@@ -55,7 +55,7 @@ M2 Macrophages  [m2_tgfb_rate]  TGF-beta field
 - Day 1 to 6: remaining waves arrive (6 waves over 120h)
 - Day 2 to 4: fibroblasts activate (TGF-beta threshold or auto-timeout at ~60h)
 - Day 3 to 4: myofibroblast differentiation begins (48h delay in activated state)
-- Day 4+: collagen deposition proportional to local TGF-beta
+- From activation: collagen deposition, constant or basal + saturating TGF-beta response depending on mode
 - Day 10+: stochastic apoptosis begins (after 7 days as myofibroblast)
 - Day 50: hard lifespan limit
 
@@ -96,14 +96,14 @@ uncertainty for these values. Defaults remain fixed during this audit.
 | `tgfb_rate` | 0.001 | per step | TGF-beta per myofibroblast (secondary to M2 source) | Calibrated |
 | `tgfb_taper_rate` | 0.002 | - | Exponential taper for TGF-beta production | Tomasek 2002 |
 | `m2_tgfb_rate` | 0.005 | per step | TGF-beta per M2 macrophage | Koh & DiPietro 2011 ([DOI](https://doi.org/10.1017/S1462399411001943)) |
-| `collagen_deposition_rate` | 0.0005 | per step | Collagen per myofibroblast (parametric) | Murphy et al. 2012 |
+| `collagen_deposition_rate` | 0.0005 | per step | Collagen per activated fibroblast or myofibroblast (parametric) | Model assumption |
 | `collagen_decay` | 0.0 | per step | MMP remodeling (0 = permanent) | Convention |
 | `mech_collagen_deposition` | false | bool | Constitutive + TGF-b-responsive collagen (test mode) | Convention |
 | `mech_collagen_tgfb_km` | 0.035 | a.u. | TGF-beta half-max for Michaelis-Menten component | Calibrated |
 | `mech_collagen_vmax` | 0.00025 | per step | TGF-b-responsive component Vmax | Calibrated |
-| `mech_collagen_basal` | 0.00035 | per step | Constitutive myofibroblast collagen rate | Calibrated |
+| `mech_collagen_basal` | 0.00035 | per step | Shared basal synthesis per activated fibroblast or myofibroblast | Model assumption |
 | `decorin_sequestration_rate` | 0.12 | model units | Collagen-proportional TGF-beta sink. Decorin is implicit | Yamaguchi et al. 1990 supports the interaction, not this coefficient ([DOI](https://doi.org/10.1038/346281a0)) |
-| `tgfb_receptor_consumption` | 0.001 | per cell | Per-cell TbRII/TbRI endocytosis rate | Vilar et al. 2006 ([DOI](https://doi.org/10.1016/j.jtbi.2006.03.024)) |
+| `tgfb_receptor_consumption` | 0.001 | per cell | Coarse-grained ligand uptake coefficient (assumed) | Vilar et al. 2006 models trafficking, without establishing this coefficient ([DOI](https://doi.org/10.1371/journal.pcbi.0020003)) |
 | `tgfb_tissue_clearance` | 0.025 | - | Coarse-grained uptake scaled by local tissue density | Model assumption |
 
 ### Mechanistic toggle
@@ -114,7 +114,7 @@ When `mech_collagen_deposition = true`, the flat collagen deposition rate is rep
 deposit = basal + Vmax * [TGF-b] / (Km + [TGF-b])
 ```
 
-The basal component represents the epigenetically locked collagen program that myofibroblasts maintain after differentiation (constitutive synthesis independent of ongoing TGF-beta signaling). The Michaelis-Menten component models TGF-beta receptor occupancy modulation of synthesis rate. This produces a more linear collagen accumulation curve compared to pure Michaelis-Menten, which tracks TGF-beta too tightly and creates an S-shaped curve.
+The basal component permits synthesis without ongoing TGF-beta stimulation in either synthetic state. The saturating component represents a coarse-grained response to TGF-beta, without explicit receptors or epigenetic states. The coefficients and equal rates across the two states remain assumptions. This function has not been fitted to a measured dose-response curve in physical units. Its trajectory shape does not establish biological accuracy.
 
 At default parameters (basal=0.00035, Vmax=0.00025, Km=0.035):
 - Zero TGF-beta: deposit = 0.00035 (constitutive only)

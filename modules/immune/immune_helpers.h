@@ -84,10 +84,10 @@ inline void ProduceTGFBeta(const Real3& qpos, Simulation* sim,
   sg.AgentDeposit(sg.Index(qpos), amount);
 }
 
-// Receptor-mediated TGF-beta endocytosis. Cells with TGF-beta receptors
-// (TbRII/TbRI) internalize ligand proportional to local concentration.
-// Clearance scales with cell density, replacing the abstract decay constant.
-// (Vilar et al. 2006, doi:10.1016/j.jtbi.2006.03.024;
+// Coarse-grained cell-associated TGF-beta uptake, proportional to local
+// concentration. The coefficient is assumed; receptors and trafficking
+// compartments are not represented. Other tissue-clearance terms remain.
+// (Vilar et al. 2006, doi:10.1371/journal.pcbi.0020003;
 //  Wakefield et al. 1990, doi:10.1172/JCI114647)
 inline void ConsumeTGFBeta(const Real3& qpos, Simulation* sim,
                            const SimParam* sp, real_t local_tgfb) {

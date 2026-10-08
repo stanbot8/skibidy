@@ -29,7 +29,7 @@ struct FibroblastParams {
   real_t tgfb_decay = 0.0;  // clearance now fully mechanistic (receptor + decorin)
   real_t tgfb_wound_seed = 0.04;  // platelet alpha-granule TGF-beta1 bolus (Shah et al. 1992)
   real_t tgfb_rate = 0.001;  // TGF-beta per myofibroblast per step
-  real_t collagen_deposition_rate = 0.0005;  // collagen per myofibroblast per step (Murphy et al. 2012)
+  real_t collagen_deposition_rate = 0.0005;  // collagen per activated fibroblast or myofibroblast per step (assumed)
   real_t collagen_decay = 0.0;
   real_t tgfb_receptor_consumption = 0.001;  // per-cell TbRII/TbRI endocytosis rate (Vilar et al. 2006)
   real_t tgfb_tissue_clearance = 0.025;  // receptor clearance by resident tissue cells

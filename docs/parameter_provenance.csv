@@ -91,10 +91,10 @@ mech_recruit_saturation_k,core,0.005,assumed,,Half-saturation for chemokine grad
 mech_m1_m2_transition,core,false,assumed,,Efferocytosis-count driven M1 to M2 test mode switch
 mech_efferocytosis_quota,core,1,assumed,,Single engulfment triggers M2 program (PS receptor)
 mech_m2_transition_rate,core,0.25,assumed,,Probability per step of transition once quota met
-mech_collagen_deposition,core,false,assumed,,TGF-beta receptor occupancy test mode switch
+mech_collagen_deposition,core,false,assumed,,Basal plus saturating TGF-beta response test mode switch
 mech_collagen_tgfb_km,core,0.035,assumed,,TGF-beta half-max for collagen synthesis (Michaelis-Menten)
 mech_collagen_vmax,core,0.00025,assumed,,TGF-b-responsive component Vmax
-mech_collagen_basal,core,0.00035,assumed,,Constitutive myofibroblast collagen rate (epigenetically locked)
+mech_collagen_basal,core,0.00035,assumed,,Shared basal synthesis per activated fibroblast or myofibroblast
 mech_vegf_production,core,false,assumed,,HIF-1alpha stabilization test mode switch
 mech_hif_o2_threshold,core,0.3,assumed,,O2 below this stabilizes HIF-1alpha
 mech_hif_vegf_rate,core,0.003,assumed,,Max VEGF production at zero O2

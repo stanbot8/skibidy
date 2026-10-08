@@ -158,7 +158,7 @@ The CSV written to `output/skibidy/metrics.csv` has 59 columns:
 | `mean_lactate_wound` | a.u. | Mean lactate in wound | `[skin.lactate] enabled` |
 | `mean_no_wound` | a.u. | Mean nitric oxide in wound | `[skin.nitric_oxide] enabled` |
 | `mean_ros_wound` | a.u. | Mean reactive oxygen species in wound | `[skin.ros] enabled` |
-| `mean_stiffness_wound` | kPa | Mean tissue stiffness in wound | `[skin.mechanotransduction] enabled` |
+| `mean_stiffness_wound` | dimensionless (0-1) | Mean modeled matrix stiffness proxy in wound | `[skin.mechanotransduction] enabled` |
 | `mean_lymphatic_wound` | normalized | Mean lymphatic density in wound | `[skin.lymphatic] enabled` |
 | `mean_edema_wound` | a.u. | Mean interstitial edema in wound | `[skin.lymphatic] enabled` |
 | `mean_voltage_wound` | mV | Mean transepithelial potential in wound | `[skin.bioelectric] enabled` |

@@ -207,6 +207,70 @@ TEST(FibroblastBehaviorTest, CollagenDeposition) {
   delete sim;
 }
 
+// Exercise scheduled matrix deposition before the contractile state is acquired.
+// An alpha-SMA-like state must not be a prerequisite for fibroblast synthesis.
+static real_t ScheduledCollagen(FibroblastState state, bool responsive,
+                               real_t tgfb_value, real_t oxygen_value) {
+  auto* sim = CreateTestSim("scheduled-fibroblast-collagen");
+  auto* sp = const_cast<SimParam*>(sim->GetParam()->Get<SimParam>());
+  SanitizeForUnitTest(sp);
+  sp->fibroblast.enabled = true;
+  sp->mech_collagen_deposition = responsive;
+  sp->fibroblast.activation_delay = 9999;
+  sp->fibroblast.activation_threshold = 999;
+  sp->fibroblast.myofibroblast_delay = 9999;
+  sp->fibroblast.tgfb_rate = 0;
+  sp->fibroblast.migration_speed = 0;
+  sp->fibroblast.tgfb_diffusion = 0;
+  sp->fibroblast.tgfb_decay = 0;
+  TGFBetaPDE tgfb(sp);
+  tgfb.Init(sim);
+  CollagenPDE collagen(sp);
+  collagen.Init(sim);
+  OxygenPDE oxygen;
+  oxygen.Init(sim);
+  sim->GetScheduler()->Simulate(1);
+  auto* rm = sim->GetResourceManager();
+  Real3 pos = {15, 15, 2};
+  auto* tgfb_grid = rm->GetDiffusionGrid(fields::kTGFBetaId);
+  auto* oxygen_grid = rm->GetDiffusionGrid(fields::kOxygenId);
+  // Uniform controlled oxygen removes diffusion and boundary supply confounds.
+  for (size_t i = 0; i < oxygen_grid->GetNumBoxes(); ++i) {
+    oxygen_grid->ChangeConcentrationBy(
+        i, oxygen_value - oxygen_grid->GetConcentration(i));
+  }
+  tgfb_grid->ChangeConcentrationBy(tgfb_grid->GetBoxIndex(pos), tgfb_value);
+  auto* cell = new Fibroblast(pos);
+  cell->SetDiameter(4);
+  cell->SetFibroblastState(state);
+  cell->AddBehavior(new FibroblastBehavior());
+  rm->AddAgent(cell);
+  sim->GetScheduler()->Simulate(3);
+  EXPECT_EQ(cell->GetFibroblastState(), state);
+  auto* grid = rm->GetDiffusionGrid(fields::kCollagenId);
+  real_t deposited = grid->GetValue(pos);
+  delete sim;
+  return deposited;
+}
+
+TEST(FibroblastBehaviorTest, MatrixSynthesisPrecedesContractileDifferentiation) {
+  for (bool responsive : {false, true}) {
+    SCOPED_TRACE(responsive);
+    real_t activated = ScheduledCollagen(kFibroActivated, responsive, 0, 1);
+    EXPECT_GT(activated, 0);
+    EXPECT_DOUBLE_EQ(ScheduledCollagen(kFibroQuiescent, responsive, 0, 1), 0);
+    EXPECT_GT(ScheduledCollagen(kMyofibroblast, responsive, 0, 1), 0);
+    EXPECT_DOUBLE_EQ(ScheduledCollagen(kFibroActivated, responsive, 0, 0), 0);
+  }
+}
+
+TEST(FibroblastBehaviorTest, ActivatedMatrixSynthesisRespondsToTGFBeta) {
+  real_t basal = ScheduledCollagen(kFibroActivated, true, 0, 1);
+  real_t stimulated = ScheduledCollagen(kFibroActivated, true, 1, 1);
+  EXPECT_GT(basal, 0);
+  EXPECT_GT(stimulated, basal);
+}
+
 TEST(FibroblastBehaviorTest, TGFBetaProduction) {
   auto* sim = CreateTestSim(TEST_NAME);
   auto* sp = const_cast<SimParam*>(sim->GetParam()->Get<SimParam>());
