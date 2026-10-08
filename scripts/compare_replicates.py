@@ -60,6 +60,9 @@ def load_cohort(directory):
 def summarize(runs):
     if len(runs) < 2:
         raise ValueError("a cohort summary requires at least two seeds")
+    methods = {run["validation"].get("scoring_method") for run in runs.values()}
+    if len(methods) != 1:
+        raise ValueError("a cohort cannot mix scoring methods")
     coverage = {}
     names = sorted({name for run in runs.values() for name in run["validation"]["coverage"]})
     for name in names:
@@ -80,7 +83,7 @@ def summarize(runs):
                               comparison_dates=scopes[0])
     statuses = [run["validation"]["status"] for run in runs.values()]
     status = "fail" if "fail" in statuses else ("pass" if all(s == "pass" for s in statuses) else "not_tested")
-    return dict(status=status, n=len(runs), coverage=coverage,
+    return dict(status=status, n=len(runs), coverage=coverage, scoring_method=methods.pop(),
                 uncertainty="Sample SD across simulation seeds. No patient-level uncertainty or significance claim.",
                 runs=list(runs.values()))
 

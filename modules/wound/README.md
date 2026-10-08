@@ -64,7 +64,7 @@ Reference curves for validation (full citations in [SOURCES.yaml](SOURCES.yaml))
 | Closure kinetics (punch biopsy) | [closure_kinetics_punch_biopsy.csv](data/closure_kinetics_punch_biopsy.csv) | Absolute 0 to 100% |
 
 <details>
-<summary>Raw digitized data (3 papers)</summary>
+<summary>Per-paper reference files (3 papers)</summary>
 
 | File | Source |
 |------|--------|

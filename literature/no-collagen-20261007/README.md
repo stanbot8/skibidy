@@ -3,7 +3,10 @@
 2026-10-07. This pass removes the unsupported universal NO collagen inhibitor
 and identifies a major contributor to persistent matrix loss. It does not
 establish accurate wound repair: every control, candidate and diagnostic run
-still fails the biological validation screens.
+still fails the engineering validation screens.
+The [validation audit](../validation-audit-20261007/README.md) re-scores this
+frozen evidence and documents why a target mismatch is not empirical biological
+validation. The original archive and its reports retain their historical method.
 
 ## Evidence and implementation
 

@@ -27,11 +27,11 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from lib import (load_csv, plots_dir, validate_ra, interpolate,
-                 peak_normalize, compute_rmse,
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+from literature.lib import (load_csv, plots_dir, evaluate_run, saved_config_path, condition_from_config,
                  SIM_COLOR, REF_COLOR, REF_KW,
                  _study_ref_path)
+from batch.lib import parse_toml, validate_run_metrics
 
 
 COLORS = [
@@ -48,9 +48,18 @@ COLORS = [
 
 def load_run(csv_path):
     """Load a metrics CSV and compute RA validation."""
+    config_path = saved_config_path(csv_path)
+    if config_path is None:
+        raise ValueError("No saved run configuration beside RA input")
+    config = parse_toml(config_path)
+    validate_run_metrics(csv_path, config)
     sim = load_csv(csv_path)
     sim_days = [h / 24.0 for h in sim["time_h"]]
-    r = validate_ra(sim, sim_days)
+    results, report = evaluate_run(sim, sim_days, config, condition_from_config(config))
+    r = results["ra"]
+    if r is None:
+        raise ValueError("RA is disabled in the saved run configuration")
+    print(report["evidence"])
     return sim, sim_days, r
 
 
@@ -88,7 +97,7 @@ def _plot_panel(ax, runs, key, ref_key, ref_col, ylabel, title,
     if ref_key in r0 and r0[ref_key]:
         ref = r0[ref_key]
         ax.plot(ref["day"], ref[ref_col], color="#888888", linewidth=1.5,
-                linestyle="--", marker="o", markersize=3, label="Literature")
+                linestyle="--", marker="o", markersize=3, label="Modeling target")
 
     ax.set_ylabel(ylabel)
     ax.set_title(title)
@@ -153,9 +162,9 @@ def print_table(runs):
     print(header)
     print("-" * len(header))
     for label, sim, sim_days, r in runs:
-        tnf = f"{r['tnf_rmse']*100:.1f}%" if r.get("tnf_rmse") else "  N/A"
-        il6 = f"{r['il6_rmse']*100:.1f}%" if r.get("il6_rmse") else "  N/A"
-        cart = f"{r['cart_rmse']*100:.1f}%" if r.get("cart_rmse") else "  N/A"
+        tnf = f"{r['tnf_rmse']*100:.1f}%" if r.get("tnf_rmse") is not None else "  N/A"
+        il6 = f"{r['il6_rmse']*100:.1f}%" if r.get("il6_rmse") is not None else "  N/A"
+        cart = f"{r['cart_rmse']*100:.1f}%" if r.get("cart_rmse") is not None else "  N/A"
         bone = f"{r['bone_rmse']*100:.1f}%" if r.get("has_bone") else "  N/A"
         tcell = f"{r['tcell_rmse']*100:.1f}%" if r.get("has_tcell") else "  N/A"
         syn = f"{r['syn_rmse']*100:.1f}%" if r.get("has_syn") else "  N/A"
@@ -209,12 +218,6 @@ def main():
             print("Usage: ra_dashboard.py [--label NAME] path/to/metrics.csv ...")
             print("       ra_dashboard.py --experiment path/to/experiment_results/")
             sys.exit(1)
-
-    # Check first run has RA data
-    _, sim0, _, r0 = runs[0]
-    if "mean_tnf_alpha_wound" not in sim0 or max(sim0["mean_tnf_alpha_wound"]) == 0:
-        print("No RA data found. Set ra_enabled = true and re-run.")
-        sys.exit(1)
 
     print_table(runs)
 

@@ -24,7 +24,7 @@ BCC growth is slow compared to many cancers, with volume doubling times of appro
 
 **Tumor PDE:** binary marker field with no diffusion and no decay. Records the spatial footprint of quiescent tumor cells after handoff.
 
-**Scale-aware validation:** the simulation operates at a representative tissue scale (30x30 um domain). Growth metrics are compared against clinical data using surface-to-volume ratio corrections.
+**Descriptive comparison:** the simulation operates at a representative tissue scale. Active-agent counts can fall during continuum handoff. Occupied binary voxels are reported separately because multiple cells can hand off to the same voxel. Neither is a conserved census of viable tumor cells or a calibrated clinical volume. The spherical surface fraction is geometric context and is not an empirical correction for Ki-67.
 
 **Scenario composability:** the tumor module can run alone (`--study=tumor`) or combined with wound healing (`--study=tumor-wound`), where a tumor grows at t=0 and a wound is introduced at day 8. Both cellular populations coexist, sharing the same field infrastructure.
 
@@ -67,7 +67,7 @@ From modules/tumor/config.toml:
 
 | Dataset | Observable | Sources | Notes |
 |---------|-----------|--------|-------|
-| `tumor_growth_rate` | Volume growth over time | Fijalkowska 2023, Sykes 2020, Kricker 2014 | Slow BCC growth |
+| `tumor_growth_rate` | Clinical linear growth | Fijalkowska 2023, Sykes 2020, Kricker 2014 | Stored projection from a 4 mm starting diameter. Not loaded by the current validator. |
 | `tumor_doubling_time` | Volume doubling time ~148 days | Khoo 2019, Tejera 2023 | Clinical measurements |
 | `tumor_proliferation_index` | Ki-67 ~27% | Toth 2012, Alferraly 2019, al-Sader 1996 | Immunohistochemistry |
 
@@ -82,14 +82,14 @@ Reference curves for validation (full citations in [SOURCES.yaml](SOURCES.yaml))
 | Tumor proliferation index | [tumor_proliferation_index.csv](data/tumor_proliferation_index.csv) | Absolute % |
 
 <details>
-<summary>Raw digitized data (8 papers)</summary>
+<summary>Per-paper reference files (8 papers)</summary>
 
 | File | Source |
 |------|--------|
 | [fijalkowska2023_bcc_growth_meta.csv](data/raw/tumor_growth/fijalkowska2023_bcc_growth_meta.csv) | Fijalkowska et al. 2023 |
 | [sykes2020_superficial_bcc.csv](data/raw/tumor_growth/sykes2020_superficial_bcc.csv) | Sykes et al. 2020 |
 | [kricker2014_community_bcc.csv](data/raw/tumor_growth/kricker2014_community_bcc.csv) | Kricker et al. 2014 |
-| [al_qahtani2020_bcc_doubling.csv](data/raw/tumor_doubling/al_qahtani2020_bcc_doubling.csv) | Al-Qahtani et al. 2020 |
+| [al_qahtani2020_bcc_doubling.csv](data/raw/tumor_doubling/al_qahtani2020_bcc_doubling.csv) | Khoo et al. 2019, as identified in the file header. Filename is historical. |
 | [tejera2023_skin_cancer_tdt.csv](data/raw/tumor_doubling/tejera2023_skin_cancer_tdt.csv) | Tejera et al. 2023 |
 | [toth2012_bcc_ki67.csv](data/raw/tumor_proliferation/toth2012_bcc_ki67.csv) | Toth et al. 2012 |
 | [alferraly2019_scc_ki67.csv](data/raw/tumor_proliferation/alferraly2019_scc_ki67.csv) | Alferraly et al. 2019 |

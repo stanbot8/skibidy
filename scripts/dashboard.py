@@ -1163,12 +1163,15 @@ async function renderValidation(){
     h += `<div class="card"><div class="card-label">Not tested</div><div class="card-value">${entries.length-tested.length}</div></div>`;
     h += '</div>';
     h += `<div class="info-box">${esc(val.criterion)}</div>`;
+    h += `<div class="info-box">${esc(val.evidence || '')} ${esc(val.scoring_method || '')}</div>`;
 
     h += '<div class="rmse-table">';
     entries.forEach(([name,val])=>{
       let cls = val.status==='pass'?'rmse-good':'rmse-bad';
       let pcls = val.status==='pass'?'pill-green':val.status==='not_tested'?'pill-yellow':'pill-red';
-      let score = val.rmse_pct == null ? esc(val.reason || 'Unavailable') : val.rmse_pct.toFixed(1)+'%';
+      let score = val.rmse_pct == null ? esc(val.reason || 'Unavailable') : val.rmse_pct.toFixed(1)+(name==='Wound closure'?' pp':'%');
+      let scope = val.comparison_dates;
+      if(scope && !scope.full_reference_window) score += ' (partial window)';
       h += `<div class="rmse-row"><span>${esc(name)}</span><span><span class="${cls}">${score}</span> <span class="pill ${pcls}">${esc(val.status)}</span></span></div>`;
     });
     h += '</div>';

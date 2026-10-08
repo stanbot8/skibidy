@@ -72,7 +72,7 @@ Reference curves for validation (full citations in [SOURCES.yaml](SOURCES.yaml))
 | Inflammation timecourse | [inflammation_timecourse.csv](data/inflammation_timecourse.csv) | Peak = 1.0 |
 
 <details>
-<summary>Raw digitized data (3 papers)</summary>
+<summary>Per-paper reference files (3 papers)</summary>
 
 | File | Source |
 |------|--------|

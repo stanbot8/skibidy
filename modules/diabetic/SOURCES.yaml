@@ -357,3 +357,27 @@ diabetic_inflammation_timecourse:
     journal: Adv Wound Care (New Rochelle)
     doi: 10.1089/wound.2023.0149
     notes: 'Review of diabetic macrophage M1 persistence and impaired efferocytosis. Ly6Chi M1 monocytes accumulate post-recruitment, failing M1->M2 switch; supports diabetic.efferocytosis_factor and m1_duration_factor parameters.'
+diabetic_mmp_kinetics:
+  description: Constructed diabetic MMP shape target, not an extracted timecourse.
+  consensus: data/diabetic_mmp_kinetics.csv
+  normalization: Peak-normalized within the compared window.
+  notes: The day-21 peak and intervening values have no verified extraction or aggregation record. This is not a simple amplitude-scaled normal curve. The citation supplies cross-condition background and does not establish the stored day-by-day trajectory.
+  sources:
+  - id: lobmann2002
+    authors: Lobmann R, Ambrosch A, Schultz G, Waldmann K, Schiweck S, Lehnert H
+    year: 2002
+    title: Expression of matrix-metalloproteinases and their inhibitors in the wounds of diabetic and non-diabetic patients
+    journal: Diabetologia 45(7):1011-1016
+    doi: 10.1007/s00125-002-0868-8
+diabetic_tgfb_kinetics:
+  description: Constructed diabetic TGF-beta shape target, not an extracted timecourse.
+  consensus: data/diabetic_tgfb_kinetics.csv
+  normalization: Peak-normalized within the compared window.
+  notes: Numerical extraction and aggregation are unverified. No 50% TGF-beta reduction or day-by-day values are derived here. The citation provides diabetic macrophage context, not direct quantitative calibration of this target.
+  sources:
+  - id: mirza2011
+    authors: Mirza R, Koh TJ
+    year: 2011
+    title: Dysregulation of monocyte/macrophage phenotype in wounds of diabetic mice
+    journal: Cytokine 56(2):256-264
+    doi: 10.1016/j.cyto.2011.06.016

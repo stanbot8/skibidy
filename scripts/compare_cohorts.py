@@ -22,6 +22,8 @@ def compare(control, candidate):
     coverage = {}
     for seed in sorted(control):
         left, right = control[seed], candidate[seed]
+        if left["validation"].get("scoring_method") != right["validation"].get("scoring_method"):
+            raise ValueError(f"scoring method mismatch for seed {seed}")
         if (left["condition"], left["profile"]) != (right["condition"], right["profile"]):
             raise ValueError(f"condition or recorded profile mismatch for seed {seed}")
         if left["validation"]["coverage"].keys() != right["validation"]["coverage"].keys():

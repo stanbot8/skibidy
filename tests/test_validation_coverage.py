@@ -4,10 +4,80 @@ import math
 from unittest.mock import patch
 from literature.lib import condition_from_config, detect_condition, evaluate_run, interpolate, compute_rmse
 from literature.lib import detect_modules, validation_report, validate_microenvironment, validate_wound
-from literature.lib import wound_comparison_days, plot_wound_panels
+from literature.lib import wound_comparison_days, plot_wound_panels, curve_rmse, _window_normalize, validate_tumor, validate_fibroblast, load_csv, _ref_path
 
 
 class ValidationCoverageTest(unittest.TestCase):
+    def test_redundant_sampling_cannot_change_curve_weight(self):
+        sparse = curve_rmse([0, 1, 2], [0, 1, 0], [0, 2], [0, 0])
+        dense = curve_rmse([0, .1, .2, .3, 1, 2], [0, .1, .2, .3, 1, 0],
+                           [0, 2], [0, 0])
+        self.assertAlmostEqual(sparse, 1 / math.sqrt(3))
+        self.assertAlmostEqual(sparse, dense)
+        self.assertAlmostEqual(curve_rmse([0, 2], [0, 0], [0, 1, 2], [0, 1, 0]), sparse)
+
+    def test_boundary_normalization_interpolates_endpoint(self):
+        for mode in ("peak", "end"):
+            normalized, denominator = _window_normalize([0, 2, 4], [0, 20, 30], [0, 28], mode)
+            self.assertAlmostEqual(denominator, 3.6)
+            self.assertAlmostEqual(normalized[1], 2 / 3.6)
+
+    def test_partial_collagen_matches_the_reference_at_the_shared_endpoint(self):
+        ref = load_csv(_ref_path("collagen_deposition.csv"))
+        days = [0, 3, 5, 7, 10, 14]
+        values = ref["collagen_normalized"][:len(days)]
+        sim = {"mean_collagen_wound": values, "n_myofibroblasts": [0] * len(days),
+               "n_fibroblasts": [0] * len(days)}
+        result = validate_fibroblast(sim, days)
+        self.assertEqual(result["collagen_rmse"], 0)
+
+    def test_partial_peak_curve_matches_the_same_reference_window(self):
+        ref = load_csv(_ref_path("immune_cell_kinetics.csv"))
+        days = [d for d in ref["day"] if d <= 3]
+        sim = {"n_neutrophils": ref["neutrophils_normalized"][:len(days)],
+               "n_macrophages": [0] * len(days), "mean_infl_wound": [0] * len(days),
+               "wound_closure_pct": [0] * len(days)}
+        self.assertEqual(validate_wound(sim, days)["neut_rmse"], 0)
+
+    def test_large_normalized_collagen_remains_visible(self):
+        from literature.lib import plot_fibroblast_panels
+        import matplotlib.pyplot as plt
+        sim = {"mean_collagen_wound": [0, 1, .8, 1e-8],
+               "n_fibroblasts": [0] * 4, "n_myofibroblasts": [0] * 4}
+        days = [0, 7, 14, 28]
+        result = validate_fibroblast(sim, days)
+        fig, axes = plt.subplots(3, 1)
+        try:
+            plot_fibroblast_panels(result, days, axes)
+            self.assertGreater(axes[2].get_ylim()[1], max(result["sim_collagen"]))
+            self.assertEqual(axes[2].get_yscale(), "symlog")
+        finally:
+            plt.close(fig)
+
+    def test_no_duration_and_nonfinite_curves_do_not_pass(self):
+        self.assertTrue(math.isnan(curve_rmse([0, 1], [0, 0], [1, 2], [0, 0])))
+        with self.assertRaises(ValueError):
+            curve_rmse([0, 1], [0, float("nan")], [0, 1], [0, 0])
+
+    def test_tumor_voxels_are_not_cells_or_cycling_denominator(self):
+        result = validate_tumor({"n_tumor_cells": [10, 10, 0],
+                                "n_tumor_cycling": [5, 5, 0],
+                                "tumor_field_cells": [0, 1000, 1000]}, [0, 1, 2])
+        self.assertEqual(result["sim_tumor"], [10, 10, 0])
+        self.assertEqual(result["sim_ki67"][:2], [50, 50])
+        self.assertTrue(math.isnan(result["sim_ki67"][-1]))
+        self.assertEqual(result["mean_ki67"], 50)
+        self.assertEqual(result["occupied_voxels"], [0, 1000, 1000])
+
+    def test_partial_shape_screen_exposes_amplitude_and_evidence_limits(self):
+        sim = {"wound_closure_pct": [0, 45, 80], "mean_infl_wound": [0, 1e-12, 0],
+               "n_neutrophils": [0, 1, 0], "n_macrophages": [0, 1, 0]}
+        _, report = evaluate_run(sim, [0, 7, 14], {"skin": {"wound": {"enabled": True}}}, "normal")
+        item = report["coverage"]["Inflammation"]
+        self.assertEqual(item["normalization_denominator"], 1e-12)
+        self.assertFalse(item["comparison_dates"]["full_reference_window"])
+        self.assertFalse(report["empirical_validation"])
+
     def test_delayed_wound_uses_injury_time_and_excludes_preinjury_peak(self):
         sim = {"wound_closure_pct": [0, 45, 80], "mean_infl_wound": [1, .6, .1],
                "n_neutrophils": [1, .5, 0], "n_macrophages": [0, 1, .5]}

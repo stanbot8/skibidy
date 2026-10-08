@@ -73,9 +73,12 @@ def run_microenvironment(results, sim_days, _condition, out_dir):
 
 def run_tumor(results, sim_days, _condition, out_dir):
     r = results["tumor"]
+    print(r["interpretation"])
+    if r["occupied_voxels"]:
+        print(f"  Final occupied handoff voxels: {r['occupied_voxels'][-1]:.0f}")
     n_init = r["n_init"]
     n_final = r["obs_final"]
-    print(f"\n  Scale context (Gompertzian):")
+    print(f"\n  Illustrative spherical geometry (active-agent census):")
     print(f"    Initial cells:              {n_init:.0f}  (surface fraction {surface_fraction(n_init):.0%})")
     print(f"    Final cells:                {n_final:.0f}  (surface fraction {surface_fraction(n_final):.0%})")
     print(f"    Established BCC (~10^5):    surface fraction {surface_fraction(1e5):.0%}")
@@ -91,13 +94,13 @@ def run_immune(results, sim_days, condition, out_dir):
     r = results["wound"]
     sim_days = r["simulation_days"]
     print(f"Immune cell kinetics validation ({len(sim_days)} sim points vs literature)")
-    print(f"  Neutrophils:  RMSE = {r['neut_rmse'] * 100:.2f} %  (peak count = {r['neut_peak']:.0f})")
-    print(f"  Macrophages:  RMSE = {r['mac_rmse'] * 100:.2f} %  (peak count = {r['mac_peak']:.0f})")
+    print(f"  Neutrophils:  RMSE = {r['neut_rmse'] * 100:.2f} %  (normalization scale = {r['neut_peak']:.0f})")
+    print(f"  Macrophages:  RMSE = {r['mac_rmse'] * 100:.2f} %  (normalization scale = {r['mac_peak']:.0f})")
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6), sharex=True)
     ax1.plot(sim_days, r["sim_neut"], **SIM_KW)
     ax1.plot(r["ref_immune"]["day"], r["ref_immune"]["neutrophils_normalized"], **REF_KW)
     ax1.set_ylabel("Neutrophils (normalized)")
-    ax1.set_title("Immune Cell Kinetics: Simulation vs Literature")
+    ax1.set_title("Immune Cell Kinetics: Simulation vs Modeling Target")
     ax1.set_ylim(-0.05, 1.15)
     ax1.legend(loc="upper right")
     ax1.grid(True, alpha=0.3)
@@ -120,17 +123,17 @@ def run_immune(results, sim_days, condition, out_dir):
 def run_ra(results, sim_days, _condition, out_dir):
     r = results["ra"]
     print(f"RA validation ({len(sim_days)} sim points vs literature)")
-    print(f"  TNF-alpha:  RMSE = {r['tnf_rmse'] * 100:.2f} %  (peak = {r['tnf_peak']:.4f})")
+    print(f"  TNF-alpha:  RMSE = {r['tnf_rmse'] * 100:.2f} %  (normalization scale = {r['tnf_peak']:.4f})")
     print(f"    Flare 0-7d:   RMSE = {r['tnf_flare_rmse'] * 100:.2f} %")
     print(f"    Chronic 7-30d: RMSE = {r['tnf_chronic_rmse'] * 100:.2f} %")
-    print(f"  IL-6:       RMSE = {r['il6_rmse'] * 100:.2f} %  (peak = {r['il6_peak']:.4f})")
+    print(f"  IL-6:       RMSE = {r['il6_rmse'] * 100:.2f} %  (normalization scale = {r['il6_peak']:.4f})")
     print(f"  Cartilage:  RMSE = {r['cart_rmse'] * 100:.2f} %")
     if r.get("has_bone"):
         print(f"  Bone:       RMSE = {r['bone_rmse'] * 100:.2f} %")
     if r.get("has_tcell"):
-        print(f"  T cells:    RMSE = {r['tcell_rmse'] * 100:.2f} %  (peak = {r['tcell_peak']:.4f})")
+        print(f"  T cells:    RMSE = {r['tcell_rmse'] * 100:.2f} %  (normalization scale = {r['tcell_peak']:.4f})")
     if r.get("has_syn"):
-        print(f"  Pannus:     RMSE = {r['syn_rmse'] * 100:.2f} %  (peak = {r['syn_peak']:.4f})")
+        print(f"  Pannus:     RMSE = {r['syn_rmse'] * 100:.2f} %  (normalization scale = {r['syn_peak']:.4f})")
     has_ext = r.get("has_bone") or r.get("has_tcell") or r.get("has_syn")
     if has_ext:
         fig, ax_arr = plt.subplots(3, 2, figsize=(12, 9), sharex=True)
@@ -196,10 +199,13 @@ def main(argv=None):
         json.dump(report, f, indent=2, allow_nan=False)
     print(f"Condition: {condition}")
     for name, item in report["coverage"].items():
-        detail = item.get("reason", f"RMSE = {item.get('rmse_pct', 0):.2f}%")
+        unit = "pp" if name == "Wound closure" else "%"
+        detail = item.get("reason", f"RMSE = {item.get('rmse_pct', 0):.2f}{unit}")
         print(f"  {name}: {item['status'].upper()} ({detail})")
     print(f"{report['status'].upper()}: {len(tested)} tested observables")
     print(report["criterion"])
+    print(report["scoring_method"])
+    print(report["evidence"])
     groups = {"immune": ("wound",), "microenvironment": ("microenv", "ph")}
     if not options.quick and any(results[key] is not None for key in groups.get(module, (module,))):
         MODULES[options.module](results, sim_days, condition, plots_dir(options.metrics))

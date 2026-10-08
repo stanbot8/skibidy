@@ -21,6 +21,14 @@ def cohort(values=(2, 20)):
 
 
 class CohortComparisonTest(unittest.TestCase):
+    def test_different_scoring_methods_cannot_be_paired(self):
+        control, candidate = cohort(), cohort()
+        candidate[42]["validation"]["scoring_method"] = "different"
+        with self.assertRaisesRegex(ValueError, "scoring method"):
+            compare(control, candidate)
+        with self.assertRaisesRegex(ValueError, "scoring methods"):
+            summarize(candidate)
+
     def test_mean_cannot_hide_individual_failure(self):
         report = summarize(cohort())
         self.assertEqual(report["coverage"]["Neutrophils"]["mean_rmse_pct"], 11)

@@ -348,11 +348,13 @@ def _build_sources_index():
 
 def discover_csvs():
     curves = glob.glob(os.path.join(_MODULES_DIR, "*", "data", "*.csv"))
+    study_curves = glob.glob(os.path.join(_PROJECT_ROOT, "studies", "*", "modules",
+                                         "*", "data", "*.csv"))
     measured = glob.glob(os.path.join(_MODULES_DIR, "*", "data", "published", "**", "*.csv"),
                          recursive=True)
     treatments = glob.glob(os.path.join(_PROJECT_ROOT, "studies", "*", "data",
                                        "treatment_constraints.csv"))
-    return sorted(set(curves + measured + treatments))
+    return sorted(set(curves + study_curves + measured + treatments))
 
 
 def check_csv(path, sources_index, strict):

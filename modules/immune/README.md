@@ -107,7 +107,7 @@ Reference curves for validation (full citations in [SOURCES.yaml](SOURCES.yaml))
 | Immune cell kinetics | [immune_cell_kinetics.csv](data/immune_cell_kinetics.csv) | Peak = 1.0 per type |
 
 <details>
-<summary>Raw digitized data (5 papers)</summary>
+<summary>Per-paper reference files (5 papers)</summary>
 
 | File | Source |
 |------|--------|

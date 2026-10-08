@@ -1,0 +1,217 @@
+run,observable,previous_status,previous_rmse_pct,current_status,current_rmse_pct
+candidate/diabetic-diabetic-wound/seed42,Wound closure,fail,18.252292841998624,fail,18.35752281630805
+candidate/diabetic-diabetic-wound/seed42,Inflammation,fail,20.253518873847316,fail,20.475588691812867
+candidate/diabetic-diabetic-wound/seed42,Neutrophils,fail,28.47337534294347,fail,28.32357784853316
+candidate/diabetic-diabetic-wound/seed42,Macrophages,fail,25.666031623952478,fail,24.941592428708688
+candidate/diabetic-diabetic-wound/seed42,TGF-b,fail,42.37856378276802,fail,42.616650193414785
+candidate/diabetic-diabetic-wound/seed42,MMP,pass,14.489611125494628,pass,14.485832793039519
+candidate/diabetic-diabetic-wound/seed43,Wound closure,fail,19.448129945447057,fail,19.556845903969663
+candidate/diabetic-diabetic-wound/seed43,Inflammation,fail,19.99547937018552,fail,20.22112350467923
+candidate/diabetic-diabetic-wound/seed43,Neutrophils,fail,29.26942227128853,fail,29.181835369816554
+candidate/diabetic-diabetic-wound/seed43,Macrophages,fail,22.58085559197672,fail,21.547479873267985
+candidate/diabetic-diabetic-wound/seed43,TGF-b,fail,45.18895212763249,fail,45.43822514625136
+candidate/diabetic-diabetic-wound/seed43,MMP,fail,19.506738082088614,fail,19.429204896799725
+candidate/diabetic-diabetic-wound/seed44,Wound closure,fail,20.626597510937916,fail,20.750478304922932
+candidate/diabetic-diabetic-wound/seed44,Inflammation,fail,21.197194524556696,fail,21.43386178149314
+candidate/diabetic-diabetic-wound/seed44,Neutrophils,fail,24.717638820673773,fail,24.6273676183888
+candidate/diabetic-diabetic-wound/seed44,Macrophages,fail,25.89266408215478,fail,25.200746548588555
+candidate/diabetic-diabetic-wound/seed44,TGF-b,fail,46.604152533751275,fail,46.86495513222496
+candidate/diabetic-diabetic-wound/seed44,MMP,pass,13.100234989711515,pass,13.038567797095688
+candidate/normal-full-model/seed42,Wound closure,pass,6.993819538326881,pass,6.946816415701892
+candidate/normal-full-model/seed42,Inflammation,fail,16.050725457410863,fail,16.207854968038898
+candidate/normal-full-model/seed42,Neutrophils,pass,4.869827036821207,pass,4.843243807822457
+candidate/normal-full-model/seed42,Macrophages,fail,15.584324691002701,fail,15.154579388918268
+candidate/normal-full-model/seed42,Fibroblasts,pass,13.179998219617525,pass,13.08021616578528
+candidate/normal-full-model/seed42,Myofibroblasts,fail,59.165587580585225,fail,59.501900729944666
+candidate/normal-full-model/seed42,Collagen,fail,201195895.6750913,fail,201551980.27886763
+candidate/normal-full-model/seed42,TGF-b,fail,28.200794978178358,fail,28.240627421476876
+candidate/normal-full-model/seed42,VEGF,pass,9.393358240961957,pass,9.331662298300863
+candidate/normal-full-model/seed42,Fibronectin,fail,25.204971680556206,fail,25.15456008313138
+candidate/normal-full-model/seed42,MMP,fail,27.188659611885967,fail,27.298730312910628
+candidate/normal-full-model/seed42,pH,pass,14.832211628018582,pass,14.915261674996561
+candidate/normal-full-model/seed43,Wound closure,pass,7.7606171386206695,pass,7.724950555787225
+candidate/normal-full-model/seed43,Inflammation,fail,15.714596366182343,fail,15.870362714737961
+candidate/normal-full-model/seed43,Neutrophils,pass,6.476389058350163,pass,6.512850030589449
+candidate/normal-full-model/seed43,Macrophages,fail,15.40646848932914,pass,14.986035954199473
+candidate/normal-full-model/seed43,Fibroblasts,pass,11.550450205708087,pass,11.432799858277553
+candidate/normal-full-model/seed43,Myofibroblasts,fail,18.984686810074,fail,18.567422612365895
+candidate/normal-full-model/seed43,Collagen,fail,134903316.31017238,fail,134678499.11036187
+candidate/normal-full-model/seed43,TGF-b,fail,25.64277358261975,fail,25.669003459823088
+candidate/normal-full-model/seed43,VEGF,pass,9.375570354149623,pass,9.314625330338295
+candidate/normal-full-model/seed43,Fibronectin,fail,25.47422708701988,fail,25.42754510624272
+candidate/normal-full-model/seed43,MMP,fail,22.297252916853303,fail,22.37503624446355
+candidate/normal-full-model/seed43,pH,pass,14.425030361481959,pass,14.505277341551617
+candidate/normal-full-model/seed44,Wound closure,pass,7.114846066660463,pass,7.0686153928956434
+candidate/normal-full-model/seed44,Inflammation,fail,17.341382381318137,fail,17.501159438083338
+candidate/normal-full-model/seed44,Neutrophils,pass,6.164872792282531,pass,6.208387707939861
+candidate/normal-full-model/seed44,Macrophages,fail,15.155497459518271,pass,14.643707873080123
+candidate/normal-full-model/seed44,Fibroblasts,pass,8.154541684316744,pass,7.958446894942997
+candidate/normal-full-model/seed44,Myofibroblasts,fail,31.64464800278165,fail,30.267923800606063
+candidate/normal-full-model/seed44,Collagen,fail,2110698800.1383471,fail,2069537342.2178395
+candidate/normal-full-model/seed44,TGF-b,fail,28.873165008869954,fail,28.90489395366162
+candidate/normal-full-model/seed44,VEGF,pass,9.348215103844243,pass,9.286706472383718
+candidate/normal-full-model/seed44,Fibronectin,fail,20.852533530433245,fail,20.79110124243371
+candidate/normal-full-model/seed44,MMP,fail,24.07009614918533,fail,24.168330162069076
+candidate/normal-full-model/seed44,pH,pass,14.766135928544214,pass,14.847932390727948
+candidate/normal-wound/seed42,Wound closure,pass,7.131563749325335,pass,7.095114559015796
+candidate/normal-wound/seed42,Inflammation,pass,14.993112810810278,fail,15.14910340570582
+candidate/normal-wound/seed42,Neutrophils,pass,5.049705842328345,pass,5.001190334500853
+candidate/normal-wound/seed42,Macrophages,fail,16.231519106022155,fail,15.81027770003996
+candidate/normal-wound/seed42,Fibroblasts,pass,14.084171269432177,pass,13.981833101600316
+candidate/normal-wound/seed42,Myofibroblasts,fail,42.310648030518706,fail,41.98737356922463
+candidate/normal-wound/seed42,Collagen,fail,244880844.1888397,fail,244756346.6115898
+candidate/normal-wound/seed42,TGF-b,fail,27.810719513514265,fail,27.856134146689822
+candidate/normal-wound/seed42,VEGF,pass,9.406705193316546,pass,9.345438126164325
+candidate/normal-wound/seed42,Fibronectin,fail,25.128196945027447,fail,25.080171848529588
+candidate/normal-wound/seed42,MMP,fail,26.10871516074131,fail,26.198979468939466
+candidate/normal-wound/seed42,pH,fail,15.404406514802771,fail,15.491105149209424
+candidate/normal-wound/seed43,Wound closure,pass,8.033228906609432,pass,8.007128721032917
+candidate/normal-wound/seed43,Inflammation,fail,16.630705287675987,fail,16.78864820805767
+candidate/normal-wound/seed43,Neutrophils,pass,5.711933399324368,pass,5.749499937595544
+candidate/normal-wound/seed43,Macrophages,fail,16.180768044378148,fail,15.721389988630241
+candidate/normal-wound/seed43,Fibroblasts,pass,12.31273769442467,pass,12.206080431219318
+candidate/normal-wound/seed43,Myofibroblasts,fail,23.310014724054533,fail,22.959045711491658
+candidate/normal-wound/seed43,Collagen,fail,287038529.99522114,fail,286767350.9496609
+candidate/normal-wound/seed43,TGF-b,fail,30.205929896907858,fail,30.276470024371715
+candidate/normal-wound/seed43,VEGF,pass,9.430307475252542,pass,9.369169313798151
+candidate/normal-wound/seed43,Fibronectin,fail,26.03359655960307,fail,25.99180728237264
+candidate/normal-wound/seed43,MMP,fail,24.66953301858829,fail,24.757558937620956
+candidate/normal-wound/seed43,pH,pass,14.954369482788557,fail,15.039621894778804
+candidate/normal-wound/seed44,Wound closure,pass,7.152806244579019,pass,7.122303928553853
+candidate/normal-wound/seed44,Inflammation,fail,16.170025927684346,fail,16.326956064312554
+candidate/normal-wound/seed44,Neutrophils,pass,5.7268947267862425,pass,5.7546630840735835
+candidate/normal-wound/seed44,Macrophages,pass,14.548552909512031,pass,13.997536158857333
+candidate/normal-wound/seed44,Fibroblasts,fail,16.15102299170855,fail,16.100028372591257
+candidate/normal-wound/seed44,Myofibroblasts,fail,31.71020020953645,fail,31.652794319420096
+candidate/normal-wound/seed44,Collagen,fail,622561847.2600505,fail,618767305.0181004
+candidate/normal-wound/seed44,TGF-b,fail,30.335877505731023,fail,30.38491601325869
+candidate/normal-wound/seed44,VEGF,pass,9.426037028998074,pass,9.364693513627003
+candidate/normal-wound/seed44,Fibronectin,fail,25.998285720375087,fail,25.954468103849106
+candidate/normal-wound/seed44,MMP,fail,21.129877444561036,fail,21.198999700638236
+candidate/normal-wound/seed44,pH,fail,15.006955824853554,fail,15.091133855622724
+control/diabetic-diabetic-wound/seed42,Wound closure,fail,18.369320216036574,fail,18.47442074481072
+control/diabetic-diabetic-wound/seed42,Inflammation,fail,20.23348639180576,fail,20.455854814249648
+control/diabetic-diabetic-wound/seed42,Neutrophils,fail,28.47337534294347,fail,28.32357784853316
+control/diabetic-diabetic-wound/seed42,Macrophages,fail,22.21905389057592,fail,21.293045371180195
+control/diabetic-diabetic-wound/seed42,TGF-b,fail,42.83730523771228,fail,43.075771072623795
+control/diabetic-diabetic-wound/seed42,MMP,pass,14.154431913820012,pass,13.973593254979514
+control/diabetic-diabetic-wound/seed43,Wound closure,fail,18.775567173121033,fail,18.882283402034286
+control/diabetic-diabetic-wound/seed43,Inflammation,fail,19.35507205243833,fail,19.575767473822616
+control/diabetic-diabetic-wound/seed43,Neutrophils,fail,28.919191413652534,fail,28.826332666478066
+control/diabetic-diabetic-wound/seed43,Macrophages,fail,21.59167342737838,fail,20.496046067082688
+control/diabetic-diabetic-wound/seed43,TGF-b,fail,42.60172928871502,fail,42.85091165506632
+control/diabetic-diabetic-wound/seed43,MMP,fail,15.732586597293738,fail,15.590238303349835
+control/diabetic-diabetic-wound/seed44,Wound closure,fail,20.684513504860444,fail,20.787972838202442
+control/diabetic-diabetic-wound/seed44,Inflammation,fail,21.11475519855825,fail,21.351104904821554
+control/diabetic-diabetic-wound/seed44,Neutrophils,fail,24.717638820673773,fail,24.6273676183888
+control/diabetic-diabetic-wound/seed44,Macrophages,fail,22.989799773104657,fail,22.149085316276484
+control/diabetic-diabetic-wound/seed44,TGF-b,fail,46.799108457387845,fail,47.031315050058865
+control/diabetic-diabetic-wound/seed44,MMP,pass,11.538554259347578,pass,11.378094818457543
+control/normal-full-model/seed42,Wound closure,pass,7.030165348280718,pass,6.985279705184608
+control/normal-full-model/seed42,Inflammation,fail,16.007719990529836,fail,16.16461008680245
+control/normal-full-model/seed42,Neutrophils,pass,4.869827036821207,pass,4.843243807822457
+control/normal-full-model/seed42,Macrophages,pass,11.49860055528753,pass,10.856160321735164
+control/normal-full-model/seed42,Fibroblasts,pass,14.521109800786533,pass,14.461849792084383
+control/normal-full-model/seed42,Myofibroblasts,fail,59.165587580585225,fail,59.501900729944666
+control/normal-full-model/seed42,Collagen,fail,26.39589101801118,fail,26.511418888519287
+control/normal-full-model/seed42,TGF-b,fail,28.874130766588692,fail,28.916588176619022
+control/normal-full-model/seed42,VEGF,pass,9.393151588201437,pass,9.33145341750831
+control/normal-full-model/seed42,Fibronectin,fail,29.2056771982124,fail,29.18851578407772
+control/normal-full-model/seed42,MMP,fail,23.352080943530396,fail,23.431525310455132
+control/normal-full-model/seed42,pH,pass,14.76391129082251,pass,14.846924799254598
+control/normal-full-model/seed43,Wound closure,pass,7.8960472838853795,pass,7.861051869771639
+control/normal-full-model/seed43,Inflammation,fail,15.809550627164365,fail,15.965477696188874
+control/normal-full-model/seed43,Neutrophils,pass,6.476389058350163,pass,6.512850030589449
+control/normal-full-model/seed43,Macrophages,fail,15.5611885098569,fail,15.110690572462913
+control/normal-full-model/seed43,Fibroblasts,pass,11.283378364308788,pass,11.173032657727761
+control/normal-full-model/seed43,Myofibroblasts,fail,25.51795215718153,fail,25.253964304836092
+control/normal-full-model/seed43,Collagen,fail,496385958.6389967,fail,451545773.7895886
+control/normal-full-model/seed43,TGF-b,fail,25.830209378105028,fail,25.856926753232152
+control/normal-full-model/seed43,VEGF,pass,9.364966225288123,pass,9.303965920218056
+control/normal-full-model/seed43,Fibronectin,fail,25.935358314703056,fail,25.888736723192263
+control/normal-full-model/seed43,MMP,fail,19.969845870804072,fail,20.026995207870193
+control/normal-full-model/seed43,pH,pass,14.399878844787487,pass,14.480019054736621
+control/normal-full-model/seed44,Wound closure,pass,6.93938079453976,pass,6.905767638264015
+control/normal-full-model/seed44,Inflammation,fail,17.214667080326286,fail,17.374030999998162
+control/normal-full-model/seed44,Neutrophils,pass,6.164872792282531,pass,6.208387707939861
+control/normal-full-model/seed44,Macrophages,fail,16.411101648185884,fail,16.037711103447453
+control/normal-full-model/seed44,Fibroblasts,pass,7.5525283449752205,pass,7.325043199430277
+control/normal-full-model/seed44,Myofibroblasts,fail,49.57287916317895,fail,49.37231396038137
+control/normal-full-model/seed44,Collagen,fail,2092860147.3855019,fail,2056006416.5008717
+control/normal-full-model/seed44,TGF-b,fail,28.58607431935339,fail,28.622308751641246
+control/normal-full-model/seed44,VEGF,pass,9.348282986691164,pass,9.286776028808381
+control/normal-full-model/seed44,Fibronectin,fail,20.809029099605073,fail,20.750585675314767
+control/normal-full-model/seed44,MMP,fail,24.92551479331062,fail,25.031263750128414
+control/normal-full-model/seed44,pH,pass,14.880889602007837,pass,14.96351346345045
+control/normal-wound/seed42,Wound closure,pass,7.2912496142780885,pass,7.259652162214049
+control/normal-wound/seed42,Inflammation,fail,15.032586105649766,fail,15.188696944896657
+control/normal-wound/seed42,Neutrophils,pass,5.049705842328345,pass,5.001190334500853
+control/normal-wound/seed42,Macrophages,fail,15.06124377432948,pass,14.535353693381028
+control/normal-wound/seed42,Fibroblasts,fail,17.895184543516134,fail,17.88339058927624
+control/normal-wound/seed42,Myofibroblasts,fail,42.47205642873102,fail,41.54355986940183
+control/normal-wound/seed42,Collagen,fail,31.492675813126432,fail,31.63586186607307
+control/normal-wound/seed42,TGF-b,fail,28.459129871390125,fail,28.51745745960701
+control/normal-wound/seed42,VEGF,pass,9.4063020227492,pass,9.345015899144999
+control/normal-wound/seed42,Fibronectin,fail,27.844183685519052,fail,27.817852551388473
+control/normal-wound/seed42,MMP,fail,23.38756039162504,fail,23.45216650864727
+control/normal-wound/seed42,pH,fail,15.301962671540794,fail,15.38839036682459
+control/normal-wound/seed43,Wound closure,pass,7.939751041247688,pass,7.898381646515544
+control/normal-wound/seed43,Inflammation,fail,16.483875846836153,fail,16.641262673423412
+control/normal-wound/seed43,Neutrophils,pass,5.711933399324368,pass,5.749499937595544
+control/normal-wound/seed43,Macrophages,fail,15.08679462818487,pass,14.530492705134545
+control/normal-wound/seed43,Fibroblasts,pass,9.098130495838209,pass,8.916132397128164
+control/normal-wound/seed43,Myofibroblasts,fail,29.436571520179694,fail,29.326733082549794
+control/normal-wound/seed43,Collagen,fail,270468831.6169492,fail,270165001.3727211
+control/normal-wound/seed43,TGF-b,fail,28.18564056643553,fail,28.2312857872004
+control/normal-wound/seed43,VEGF,pass,9.430101799333588,pass,9.36896024566357
+control/normal-wound/seed43,Fibronectin,fail,25.13779850843315,fail,25.091208250507062
+control/normal-wound/seed43,MMP,fail,22.929400401278116,fail,23.002998682142092
+control/normal-wound/seed43,pH,pass,14.738550411621878,pass,14.82178554007548
+control/normal-wound/seed44,Wound closure,pass,6.911797622569165,pass,6.873930729107137
+control/normal-wound/seed44,Inflammation,fail,16.335775525297716,fail,16.493141753812917
+control/normal-wound/seed44,Neutrophils,pass,5.7268947267862425,pass,5.7546630840735835
+control/normal-wound/seed44,Macrophages,pass,12.856350255843493,pass,12.335782031535498
+control/normal-wound/seed44,Fibroblasts,fail,21.665193753484964,fail,21.70081476078903
+control/normal-wound/seed44,Myofibroblasts,fail,31.904981818941874,fail,31.33252990991241
+control/normal-wound/seed44,Collagen,fail,270962796.6857724,fail,267016852.9402183
+control/normal-wound/seed44,TGF-b,fail,27.826009450609646,fail,27.857368199449272
+control/normal-wound/seed44,VEGF,pass,9.42650120752434,pass,9.365166615908715
+control/normal-wound/seed44,Fibronectin,fail,25.502572254027427,fail,25.454363923239804
+control/normal-wound/seed44,MMP,fail,22.426015592769765,fail,22.503899573550605
+control/normal-wound/seed44,pH,pass,14.509000456642134,pass,14.590269978399482
+mmp-off-diagnostic/normal-wound/seed42,Wound closure,pass,7.282075471110674,pass,7.249798868092487
+mmp-off-diagnostic/normal-wound/seed42,Inflammation,fail,15.012128802510405,fail,15.168213378968401
+mmp-off-diagnostic/normal-wound/seed42,Neutrophils,pass,5.049705842328345,pass,5.001190334500853
+mmp-off-diagnostic/normal-wound/seed42,Macrophages,fail,17.427823134627324,fail,17.02427266547267
+mmp-off-diagnostic/normal-wound/seed42,Fibroblasts,pass,10.564583710025994,pass,10.432328443059685
+mmp-off-diagnostic/normal-wound/seed42,Myofibroblasts,fail,51.16249668928785,fail,50.98512822642059
+mmp-off-diagnostic/normal-wound/seed42,Collagen,pass,12.788141665019323,pass,12.761858221706465
+mmp-off-diagnostic/normal-wound/seed42,TGF-b,fail,29.931172124089088,fail,29.997186002200927
+mmp-off-diagnostic/normal-wound/seed42,VEGF,pass,9.408612560726105,pass,9.347356863992715
+mmp-off-diagnostic/normal-wound/seed42,Fibronectin,fail,26.154677763510037,fail,26.11707085098218
+mmp-off-diagnostic/normal-wound/seed42,MMP,fail,24.903774914857735,fail,24.986756850805225
+mmp-off-diagnostic/normal-wound/seed42,pH,pass,6.858467892310105,pass,6.88065733622518
+mmp-off-diagnostic/normal-wound/seed43,Wound closure,pass,8.062039532180345,pass,8.038180457779566
+mmp-off-diagnostic/normal-wound/seed43,Inflammation,fail,15.91389406357891,fail,16.07061541583008
+mmp-off-diagnostic/normal-wound/seed43,Neutrophils,pass,5.711933399324368,pass,5.749499937595544
+mmp-off-diagnostic/normal-wound/seed43,Macrophages,pass,13.730500291667102,pass,13.145064837871159
+mmp-off-diagnostic/normal-wound/seed43,Fibroblasts,fail,17.573824868900033,fail,17.509287260582873
+mmp-off-diagnostic/normal-wound/seed43,Myofibroblasts,fail,30.11000673181405,fail,29.898578377191654
+mmp-off-diagnostic/normal-wound/seed43,Collagen,pass,8.889178748803591,pass,8.868462545383245
+mmp-off-diagnostic/normal-wound/seed43,TGF-b,fail,29.638689162588385,fail,29.706178169091967
+mmp-off-diagnostic/normal-wound/seed43,VEGF,pass,9.421347351717472,pass,9.360135925189194
+mmp-off-diagnostic/normal-wound/seed43,Fibronectin,fail,26.638520661985954,fail,26.60081789133984
+mmp-off-diagnostic/normal-wound/seed43,MMP,fail,22.467252656585742,fail,22.537022936383185
+mmp-off-diagnostic/normal-wound/seed43,pH,pass,7.660402744831216,pass,7.699868713529308
+mmp-off-diagnostic/normal-wound/seed44,Wound closure,pass,7.128968514880214,pass,7.097586705214343
+mmp-off-diagnostic/normal-wound/seed44,Inflammation,fail,16.278409735957723,fail,16.435625423256848
+mmp-off-diagnostic/normal-wound/seed44,Neutrophils,pass,5.7268947267862425,pass,5.7546630840735835
+mmp-off-diagnostic/normal-wound/seed44,Macrophages,pass,12.516348956490745,pass,12.001506109818303
+mmp-off-diagnostic/normal-wound/seed44,Fibroblasts,pass,10.810008200990522,pass,10.672510337162636
+mmp-off-diagnostic/normal-wound/seed44,Myofibroblasts,fail,28.262508171338673,fail,28.005016705014622
+mmp-off-diagnostic/normal-wound/seed44,Collagen,fail,47.701512826159075,fail,47.94348798525576
+mmp-off-diagnostic/normal-wound/seed44,TGF-b,fail,29.024018958802984,fail,29.064690217048796
+mmp-off-diagnostic/normal-wound/seed44,VEGF,pass,9.42691934061675,pass,9.365590289781265
+mmp-off-diagnostic/normal-wound/seed44,Fibronectin,fail,25.985229907183754,fail,25.939614260063443
+mmp-off-diagnostic/normal-wound/seed44,MMP,fail,22.493687853652297,fail,22.568540130993554
+mmp-off-diagnostic/normal-wound/seed44,pH,pass,12.309550568378947,pass,12.379275959363916

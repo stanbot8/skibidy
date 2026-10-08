@@ -241,7 +241,7 @@ def main():
                 axes[-1, c].set_xlim(0, max(30, max_day))
 
         cond_tag = f" [{condition}]" if condition != "normal" else ""
-        fig.suptitle(f"skibidy Validation Dashboard{cond_tag}", fontsize=14, fontweight="bold")
+        fig.suptitle(f"skibidy Engineering Screens{cond_tag}", fontsize=14, fontweight="bold")
         fig.tight_layout(rect=[0, 0, 1, 0.96])
         path = os.path.join(out_dir, "validation_dashboard.png")
         fig.savefig(path, dpi=150)

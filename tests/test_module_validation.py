@@ -146,6 +146,56 @@ class ModuleValidationTest(unittest.TestCase):
             self.assertEqual(coverage[name]["status"], "not_tested")
         self.assertTrue((self.run / "plots/microenvironment_validation.png").is_file())
 
+    def test_publication_figures_share_saved_clock_and_condition_rules(self):
+        from scripts import figures
+        from literature.lib import evaluate_run
+        from batch.lib import parse_toml
+        self.save_config(trigger=48)
+        data = figures.load_consensus(str(self.metrics))
+        days = figures.consensus_days(data)
+        self.assertEqual(days, [-2, 5, 14])
+        result = figures.validate_consensus_wound(data, days)
+        expected, _ = evaluate_run(data, [0, 7, 16], parse_toml(self.config), "normal")
+        self.assertEqual(result["closure_rmse"], expected["wound"]["closure_rmse"])
+        self.save_config("diabetic")
+        data = figures.load_consensus(str(self.metrics))
+        days = figures.consensus_days(data)
+        self.assertIsNone(figures.validate_consensus_fibroblast(data, days))
+        with self.assertRaises(ValueError):
+            figures.validate_consensus_wound(data, days, "normal")
+        figures.supplementary_panels(data, days, "diabetic", str(self.root), ["png"])
+        self.assertFalse((self.root / "figS_diabetic_collagen.png").exists())
+        self.assertTrue((self.root / "figS_diabetic_mmp.png").exists())
+
+    def test_ra_dashboard_renders_enabled_zero_cytokines(self):
+        from literature.validators.ra_dashboard import load_run
+        self.config.write_text(
+            "[skin]\nduration_days = 30\nmetrics_interval_h = 24\n"
+            "[skin.wound]\nenabled = false\n[skin.ra]\nenabled = true\n")
+        with self.metrics.open("w", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(("time_h", "mean_tnf_alpha_wound", "mean_il6_wound",
+                             "mean_cartilage_wound", "mean_bone_wound",
+                             "mean_tcell_wound", "mean_synovial_wound"))
+            for day in (0, 15, 30):
+                writer.writerow((day * 24, 0, 0, 1, 1, 0, 0))
+        _, _, results = load_run(str(self.metrics))
+        self.assertGreater(results["tnf_rmse"], 0)
+        result = subprocess.run(
+            [sys.executable, str(ROOT / "literature/validators/ra_dashboard.py"),
+             str(self.metrics)], cwd=self.root, capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue((self.run / "plots/ra_dashboard.png").is_file())
+
+    def test_ra_dashboard_rejects_disabled_and_truncated_saved_runs(self):
+        from literature.validators.ra_dashboard import load_run
+        self.save_config(enabled=False)
+        with self.assertRaisesRegex(ValueError, "RA is disabled"):
+            load_run(str(self.metrics))
+        self.save_metrics(days=(0, 1, 2))
+        with self.assertRaisesRegex(ValueError, "incomplete duration"):
+            load_run(str(self.metrics))
+
 
 if __name__ == "__main__":
     unittest.main()

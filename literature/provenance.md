@@ -3,7 +3,7 @@
 Audit of the 32 reference CSVs in `modules/*/data/` that drive the validation
 pipeline. For each dataset: observable, condition, primary citations, cohort
 size when reported, extraction method, aggregation rule, normalization. Updated
-2026-04-26.
+Catalog originally recorded 2026-04-26. Coverage and reference limits reviewed 2026-10-07.
 
 The companion file `modules/<m>/SOURCES.yaml` carries fuller per-paper notes;
 this table records the existing reference curves. Labels such as "consensus",
@@ -49,7 +49,7 @@ does not identify a dimensionless membrane damage or repair rate.
 | `diabetic/data/diabetic_inflammation_timecourse.csv` | inflammatory mediator burden | Mirza 2011 Cytokine; Louiselle 2021 Transl Res; Eming 2014 Sci Transl Med; Clayton 2024 Adv Wound Care | not stated | tabular (db/db murine) | weighted | peak-normalized |
 | `diabetic/data/diabetic_immune_cell_kinetics.csv` | neutrophil + macrophage density | Mirza 2011 Cytokine; Wetzler 2000 J Invest Dermatol; Khanna 2010 PLoS One; Clayton 2024 Adv Wound Care | not stated | tabular (db/db murine) | weighted | peak-normalized per cell type |
 | `diabetic/data/diabetic_mmp_kinetics.csv` | MMP activity | Lobmann 2002 Diabetologia (MMP-1 65x, MMP-9 14x elevated in DFU vs traumatic) | n=12 (Lobmann) | parameter-derived from fold-change ratio | single-source | peak-normalized |
-| `diabetic/data/diabetic_tgfb_kinetics.csv` | TGF-beta | Lerman 2003 (cited in SOURCES.yaml: ~50% reduced VEGF/TGF-beta in diabetic fibroblasts); Brem 2007 J Clin Invest review | not stated | parameter-derived | single-source review | peak-normalized |
+| `diabetic/data/diabetic_tgfb_kinetics.csv` | TGF-beta | Diabetic fibroblast and macrophage background. No extracted quantitative timecourse or established 50% TGF-beta reduction | not stated | constructed | unverified aggregation | peak-normalized |
 
 ## Burn
 
@@ -102,36 +102,55 @@ does not identify a dimensionless membrane damage or repair rate.
 | `tumor/data/tumor_growth_rate.csv` | linear growth rate | Fijalkowska 2023 Postepy Dermatol Alergol; Sykes 2020 Australas J Dermatol; Kricker 2014 J Am Acad Dermatol | community-cohort | tabular | consensus | absolute (mm/month) |
 | `tumor/data/tumor_proliferation_index.csv` | Ki-67 fraction | Toth 2012 Biologia; Alferraly 2019 Open Access Maced J Med Sci; al-Sader 1996 J Clin Pathol | not stated | tabular | consensus | absolute (% Ki-67+) |
 
-## Known weaknesses
+## Reference limits and coverage gaps
+Legacy timecourses lack a verified chain from measured values to the stored
+target, including extraction records, source cohorts and aggregation weights.
+Some normalized per-paper files exist under `raw/`. Their presence does not
+establish that the values were digitized, that an asserted consensus is a mean,
+or that the underlying assays measure the same quantity.
+Normal closure combines a pig partial-thickness series, a human sigmoid fit and
+a review composite. The day-7 raw-file mean is about 52.3%, while the target is
+45%. No aggregation procedure explaining that difference is recorded. The
+simulation uses wound-voxel occupancy, which is not automatically equivalent to
+the source outcomes.
+Collagen inputs mix tensile-strength proxies, estimated deposition from rat
+synthesis rates, rat hydroxyproline and review schematics. The target is
+end-normalized at day 28. Its normalized value is not a collagen mass,
+concentration or breaking strength. The raw files are modeling inputs, and their
+label does not make them interchangeable assays.
+Diabetic MMP and TGF-beta targets are constructed day-by-day trajectories with
+unverified numerical extraction. They are not simple amplitude-scaled normal
+curves. Normal MMP peaks at day 5 and the diabetic target at day 21.
+Lobmann's cross-condition MMP observations do not establish that 28-day shape.
+The inherited TGF-beta table attribution of a 50% reduction to Lerman is
+unestablished. Peak normalization does not test a diabetic fold change.
+Burn, pressure and primary-intention surgical targets are condition sketches
+without recorded cohorts or a reproducible numerical extraction. The pressure
+target's guideline citation is not itself a measured closure timecourse.
+The pH target is a schematic alkalinity index without extracted pH measurements.
+The six rheumatoid curves are generated 30-day trajectories supported by review
+background, not an observed joint-erosion cohort.
+Measured-data exceptions include the GSE209609 extraction linked above and
+the venous, scar and senescence CSV headers. Some headers contain cohort sizes,
+source tables and approximate figure-extraction descriptions. These must be
+assessed individually. They do not validate the legacy normalized targets.
+Many mechanisms have no quantitative outcome screen, including bioelectricity,
+biofilm, blood, body site, dermis, elastin, glucose, hemostasis, hyaluronan,
+lactate, lymphatics, mechanotransduction, neuropathy, nitric oxide, perfusion,
+photon input, ROS, scab, temperature and tissue. Scar and senescence have stored
+CSV evidence, but the shared validator does not score it. A physical input may
+need a different validation design from a wound timecourse.
 
-- **No cohort sizes are recorded in any CSV header**, even when the underlying paper reports n. Adding n where known is the cheapest provenance win.
-- **No CSV records the extraction tool used** (WebPlotDigitizer vs hand-tabulation vs cross-paper averaging). The Explore audit could only infer extraction style; this should be captured at extraction time.
-- **`diabetic_mmp_kinetics.csv` and `diabetic_tgfb_kinetics.csv`** are parameter-derived rather than directly digitized. Lobmann 2002 supports a fold-change magnitude but the day-by-day shape is interpolated from the normal curve scaled by the diabetic fold-change ratio. Documented above; consider relabeling these as "model-derived consistency curves" rather than empirical references.
-- **Pressure ulcer curves** lean on the NPUAP/EPUAP/PPPIA guideline which is itself a meta-aggregate. The primary timecourse data behind that guideline is sparse for pressure ulcers; this is a known field-wide gap, not skibidy-specific.
-- **No raw extraction artefacts (`raw/` subdirs) accompany any CSV.** Without the source figure or table snapshot, re-extraction requires fetching the paper from scratch. Optional improvement: ship a `raw/` subdir with the source figure PNG and the WebPlotDigitizer JSON for each curve.
-
-## Validation-curve gaps (modules with `SOURCES.yaml` but no `data/` CSV)
-
-22 modules cite literature for parameter values but have no observable timecourse for the validator to compare against:
-
-`bioelectric`, `biofilm`, `blood`, `body_site`, `dermis`, `elastin`, `glucose`,
-`hemostasis`, `hyaluronan`, `lactate`, `lymphatic`, `mechanotransduction`,
-`neuropathy`, `nitric_oxide`, `perfusion`, `photon`, `ros`, `scab`, `scar`,
-`senescence`, `temperature`, `tissue`.
-
-Some of these (e.g. `temperature`, `photon`) are physical-input modules where a
-validation curve does not apply. Others (e.g. `scar`, `senescence`,
-`hemostasis`, `lymphatic`, `mechanotransduction`) have sourceable timecourse
-data in the literature and are reasonable next targets.
 
 ## Profiles without dedicated reference curves
 
 The following profiles exist but have no condition-specific reference CSVs;
-the validator either falls back to the normal-wound curves or skips:
+the validator leaves unsupported condition comparisons untested:
 
 `keloid`, `hypertrophic`, `psoriasis`, `aged`, `aged_diabetic`, `tumor_wound`.
 
-`venous` and `scleroderma` are now covered by their respective curves above.
+`venous` and `scleroderma` have stored datasets above but no shared-validator
+observable mapping. Presence of a CSV is not tested coverage.
 `rheumatoid` is study-scoped and has separate reference data under `studies/rheumatoid/`.
 
 ### Hypertrophic gap

@@ -79,11 +79,20 @@ tumor_proliferation_index:
   units:
     ki67_pct: percent of cells Ki-67 positive
   normalization: absolute (percentage)
-  notes: 'Ki-67 marks cells in S/G2/M phases. BCC mean 27.4% (Toth 2012), range 2-70%. SCC higher: 22-68% depending on grade
-    (Kurnia 2020). Simulation equivalent: fraction of tumor cells in S+G2+M phases.
+  notes: 'BCC mean 27.4% (Toth 2012), range 2-70%. SCC higher: 22-68% depending on grade
+    (Kurnia 2020). The simulation reports non-G0 active agents as a cycling proxy.
+    This is not a measured Ki-67 fraction. Gerdes 1984 found expression in S/G2/M
+    and post-mitotic G1, with absent expression during early G0-to-G1 transition.
+    Binary handoff voxels are not included in the active-agent denominator.
 
     '
   sources:
+  - id: gerdes1984
+    authors: Gerdes J, Lemke H, Baisch H, Wacker HH, Schwab U, Stein H
+    year: 1984
+    title: Cell cycle analysis of a cell proliferation-associated human nuclear antigen defined by the monoclonal antibody Ki-67
+    journal: J Immunol 133(4):1710-1715
+    url: https://pubmed.ncbi.nlm.nih.gov/6206131/
   - id: toth2012
     authors: Toth DP, Bognar G, Gurbity-Palfi T, Vizkeleti L, Dobozy A, Kemeny L
     year: 2012
