@@ -1,0 +1,6 @@
+# Scientific analysis and plotting; simulation itself remains C++.
+numpy==2.5.3
+scipy==1.18.1
+matplotlib==3.11.2
+PyYAML==6.0.3
+openpyxl==3.1.5
